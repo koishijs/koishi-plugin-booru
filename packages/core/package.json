@@ -1,0 +1,47 @@
+{
+  "name": "koishi-plugin-booru",
+  "description": "Image service for Koishi",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "author": "Shigma <shigma10826@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
+  },
+  "homepage": "https://booru.koishi.chat",
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "service",
+    "plugin",
+    "booru",
+    "image",
+    "picture",
+    "random",
+    "setu"
+  ],
+  "koishi": {
+    "description": {
+      "zh": "最好的涩图插件！"
+    },
+    "service": {
+      "implements": ["booru"]
+    }
+  },
+  "peerDependencies": {
+    "koishi": "^4.10.0"
+  },
+  "devDependencies": {
+    "koishi": "^4.11.0"
+  }
+}
