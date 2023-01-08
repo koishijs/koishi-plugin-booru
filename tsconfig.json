@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "koishi-plugin-booru": ["packages/core/src"],
+      "koishi-plugin-booru-*": ["packages/*/src"],
+    },
+  },
+}
