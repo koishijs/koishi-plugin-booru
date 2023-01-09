@@ -1,6 +1,6 @@
 {
-  "name": "koishi-plugin-booru",
-  "description": "Image service for Koishi",
+  "name": "koishi-plugin-booru-lolicon",
+  "description": "Image service by lolicon.app for Koishi",
   "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -8,12 +8,15 @@
     "lib",
     "dist"
   ],
-  "author": "Shigma <shigma10826@gmail.com>",
+  "author": {
+    "name": "Maiko Tan",
+    "email": "maiko.tan.coding@gmail.com"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
-    "directory": "packages/core"
+    "directory": "packages/lolicon"
   },
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
@@ -28,14 +31,15 @@
     "image",
     "picture",
     "random",
-    "setu"
+    "setu",
+    "lolicon"
   ],
   "koishi": {
     "description": {
-      "zh": "最好的涩图插件！"
+      "zh": "最好的涩图插件！ - Lolicon 图源支持"
     },
     "service": {
-      "implements": [
+      "require": [
         "booru"
       ]
     }

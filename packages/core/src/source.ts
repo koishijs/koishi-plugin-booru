@@ -1,7 +1,7 @@
 import { Context, Schema } from 'koishi'
 
-export abstract class ImageSource {
-  constructor(public ctx: Context, public config: ImageSource.Config) {
+export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
+  constructor(public ctx: Context, public config: Config) {
     this.ctx.booru.register(this)
   }
 
