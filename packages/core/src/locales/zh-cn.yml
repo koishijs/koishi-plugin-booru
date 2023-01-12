@@ -1,0 +1,15 @@
+commands:
+  booru:
+    description: 搜索图片
+
+    options:
+      label: 指定图源标签
+
+    messages:
+      no-result: 没有找到符合条件的图片
+      format: |
+        <message forward>
+          <image url={url}></image>
+          <p>{title}</p>
+          <p>{desc}</p>
+        </message>

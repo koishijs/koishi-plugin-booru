@@ -25,7 +25,7 @@ class ImageService extends Service {
 
   async get(query: ImageService.Query) {
     const weightMap = Object.fromEntries(Object.entries(this.sources)
-      .filter(([key, source]) => query.labels.includes(source.config.label))
+      .filter(([key, source]) => query.labels.length === 0 || query.labels.includes(source.config.label))
       .map(([key, source]) => [key, source.config.weight] as const))
     const source = this.sources[Random.weightedPick(weightMap)]
     return source?.get(query)
@@ -38,4 +38,25 @@ namespace ImageService {
   }
 }
 
-export default ImageService
+export function apply(ctx: Context, config: unknown) {
+  ctx.plugin(ImageService)
+
+  ctx.i18n.define('zh', require('./locales/zh-cn'))
+
+  ctx
+    .command('booru <query...>')
+    .option('label', '-l <label:string>')
+    .action(async ({ session, options }, query) => {
+      query = query?.trim()
+      if (!query) return session.execute('help booru')
+
+      const image = await ctx.booru.get({
+        tags: query.split(/\s+/),
+        labels: options.label?.split(',')?.map((x) => x.trim())?.filter(Boolean) ?? [],
+      })
+
+      if (!image) return session?.text('.no-result')
+
+      return session?.text('.format', image)
+    })
+}
