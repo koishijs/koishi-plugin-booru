@@ -21,11 +21,20 @@ export namespace ImageSource {
 
   export interface Query {
     tags: string[]
+    /** raw query */
+    raw: string
   }
+
+  export type NsfwType = 'furry' | 'guro' | 'shota' | 'bl'
 
   export interface Result {
     url: string
+    pageUrl?: string
+    author?: string
+    authorUrl?: string
     title?: string
     desc?: string
+    tags?: string[]
+    nsfw?: boolean | NsfwType
   }
 }

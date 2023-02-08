@@ -7,9 +7,21 @@ commands:
 
     messages:
       no-result: 没有找到符合条件的图片
-      format: |
-        <message forward>
-          <image url={url}></image>
-          <p>{title}</p>
-          <p>{desc}</p>
-        </message>
+      output:
+        image: <message><image url={url}></image></message>
+        meta: |
+          <message>
+            <p>{title}</p>
+            <p>作者: {author}</p>
+            <p>{desc}</p>
+          </message>
+        link: |
+          <message>
+            <p>页面地址: {pageUrl}</p>
+            <p>作者主页: {authorUrl}</p>
+          </message>
+        source: |
+          <message>
+            <p>图源: {source}</p>
+            <p>标签: {tags}</p>
+          </message>
