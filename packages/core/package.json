@@ -45,5 +45,8 @@
   },
   "devDependencies": {
     "koishi": "^4.11.0"
+  },
+  "dependencies": {
+    "languagedetect": "^2.0.0"
   }
 }

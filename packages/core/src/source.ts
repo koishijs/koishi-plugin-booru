@@ -1,6 +1,8 @@
 import { Context, Schema } from 'koishi'
 
 export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
+  languages: string[] = []
+
   constructor(public ctx: Context, public config: Config) {
     this.ctx.booru.register(this)
   }

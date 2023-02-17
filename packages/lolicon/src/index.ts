@@ -32,6 +32,8 @@ export const name = 'koishi-plugin-booru-lolicon'
 export const using = ['booru']
 
 export class LoliconImageSource extends ImageSource<Config> {
+  languages = ['en', 'zh-CN', 'ja']
+
   constructor(ctx: Context, config: Config) {
     super(ctx, config)
   }

@@ -23,6 +23,8 @@ export const name = 'koishi-plugin-booru-danbooru'
 export const using = ['booru']
 
 export class DanbooruImageSource extends ImageSource<Config> {
+  languages = ['en']
+
   constructor(ctx: Context, config: Config) {
     super(ctx, config)
   }
