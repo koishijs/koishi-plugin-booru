@@ -64,17 +64,23 @@ export enum OutputType {
 export interface Config {
   detectLanguage: boolean
   confidence: number
+  maxCount: number
   output: OutputType
 }
 
 export const Config = Schema.intersect([
-  Schema.union([
+  Schema.intersect([
+    Schema.union([
+      Schema.object({
+        detectLanguage: Schema.boolean().default(false).description('自动检测输入语言并选择语言匹配的图源。'),
+      }),
+      Schema.object({
+        detectLanguage: Schema.const(true).description('自动检测输入语言并选择语言匹配的图源。'),
+        confidence: Schema.number().default(0.5).description('语言检测的置信度。'),
+      }),
+    ]),
     Schema.object({
-      detectLanguage: Schema.boolean().default(false).description('自动检测输入语言并选择语言匹配的图源。'),
-    }),
-    Schema.object({
-      detectLanguage: Schema.const(true).description('自动检测输入语言并选择语言匹配的图源。'),
-      confidence: Schema.number().default(0.5).description('语言检测的置信度。'),
+      maxCount: Schema.number().default(10).description('每次搜索的最大数量。'),
     }),
   ]).description('搜索设置'),
   Schema.object({
@@ -92,31 +98,47 @@ export function apply(ctx: Context, config: Config) {
 
   ctx.i18n.define('zh', require('./locales/zh-cn'))
 
+  const count = (value: string, session: Session) => {
+    const count = parseInt(value)
+    if (count < 1 || count > config.maxCount) {
+      session.send('booru.count-invalid')
+      return 1
+    }
+    return count
+  }
+
   ctx
     .command('booru <query...>')
+    .option('count', '-c <count:number>', { type: count, fallback: 1 })
     .option('label', '-l <label:string>')
     .action(async ({ session, options }, query) => {
       query = query?.trim()
       if (!query) return session.execute('help booru')
 
-      const image = await ctx.booru.get({
+      const images = await ctx.booru.get({
         tags: query.split(/\s+/),
         raw: query,
+        count: options.count,
         labels: options.label?.split(',')?.map((x) => x.trim())?.filter(Boolean) ?? [],
       })
 
-      if (!image) return session?.text('.no-result')
+      if (!images || !images.length) return session?.text('.no-result')
 
       const output: (string | Element)[] = []
-      switch (config.output) {
-        case OutputType.All:
-          image.tags && output.unshift(session.text('.output.source', { ...image, tags: image.tags.join(' ') }))
-        case OutputType.ImageAndLink:
-          (image.pageUrl || image.authorUrl) && output.unshift(session.text('.output.link', image))
-        case OutputType.ImageAndInfo:
-          image.title && image.author && image.desc && output.unshift(session.text('.output.info', image))
-        case OutputType.ImageOnly:
-          output.unshift(session.text('.output.image', image))
+      for (const image of images) {
+        switch (config.output) {
+          case OutputType.All:
+            if (image.tags)
+              output.unshift(session.text('.output.source', { ...image, tags: image.tags.join(' ') }))
+          case OutputType.ImageAndLink:
+            if (image.pageUrl || image.authorUrl)
+              output.unshift(session.text('.output.link', image))
+          case OutputType.ImageAndInfo:
+            if (image.title && image.author && image.desc)
+              output.unshift(session.text('.output.info', image))
+          case OutputType.ImageOnly:
+            output.unshift(session.text('.output.image', image))
+        }
       }
 
       return output.length === 1 ? output[0] : `<message forward>${output.join('\n')}</message>`

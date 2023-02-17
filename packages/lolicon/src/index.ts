@@ -38,21 +38,21 @@ export class LoliconImageSource extends ImageSource<Config> {
     super(ctx, config)
   }
 
-  async get(query: ImageSource.Query): Promise<ImageSource.Result> {
+  async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy?.endpoint
     const param: Lolicon.Request = {
       r18: this.config.r18,
       tag: query.tags,
+      num: query.count,
       proxy,
     }
     const resp = await this.ctx.http.post<Lolicon.Response>(this.config.endpoint, param)
-    if (resp.data?.length) {
-      const setu = resp.data[0]
+    return resp.data.map((setu) => {
       return {
         url: setu.urls.original,
         title: setu.title,
       }
-    }
+    })
   }
 }
 

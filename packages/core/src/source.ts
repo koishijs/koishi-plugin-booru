@@ -7,7 +7,7 @@ export abstract class ImageSource<Config extends ImageSource.Config = ImageSourc
     this.ctx.booru.register(this)
   }
 
-  abstract get(query: ImageSource.Query): Promise<ImageSource.Result>
+  abstract get(query: ImageSource.Query): Promise<ImageSource.Result[]>
 }
 
 export namespace ImageSource {
@@ -25,6 +25,7 @@ export namespace ImageSource {
     tags: string[]
     /** raw query */
     raw: string
+    count: number
   }
 
   export type NsfwType = 'furry' | 'guro' | 'shota' | 'bl'

@@ -29,25 +29,26 @@ export class DanbooruImageSource extends ImageSource<Config> {
     super(ctx, config)
   }
 
-  async get(query: ImageSource.Query): Promise<ImageSource.Result> {
+  async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     const resp = await this.ctx.http.axios<Danbooru.Post[]>(trimSlash(this.config.endpoint) + '/posts.json', { params: {
       tags: query.tags.map((t) => t.replace(/ /g, '_')).join(' '),
       random: true,
-      limit: 1,
+      limit: query.count,
     }})
 
     if (!Array.isArray(resp.data)) {
       throw new SessionError('commands.booru.message.no-response')
     }
 
-    const post = resp.data[0]
-    return {
-      url: post.file_url,
-      pageUrl: post.source,
-      author: post.tag_string_artist.replace(/ /g, ', ').replace(/_/g, ' '),
-      tags: post.tag_string.split(' ').map((t) => t.replace(/_/g, ' ')),
-      nsfw: post.rating === 'e' || post.rating === 'q',
-    }
+    return resp.data.map((post) => {
+      return {
+        url: post.file_url,
+        pageUrl: post.source,
+        author: post.tag_string_artist.replace(/ /g, ', ').replace(/_/g, ' '),
+        tags: post.tag_string.split(' ').map((t) => t.replace(/_/g, ' ')),
+        nsfw: post.rating === 'e' || post.rating === 'q',
+      }
+    })
   }
 }
 
