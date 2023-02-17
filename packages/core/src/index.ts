@@ -1,4 +1,5 @@
-import { Context, Dict, Element, Random, Schema, Service } from 'koishi'
+import { Context, Dict, Element, Random, Schema, Service, Session } from 'koishi'
+import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
 
 export * from './source'
@@ -10,11 +11,15 @@ declare module 'koishi' {
 }
 
 class ImageService extends Service {
+  private config: Config
   private sources: Dict<ImageSource> = {}
   private counter = 0
 
-  constructor(ctx: Context) {
+  private languageDetect = new LanguageDetect()
+
+  constructor(ctx: Context, config: Config) {
     super(ctx, 'booru', true)
+    this.config = config
   }
 
   register(source: ImageSource) {
@@ -25,7 +30,18 @@ class ImageService extends Service {
 
   async get(query: ImageService.Query) {
     const weightMap = Object.fromEntries(Object.entries(this.sources)
-      .filter(([key, source]) => query.labels.length === 0 || query.labels.includes(source.config.label))
+      .filter(([key, source]) => {
+        if (query.labels.length && !query.labels.includes(source.config.label)) return false
+        if (this.config.detectLanguage) {
+          const probabilities = this.languageDetect.detect(query.raw, 3).filter((x) => x[1] > this.config.confidence)
+          if (!probabilities.length) {
+            // if no language detected, just treat it as any language
+            return true
+          }
+          return probabilities.some(([lang]) => source.languages.includes(lang))
+        }
+        return true
+      })
       .map(([key, source]) => [key, source.config.weight] as const))
     const source = this.sources[Random.weightedPick(weightMap)]
     return source?.get(query)
@@ -46,10 +62,21 @@ export enum OutputType {
 }
 
 export interface Config {
+  detectLanguage: boolean
+  confidence: number
   output: OutputType
 }
 
 export const Config = Schema.intersect([
+  Schema.union([
+    Schema.object({
+      detectLanguage: Schema.boolean().default(false).description('自动检测输入语言并选择语言匹配的图源。'),
+    }),
+    Schema.object({
+      detectLanguage: Schema.const(true).description('自动检测输入语言并选择语言匹配的图源。'),
+      confidence: Schema.number().default(0.5).description('语言检测的置信度。'),
+    }),
+  ]).description('搜索设置'),
   Schema.object({
     output: Schema.union([
       Schema.const(0).description('仅发送图片'),
@@ -61,7 +88,7 @@ export const Config = Schema.intersect([
 ])
 
 export function apply(ctx: Context, config: Config) {
-  ctx.plugin(ImageService)
+  ctx.plugin(ImageService, config)
 
   ctx.i18n.define('zh', require('./locales/zh-cn'))
 
