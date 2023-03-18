@@ -10,6 +10,14 @@
   ],
   "license": "MIT",
   "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
+    "directory": "packages/gelbooru"
+  },
+  "bugs": {
+    "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
+  },
   "homepage": "https://booru.koishi.chat",
   "keywords": [
     "chatbot",
