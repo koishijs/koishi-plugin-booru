@@ -1,0 +1,42 @@
+{
+  "name": "koishi-plugin-booru-gelbooru",
+  "description": "Image service by gelbooru for Koishi",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "license": "MIT",
+  "scripts": {},
+  "homepage": "https://booru.koishi.chat",
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "service",
+    "plugin",
+    "booru",
+    "image",
+    "picture",
+    "random",
+    "setu",
+    "gelbooru"
+  ],
+  "koishi": {
+    "description": {
+      "zh": "最好的涩图插件！ - Gelbooru 图源支持"
+    },
+    "service": {
+      "require": [
+        "booru"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "koishi": "^4.10.0"
+  },
+  "devDependencies": {
+    "koishi": "^4.11.0"
+  }
+}
