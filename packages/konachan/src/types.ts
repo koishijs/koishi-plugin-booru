@@ -35,5 +35,6 @@ export namespace Konachan {
     frames_pending_string: string
     frames_pending: any[]
     frames_string: string
-    frames: any[]  }
+    frames: any[]
+  }
 }
