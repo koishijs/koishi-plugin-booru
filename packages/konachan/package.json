@@ -8,6 +8,11 @@
     "lib",
     "dist"
   ],
+  "author": {
+    "email": "634469564@qq.com",
+    "name": "kbd",
+    "url": "https://github.com/Kabuda-czh"
+  },
   "license": "MIT",
   "scripts": {},
   "repository": {

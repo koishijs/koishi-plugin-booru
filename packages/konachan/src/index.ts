@@ -4,8 +4,8 @@ import { Konachan } from './types'
 
 export interface Config extends ImageSource.Config {
   endpoint: string
-  userId: string
-  apiKey: string
+  userId?: string
+  apiKey?: string
 }
 
 export const Config = Schema.object({
@@ -13,10 +13,10 @@ export const Config = Schema.object({
   weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
 
   endpoint: Schema.union([
-    Schema.const('https://konachan.com/').description('含 R18'),
-    Schema.const('https://konachan.net/').description('非 R18')
+    Schema.const('https://konachan.com/').description('konachan.com (NSFW)'),
+    Schema.const('https://konachan.net/').description('konachan.net (SFW)')
   ]).description('konachan 的 URL。').default('https://konachan.com/'),
-  login: Schema.string().description('konachan 的用户名。').required(),
+  userId: Schema.string().description('konachan 的用户名。').required(),
   apiKey: Schema.string().description('konachan 的 API Key。').required(),
 })
 
@@ -36,7 +36,6 @@ export class KonachanImageSource extends ImageSource<Config> {
       limit: query.count
     }
     const url = trimSlash(this.config.endpoint) + '/post.json' + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
-
     const { data } = await this.ctx.http.axios<Konachan.Response[]>(url)
 
     if (!Array.isArray(data)) {
