@@ -1,0 +1,54 @@
+{
+  "name": "koishi-plugin-booru-pixiv",
+  "description": "Image service from pixiv.net for Koishi",
+  "version": "0.1.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "author": {
+    "name": "Maiko Tan",
+    "email": "maiko.tan.coding@gmail.com",
+    "url": "https://github.com/MaikoTan"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
+    "directory": "packages/pixiv"
+  },
+  "bugs": {
+    "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
+  },
+  "homepage": "https://booru.koishi.chat",
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "service",
+    "plugin",
+    "booru",
+    "image",
+    "picture",
+    "random",
+    "setu",
+    "pixiv"
+  ],
+  "koishi": {
+    "description": {
+      "zh": "最好的涩图插件！ - Pixiv 图源支持"
+    },
+    "service": {
+      "require": [
+        "booru"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "koishi": "^4.10.0"
+  },
+  "devDependencies": {
+    "koishi": "^4.11.0"
+  }
+}
