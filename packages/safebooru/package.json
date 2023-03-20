@@ -12,7 +12,8 @@
     "email": "634469564@qq.com",
     "name": "kbd",
     "url": "https://github.com/Kabuda-czh"
-  },  "scripts": {},
+  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
