@@ -27,7 +27,7 @@ export namespace Konachan {
     jpeg_file_size: number
     rating: string
     has_children: boolean
-    parent_id?: number | null
+    parent_id?: number
     status: string
     width: number
     height: number
