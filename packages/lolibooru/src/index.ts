@@ -13,8 +13,8 @@ export const Config = Schema.object({
   weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
 
   endpoint: Schema.string().description('lolibooru 的 URL。').default('https://lolibooru.moe'),
-  // login: Schema.string().description('lolibooru 的用户名。').required(),
-  // apiKey: Schema.string().description('lolibooru 的 API Key。').required(),
+  login: Schema.string().description('lolibooru 的用户名。').required(),
+  apiKey: Schema.string().description('lolibooru 的 API Key。').required(),
 })
 
 export const name = 'koishi-plugin-booru-lolibooru'
