@@ -1,0 +1,55 @@
+{
+  "name": "koishi-plugin-booru-konachan",
+  "description": "Image service by konachan for Koishi",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "author": {
+    "email": "634469564@qq.com",
+    "name": "kbd",
+    "url": "https://github.com/Kabuda-czh"
+  },
+  "license": "MIT",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
+    "directory": "packages/konachan"
+  },
+  "bugs": {
+    "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
+  },
+  "homepage": "https://booru.koishi.chat",
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "service",
+    "plugin",
+    "booru",
+    "image",
+    "picture",
+    "random",
+    "setu",
+    "konachan"
+  ],
+  "koishi": {
+    "description": {
+      "zh": "最好的涩图插件！ - Konachan 图源支持"
+    },
+    "service": {
+      "require": [
+        "booru"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "koishi": "^4.10.0"
+  },
+  "devDependencies": {
+    "koishi": "^4.11.0"
+  }
+}
