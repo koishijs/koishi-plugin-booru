@@ -8,6 +8,7 @@ export const using = ['booru']
 export interface Config extends ImageSource.Config {
   endpoint: string
   token?: string
+  minBookmarks: number
   pximgProxy?: string
 }
 
@@ -17,6 +18,7 @@ export const Config = Schema.object({
 
   endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
   token: Schema.string().description('Pixiv 的 Refresh Token'),
+  minBookmarks: Schema.number().default(0).description('最少收藏数'),
   pximgProxy: Schema.string().description('Pixiv 图片代理，用于解决图片无法访问的问题').default('https://i.pixiv.re/'),
 })
 
@@ -36,10 +38,11 @@ export class PixivImageSource extends ImageSource<Config> {
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    let url = this.config.token ? '/v1/illust/recommended' : '/v1/illust/recommended-nologin'
+    const url = '/v1/search/illust'
     const params = {
-      content_type: 'illust',
-      include_ranking_label: 'true',
+      word: query.tags.join(' '),
+      search_target: 'partial_match_for_tags',
+      sort: 'date_desc', // TODO: Pixiv member could use 'popular_desc'
       filter: 'for_ios',
     }
 
@@ -53,29 +56,32 @@ export class PixivImageSource extends ImageSource<Config> {
         headers: this._getHeaders(),
       })
 
-      return data.illusts.map((illust: any) => {
-        let url = ''
-        if (illust.page_count > 1) {
-          url = illust.meta_pages[0].image_urls.original
-        } else {
-          url = illust.meta_single_page.original_image_url
-        }
+      return data.illusts
+        .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
+        .slice(0, query.count)
+        .map((illust: any) => {
+          let url = ''
+          if (illust.page_count > 1) {
+            url = illust.meta_pages[0].image_urls.original
+          } else {
+            url = illust.meta_single_page.original_image_url
+          }
 
-        if (this.config.pximgProxy) {
-          url = this.config.pximgProxy + url.replace(/^https?:\/\/i\.pximg\.net\//, '')
-        }
+          if (this.config.pximgProxy) {
+            url = this.config.pximgProxy + url.replace(/^https?:\/\/i\.pximg\.net\//, '')
+          }
 
-        return {
-          url,
-          title: illust.title,
-          pageUrl: `https://pixiv.net/i/${illust.id}`,
-          author: illust.user.name,
-          authorUrl: `https://pixiv.net/u/${illust.user.id}`,
-          desc: illust.caption,
-          tags: illust.tags.map((tag: any) => tag.name),
-          nsfw: illust.x_restrict >= 1,
-        }
-      })
+          return {
+            url,
+            title: illust.title,
+            pageUrl: `https://pixiv.net/i/${illust.id}`,
+            author: illust.user.name,
+            authorUrl: `https://pixiv.net/u/${illust.user.id}`,
+            desc: illust.caption,
+            tags: illust.tags.map((tag: any) => tag.name),
+            nsfw: illust.x_restrict >= 1,
+          }
+        })
     } catch (err) {
       throw new SessionError('commands.booru.messages.no-response')
     }
