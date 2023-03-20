@@ -2,28 +2,10 @@ import { Context, Schema, SessionError, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { Gelbooru } from './types'
 
-export interface Config extends ImageSource.Config {
-  endpoint: string
-  userId: string
-  apiKey: string
-}
-
-export const Config = Schema.object({
-  label: Schema.string().default('gelbooru').description('图源标签，可用于在指令中手动指定图源。'),
-  weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
-
-  endpoint: Schema.string().description('gelbooru 的 URL。').default('https://gelbooru.com/index.php'),
-  userId: Schema.string().description('gelbooru 的用户名。').required(),
-  apiKey: Schema.string().description('gelbooru 的 API Key。').required(),
-})
-
-export const name = 'koishi-plugin-booru-gelbooru'
-export const using = ['booru']
-
-export class GelbooruImageSource extends ImageSource<Config> {
+class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
   languages = ['en']
 
-  constructor(ctx: Context, config: Config) {
+  constructor(ctx: Context, config: GelbooruImageSource.Config) {
     super(ctx, config)
   }
 
@@ -56,6 +38,20 @@ export class GelbooruImageSource extends ImageSource<Config> {
   }
 }
 
-export function apply(ctx: Context, config: Config) {
-  ctx.booru.register(new GelbooruImageSource(ctx, config))
+namespace GelbooruImageSource {
+  export interface Config extends ImageSource.Config {
+    endpoint: string
+    userId: string
+    apiKey: string
+  }
+
+  export const Config: Schema<Config> = Schema.object({
+    label: Schema.string().default('gelbooru').description('图源标签，可用于在指令中手动指定图源。'),
+    weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
+    endpoint: Schema.string().description('gelbooru 的 URL。').default('https://gelbooru.com/index.php'),
+    userId: Schema.string().description('gelbooru 的用户名。').required(),
+    apiKey: Schema.string().description('gelbooru 的 API Key。').required(),
+  })
 }
+
+export default GelbooruImageSource

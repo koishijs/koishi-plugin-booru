@@ -1,39 +1,18 @@
-import { Context, Quester, Schema, SessionError, trimSlash } from 'koishi'
+import { Context, Schema, SessionError, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
-
-export const name = 'koishi-plugin-booru-pixiv'
-
-export const using = ['booru']
-
-export interface Config extends ImageSource.Config {
-  endpoint: string
-  token?: string
-  minBookmarks: number
-  pximgProxy?: string
-}
-
-export const Config = Schema.object({
-  label: Schema.string().default('pixiv').description('图源标签，可用于在指令中手动指定图源。'),
-  weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
-
-  endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
-  token: Schema.string().description('Pixiv 的 Refresh Token'),
-  minBookmarks: Schema.number().default(0).description('最少收藏数'),
-  pximgProxy: Schema.string().description('Pixiv 图片代理，用于解决图片无法访问的问题').default('https://i.pixiv.re/'),
-})
 
 const CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
 const CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
 const HASH_SECRET = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c'
 
-export class PixivImageSource extends ImageSource<Config> {
+class PixivImageSource extends ImageSource<PixivImageSource.Config> {
   languages = ['en']
 
   private userId?: string
   private accessToken?: string
   private refreshToken?: string
 
-  constructor(ctx: Context, config: Config) {
+  constructor(ctx: Context, config: PixivImageSource.Config) {
     super(ctx, config)
   }
 
@@ -137,6 +116,22 @@ export class PixivImageSource extends ImageSource<Config> {
   }
 }
 
-export function apply(ctx: Context, config: Config) {
-  ctx.booru.register(new PixivImageSource(ctx, config))
+namespace PixivImageSource {
+  export interface Config extends ImageSource.Config {
+    endpoint: string
+    token?: string
+    minBookmarks: number
+    pximgProxy?: string
+  }
+
+  export const Config: Schema<Config> = Schema.object({
+    label: Schema.string().default('pixiv').description('图源标签，可用于在指令中手动指定图源。'),
+    weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
+    endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
+    token: Schema.string().description('Pixiv 的 Refresh Token'),
+    minBookmarks: Schema.number().default(0).description('最少收藏数'),
+    pximgProxy: Schema.string().description('Pixiv 图片代理，用于解决图片无法访问的问题').default('https://i.pixiv.re/'),
+  })
 }
+
+export default PixivImageSource

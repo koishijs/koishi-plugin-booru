@@ -2,28 +2,10 @@ import { Context, Schema, SessionError, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { Yande } from './types'
 
-export interface Config extends ImageSource.Config {
-  endpoint: string
-  login?: string
-  apiKey?: string
-}
-
-export const Config = Schema.object({
-  label: Schema.string().default('yande').description('图源标签，可用于在指令中手动指定图源。'),
-  weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
-
-  endpoint: Schema.string().description('yande 的 URL。').default('https://yande.re'),
-  login: Schema.string().description('yande 的用户名。').required(),
-  apiKey: Schema.string().description('yande 的 API Key。').required(),
-})
-
-export const name = 'koishi-plugin-booru-yande'
-export const using = ['booru']
-
-export class YandeImageSource extends ImageSource<Config> {
+class YandeImageSource extends ImageSource<YandeImageSource.Config> {
   languages = ['en']
 
-  constructor(ctx: Context, config: Config) {
+  constructor(ctx: Context, config: YandeImageSource.Config) {
     super(ctx, config)
   }
 
@@ -52,7 +34,20 @@ export class YandeImageSource extends ImageSource<Config> {
   }
 }
 
-export function apply(ctx: Context, config: Config) {
-  ctx.booru.register(new YandeImageSource(ctx, config))
+namespace YandeImageSource {
+  export interface Config extends ImageSource.Config {
+    endpoint: string
+    login?: string
+    apiKey?: string
+  }
+
+  export const Config: Schema<Config> = Schema.object({
+    label: Schema.string().default('yande').description('图源标签，可用于在指令中手动指定图源。'),
+    weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
+    endpoint: Schema.string().description('yande 的 URL。').default('https://yande.re'),
+    login: Schema.string().description('yande 的用户名。').required(),
+    apiKey: Schema.string().description('yande 的 API Key。').required(),
+  })
 }
 
+export default YandeImageSource

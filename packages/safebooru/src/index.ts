@@ -2,28 +2,10 @@ import { Context, Schema, SessionError, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { Safebooru } from './types'
 
-export interface Config extends ImageSource.Config {
-  endpoint: string
-  login?: string
-  apiKey?: string
-}
-
-export const Config = Schema.object({
-  label: Schema.string().default('safebooru').description('图源标签，可用于在指令中手动指定图源。'),
-  weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
-
-  endpoint: Schema.string().description('safebooru 的 URL。').default('https://safebooru.org/index.php'),
-  login: Schema.string().description('safebooru 的用户名。').required(),
-  apiKey: Schema.string().description('safebooru 的 API Key。').required(),
-})
-
-export const name = 'koishi-plugin-booru-safebooru'
-export const using = ['booru']
-
-export class SafebooruImageSource extends ImageSource<Config> {
+class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
   languages = ['en']
 
-  constructor(ctx: Context, config: Config) {
+  constructor(ctx: Context, config: SafebooruImageSource.Config) {
     super(ctx, config)
   }
 
@@ -59,7 +41,20 @@ export class SafebooruImageSource extends ImageSource<Config> {
   }
 }
 
-export function apply(ctx: Context, config: Config) {
-  ctx.booru.register(new SafebooruImageSource(ctx, config))
+namespace SafebooruImageSource {
+  export interface Config extends ImageSource.Config {
+    endpoint: string
+    login?: string
+    apiKey?: string
+  }
+
+  export const Config: Schema<Config> = Schema.object({
+    label: Schema.string().default('safebooru').description('图源标签，可用于在指令中手动指定图源。'),
+    weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
+    endpoint: Schema.string().description('safebooru 的 URL。').default('https://safebooru.org/index.php'),
+    login: Schema.string().description('safebooru 的用户名。').required(),
+    apiKey: Schema.string().description('safebooru 的 API Key。').required(),
+  })
 }
 
+export default SafebooruImageSource
