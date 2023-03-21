@@ -42,7 +42,10 @@ class ImageService extends Service {
         }
         return true
       })
-      .sort((a, b) => a.config.weight - b.config.weight)
+      .sort((a, b) => {
+        if (a.config.weight !== b.config.weight) return a.config.weight - b.config.weight
+        return Math.random() - 0.5
+      })
 
     // return the first non-empty result
     for (const source of sources) {
