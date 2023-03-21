@@ -51,7 +51,7 @@ class ImageService extends Service {
       if (images && images.length) return images
     }
 
-    throw new SessionError('commands.booru.message.no-response')
+    throw new SessionError('commands.booru.messages.no-response')
   }
 }
 
