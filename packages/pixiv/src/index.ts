@@ -13,7 +13,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
   private userId?: string
   private accessToken?: string
   private refreshToken?: string
-  private refreshTime?: ReturnType<typeof setTimeout>
+  private refreshTime?: NodeJS.Timeout
 
   constructor(ctx: Context, config: PixivImageSource.Config) {
     super(ctx, config)
