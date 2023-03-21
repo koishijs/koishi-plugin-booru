@@ -1,6 +1,8 @@
 import { Context, Schema, SessionError, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
+import { PixivAppApi } from './types'
+
 const CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
 const CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
 const HASH_SECRET = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c'
@@ -18,7 +20,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     const url = '/v1/search/illust'
-    const params = {
+    const params: PixivAppApi.SearchParams = {
       word: query.tags.join(' '),
       search_target: 'partial_match_for_tags',
       sort: 'date_desc', // TODO: Pixiv member could use 'popular_desc'
@@ -30,7 +32,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     }
 
     try {
-      const data = await this.ctx.http.get(trimSlash(this.config.endpoint) + url, {
+      const data = await this.ctx.http.get<PixivAppApi.Result>(trimSlash(this.config.endpoint) + url, {
         params,
         headers: this._getHeaders(),
       })
@@ -38,7 +40,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       return data.illusts
         .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
         .slice(0, query.count)
-        .map((illust: any) => {
+        .map((illust) => {
           let url = ''
           if (illust.page_count > 1) {
             url = illust.meta_pages[0].image_urls.original
@@ -57,7 +59,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
             author: illust.user.name,
             authorUrl: `https://pixiv.net/u/${illust.user.id}`,
             desc: illust.caption,
-            tags: illust.tags.map((tag: any) => tag.name),
+            tags: illust.tags.map((tag) => tag.name),
             nsfw: illust.x_restrict >= 1,
           }
         })
