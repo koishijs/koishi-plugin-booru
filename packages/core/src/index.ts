@@ -118,8 +118,7 @@ export function apply(ctx: Context, config: Config) {
     .option('count', '-c <count:number>', { type: count, fallback: 1 })
     .option('label', '-l <label:string>')
     .action(async ({ session, options }, query) => {
-      query = query?.trim()
-      if (!query) return session.execute('help booru')
+      query = query?.trim() ?? ''
 
       const images = await ctx.booru.get({
         tags: query.split(/\s+/),
