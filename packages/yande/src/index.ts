@@ -10,6 +10,7 @@ class YandeImageSource extends ImageSource<YandeImageSource.Config> {
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
+    // API docs: https://yande.re/help/api
     const params = {
       tags: query.tags.map((t) => t.replace(/ /g, '_')).join('+') + "+order:random",
       limit: query.count
