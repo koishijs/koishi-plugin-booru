@@ -24,7 +24,7 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
     const { data } = await this.ctx.http.axios<Gelbooru.Response>(url)
 
     if (!Array.isArray(data.post)) {
-      throw new SessionError('commands.booru.message.no-response')
+      return
     }
 
     return data.post.map((post) => {

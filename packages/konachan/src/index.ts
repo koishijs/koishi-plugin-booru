@@ -19,7 +19,7 @@ class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
     const { data } = await this.ctx.http.axios<Konachan.Response[]>(url)
 
     if (!Array.isArray(data)) {
-      throw new SessionError('commands.booru.message.no-response')
+      return
     }
 
     return data.map((post) => {

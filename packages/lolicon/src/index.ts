@@ -18,6 +18,11 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
       proxy,
     }
     const resp = await this.ctx.http.post<Lolicon.Response>(this.config.endpoint, param)
+
+    if (!Array.isArray(resp.data)) {
+      return
+    }
+
     return resp.data.map((setu) => {
       return {
         url: setu.urls.original,

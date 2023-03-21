@@ -18,9 +18,9 @@ class YandeImageSource extends ImageSource<YandeImageSource.Config> {
     const url = trimSlash(this.config.endpoint) + '/post.json' + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
 
     const resp = await this.ctx.http.axios<Yande.Response[]>(url)
-    console.log(resp.data)
+
     if (!Array.isArray(resp.data)) {
-      throw new SessionError('commands.booru.message.no-response')
+      return
     }
 
     return resp.data.map((post) => {
