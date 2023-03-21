@@ -10,6 +10,7 @@ class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
+    // API docs: https://safebooru.org/index.php?page=help&topic=dapi
     const params = {
       // TODO random 无效
       tags: query.tags.map((t) => t.replace(/ /g, '_')).join('+') + "+sort:random",
