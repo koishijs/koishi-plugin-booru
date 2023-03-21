@@ -42,7 +42,6 @@ class ImageService extends Service {
         }
         return true
       })
-      .map((source) => source)
       .sort((a, b) => a.config.weight - b.config.weight)
 
     // return the first non-empty result
