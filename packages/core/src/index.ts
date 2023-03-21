@@ -1,4 +1,4 @@
-import { Context, Dict, Element, Random, Schema, Service, Session } from 'koishi'
+import { Context, Dict, Element, Schema, Service, Session, SessionError } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
 
@@ -29,8 +29,8 @@ class ImageService extends Service {
   }
 
   async get(query: ImageService.Query) {
-    const weightMap = Object.fromEntries(Object.entries(this.sources)
-      .filter(([key, source]) => {
+    const sources = Object.values(this.sources)
+      .filter((source) => {
         if (query.labels.length && !query.labels.includes(source.config.label)) return false
         if (this.config.detectLanguage) {
           const probabilities = this.languageDetect.detect(query.raw, 3).filter((x) => x[1] > this.config.confidence)
@@ -42,9 +42,16 @@ class ImageService extends Service {
         }
         return true
       })
-      .map(([key, source]) => [key, source.config.weight] as const))
-    const source = this.sources[Random.weightedPick(weightMap)]
-    return source?.get(query)
+      .map((source) => source)
+      .sort((a, b) => a.config.weight - b.config.weight)
+
+    // return the first non-empty result
+    for (const source of sources) {
+      const images = await source.get(query)
+      if (images && images.length) return images
+    }
+
+    throw new SessionError('commands.booru.message.no-response')
   }
 }
 

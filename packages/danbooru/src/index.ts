@@ -17,7 +17,7 @@ class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
     }})
 
     if (!Array.isArray(resp.data)) {
-      throw new SessionError('commands.booru.message.no-response')
+      return
     }
 
     return resp.data.map((post) => {

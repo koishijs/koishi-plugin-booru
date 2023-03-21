@@ -6,7 +6,7 @@ const CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
 const HASH_SECRET = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c'
 
 class PixivImageSource extends ImageSource<PixivImageSource.Config> {
-  languages = ['en']
+  languages = ['en', 'zh', 'zh-CN', 'zh-TW', 'ja', 'ko']
 
   private userId?: string
   private accessToken?: string
@@ -62,7 +62,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
           }
         })
     } catch (err) {
-      throw new SessionError('commands.booru.messages.no-response')
+      return
     }
   }
 

@@ -21,12 +21,10 @@ class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
     }
     const url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
 
-    console.log(url)
-
     const { data } = await this.ctx.http.axios<Safebooru.Response[]>(url)
 
     if (!Array.isArray(data)) {
-      throw new SessionError('commands.booru.message.no-response')
+      return
     }
 
     return data.map((post) => {
