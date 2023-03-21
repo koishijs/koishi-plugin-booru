@@ -14,7 +14,6 @@
     "url": "https://github.com/Kabuda-czh"
   },
   "license": "MIT",
-  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
@@ -47,7 +46,8 @@
     }
   },
   "peerDependencies": {
-    "koishi": "^4.10.0"
+    "koishi": "^4.10.0",
+    "koishi-plugin-booru": "^1.0.0"
   },
   "devDependencies": {
     "koishi": "^4.12.0"
