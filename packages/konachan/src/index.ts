@@ -10,6 +10,7 @@ class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
+    // API docs: https://konachan.net/help/api and https://konachan.com/help/api
     const params = {
       tags: query.tags.map((t) => t.replace(/ /g, '_')).join('+') + "+order:random",
       limit: query.count
