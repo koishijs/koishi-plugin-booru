@@ -46,9 +46,9 @@ namespace KonachanImageSource {
     }).description('全局设置'),
     Schema.object({
       endpoint: Schema.union([
-        Schema.const('https://konachan.com/').description('konachan.com (NSFW)'),
-        Schema.const('https://konachan.net/').description('konachan.net (SFW)')
-      ]).description('konachan 的 URL。').default('https://konachan.com/'),
+        Schema.const('https://konachan.com/').description('Konachan.com (NSFW)'),
+        Schema.const('https://konachan.net/').description('Konachan.net (SFW)')
+      ]).description('Konachan 的 URL。').default('https://konachan.com/'),
     }).description('搜索设置'),
   ])
 }

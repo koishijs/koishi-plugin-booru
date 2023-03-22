@@ -51,7 +51,7 @@ namespace SafebooruImageSource {
       weight: Schema.number().min(1).default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
     }).description('全局设置'),
     Schema.object({
-      endpoint: Schema.string().description('safebooru 的 URL。').default('https://safebooru.org/index.php'),
+      endpoint: Schema.string().description('Safebooru 的 URL。').default('https://safebooru.org/index.php'),
     }).description('搜索设置'),
   ])
 }

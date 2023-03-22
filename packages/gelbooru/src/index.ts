@@ -50,7 +50,7 @@ namespace GelbooruImageSource {
       weight: Schema.number().min(1).default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
     }).description('全局设置'),
     Schema.object({
-      endpoint: Schema.string().description('gelbooru 的 URL。').default('https://gelbooru.com/index.php'),
+      endpoint: Schema.string().description('Gelbooru 的 URL。').default('https://gelbooru.com/index.php'),
     }).description('搜索设置'),
   ])
 }

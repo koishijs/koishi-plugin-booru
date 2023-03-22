@@ -46,7 +46,7 @@ namespace YandeImageSource {
       weight: Schema.number().min(1).default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
     }).description('全局设置'),
     Schema.object({
-      endpoint: Schema.string().description('yande 的 URL。').default('https://yande.re'),
+      endpoint: Schema.string().description('Yande.re 的 URL。').default('https://yande.re'),
     }).description('搜索设置'),
   ])
 }
