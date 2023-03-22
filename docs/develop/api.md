@@ -8,7 +8,7 @@ ctx.booru.register(source: ImageSource): () => boolean
 
 注册一个图源，返回一个 dispose 函数，调用此函数可以注销此图源。
 
-## `ctx.booru.get
+## `ctx.booru.get`
 
 ```ts
 ctx.booru.get(query: ImageService.Query): Promise<ImageSource.Result[]>
