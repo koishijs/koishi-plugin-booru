@@ -148,7 +148,7 @@ namespace PixivImageSource {
           endpoint: Schema.string().required().description('反代服务的地址。'),
         }).description('自定义'),
       ]).description('Pixiv 反代服务。').default('i.pixiv.re'),
-    }),
+    }).description('搜索设置'),
   ])
 }
 
