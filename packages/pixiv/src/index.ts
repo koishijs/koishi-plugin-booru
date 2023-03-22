@@ -132,7 +132,7 @@ namespace PixivImageSource {
 
   export const Config: Schema<Config> = Schema.object({
     label: Schema.string().default('pixiv').description('图源标签，可用于在指令中手动指定图源。'),
-    weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
+    weight: Schema.number().min(1).default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
     endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
     // TODO: set token as non-required for illust recommend
     token: Schema.string().required().description('Pixiv 的 Refresh Token'),
