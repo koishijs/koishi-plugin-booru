@@ -50,8 +50,9 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
             url = illust.meta_single_page.original_image_url
           }
 
-          if (this.config.pximgProxy) {
-            url = this.config.pximgProxy + url.replace(/^https?:\/\/i\.pximg\.net\//, '')
+          if (this.config.proxy) {
+            const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy.endpoint
+            url = proxy + url.replace(/^https?:\/\/i\.pximg\.net\//, '')
           }
 
           return {
@@ -127,18 +128,28 @@ namespace PixivImageSource {
     endpoint: string
     token?: string
     minBookmarks: number
-    pximgProxy?: string
+    proxy?: { endpoint: string } | string
   }
 
-  export const Config: Schema<Config> = Schema.object({
-    label: Schema.string().default('pixiv').description('图源标签，可用于在指令中手动指定图源。'),
-    weight: Schema.number().min(1).default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
-    endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
-    // TODO: set token as non-required for illust recommend
-    token: Schema.string().required().description('Pixiv 的 Refresh Token'),
-    minBookmarks: Schema.number().default(0).description('最少收藏数'),
-    pximgProxy: Schema.string().description('Pixiv 图片代理，用于解决图片无法访问的问题').default('https://i.pixiv.re/'),
-  })
+  export const Config: Schema<Config> = Schema.intersect([
+    Schema.object({
+      label: Schema.string().default('pixiv').description('图源标签，可用于在指令中手动指定图源。'),
+      weight: Schema.number().min(1).default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
+    }).description('全局设置'),
+    Schema.object({
+      endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
+      // TODO: set token as non-required for illust recommend
+      token: Schema.string().required().description('Pixiv 的 Refresh Token'),
+      minBookmarks: Schema.number().default(0).description('最少收藏数'),
+      proxy: Schema.union([
+        Schema.const('i.pixiv.re'),
+        Schema.const('i.pixiv.cat'),
+        Schema.object({
+          endpoint: Schema.string().required().description('反代服务的地址。'),
+        }).description('自定义'),
+      ]).description('Pixiv 反代服务。').default('i.pixiv.re'),
+    }),
+  ])
 }
 
 export default PixivImageSource
