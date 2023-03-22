@@ -1,0 +1,27 @@
+commands:
+  booru:
+    description: 搜索图片
+
+    options:
+      label: 指定图源标签
+
+    messages:
+      no-result: 没有找到符合条件的图片
+      output:
+        image: <message><image url={url}></image></message>
+        info: |
+          <message>
+            <p>{title}</p>
+            <p>作者: {author}</p>
+            <p>{desc}</p>
+          </message>
+        link: |
+          <message>
+            <p>页面地址: {pageUrl}</p>
+            <p>作者主页: {authorUrl}</p>
+          </message>
+        source: |
+          <message>
+            <p>图源: {source}</p>
+            <p>标签: {tags}</p>
+          </message>
