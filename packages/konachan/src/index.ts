@@ -37,8 +37,6 @@ class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
 namespace KonachanImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
-    userId?: string
-    apiKey?: string
   }
 
   export const Config: Schema<Config> = Schema.object({
@@ -48,8 +46,6 @@ namespace KonachanImageSource {
       Schema.const('https://konachan.com/').description('konachan.com (NSFW)'),
       Schema.const('https://konachan.net/').description('konachan.net (SFW)')
     ]).description('konachan 的 URL。').default('https://konachan.com/'),
-    userId: Schema.string().description('konachan 的用户名。').required(),
-    apiKey: Schema.string().description('konachan 的 API Key。').required(),
   })
 }
 
