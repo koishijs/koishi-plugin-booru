@@ -16,7 +16,7 @@ export default defineConfig({
       text: '指南',
       items: [
         { text: '介绍', link: './' },
-        { text: 'API', link: './api' },
+        { text: '配置项', link: './config' },
       ],
     }, {
       text: '插件',
@@ -29,6 +29,11 @@ export default defineConfig({
         { text: 'Pixiv', link: './plugins/pixiv' },
         { text: 'Safebooru', link: './plugins/safebooru' },
         { text: 'Yande', link: './plugins/yande' },
+      ],
+    }, {
+      text: '开发',
+      items: [
+        { text: 'API', link: './develop/api' },
       ],
     }, {
       text: '更多',
