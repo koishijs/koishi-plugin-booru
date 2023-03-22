@@ -37,19 +37,15 @@ class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
 namespace KonachanImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
-    userId?: string
-    apiKey?: string
   }
 
   export const Config: Schema<Config> = Schema.object({
     label: Schema.string().default('konachan').description('图源标签，可用于在指令中手动指定图源。'),
-    weight: Schema.number().default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
+    weight: Schema.number().min(1).default(1).description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
     endpoint: Schema.union([
       Schema.const('https://konachan.com/').description('konachan.com (NSFW)'),
       Schema.const('https://konachan.net/').description('konachan.net (SFW)')
     ]).description('konachan 的 URL。').default('https://konachan.com/'),
-    userId: Schema.string().description('konachan 的用户名。').required(),
-    apiKey: Schema.string().description('konachan 的 API Key。').required(),
   })
 }
 
