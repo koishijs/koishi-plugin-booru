@@ -50,10 +50,10 @@ class ImageService extends Service {
     // return the first non-empty result
     for (const source of sources) {
       const images = await source.get(query)
-      if (images && images.length) return images
+      if (images?.length) return images
     }
 
-    throw new SessionError('commands.booru.messages.no-result')
+    return undefined
   }
 }
 
