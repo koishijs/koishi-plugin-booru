@@ -9,6 +9,15 @@ export abstract class ImageSource<Config extends ImageSource.Config = ImageSourc
     this.ctx.booru.register(this)
   }
 
+  /**
+   * split query into tags, default implementation is comma-separated.
+   * 
+   * e.g. `tag1, wordy tag2, UPPER CASED tag3` => `['tag1', 'wordy_tag2', 'upper_cased_tag3']`
+   */
+  tokenize(query: string): string[] {
+    return query.split(',').map((x) => x.trim()).filter(Boolean).map((x) => x.toLowerCase().replace(/ +/g, '_'))
+  }
+
   abstract get(query: ImageSource.Query): Promise<ImageSource.Result[]>
 }
 

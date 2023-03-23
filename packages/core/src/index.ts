@@ -33,7 +33,7 @@ class ImageService extends Service {
       .filter((source) => {
         if (query.labels.length && !query.labels.includes(source.config.label)) return false
         if (this.config.detectLanguage) {
-          const probabilities = this.languageDetect.detect(query.raw, 3).filter((x) => x[1] > this.config.confidence)
+          const probabilities = this.languageDetect.detect(query.query, 3).filter((x) => x[1] > this.config.confidence)
           if (!probabilities.length) {
             // if no language detected, just treat it as any language
             return true
@@ -49,7 +49,8 @@ class ImageService extends Service {
 
     // return the first non-empty result
     for (const source of sources) {
-      const images = await source.get(query)
+      const tags = source.tokenize(query.query)
+      const images = await source.get({ ...query, tags, raw: query.query })
       if (images?.length) return images
     }
 
@@ -58,8 +59,10 @@ class ImageService extends Service {
 }
 
 namespace ImageService {
-  export interface Query extends ImageSource.Query {
+  export interface Query {
+    query: string
     labels: string[]
+    count: number
   }
 }
 
@@ -117,15 +120,14 @@ export function apply(ctx: Context, config: Config) {
   }
 
   ctx
-    .command('booru <query...>')
+    .command('booru <query:text>')
     .option('count', '-c <count:number>', { type: count, fallback: 1 })
     .option('label', '-l <label:string>')
     .action(async ({ session, options }, query) => {
       query = query?.trim() ?? ''
 
       const images = await ctx.booru.get({
-        tags: query.split(/\s+/),
-        raw: query,
+        query,
         count: options.count,
         labels: options.label?.split(',')?.map((x) => x.trim())?.filter(Boolean) ?? [],
       })
