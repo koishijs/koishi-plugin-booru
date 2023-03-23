@@ -21,7 +21,10 @@ jobs:
       - name: Build
         run: yarn build
 
-      - name: Publish
-        uses: koishijs/action-publish@master
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+      - name: Set npm token
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+      - name: Publish packages
+        run: |
+          yarn pub
