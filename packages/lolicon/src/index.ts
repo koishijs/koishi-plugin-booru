@@ -9,6 +9,10 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
     super(ctx, config)
   }
 
+  override tokenize(query: string) {
+    return query.split(/\s+/)
+  }
+
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy?.endpoint
     const param: Lolicon.Request = {

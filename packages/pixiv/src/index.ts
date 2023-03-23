@@ -20,6 +20,10 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     this.refreshToken = config.token
   }
 
+  override tokenize(query: string) {
+    return query.split(/\s+/)
+  }
+
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     const url = '/v1/search/illust'
     const params: PixivAppApi.SearchParams = {
