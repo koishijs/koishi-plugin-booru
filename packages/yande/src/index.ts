@@ -1,4 +1,4 @@
-import { Context, Schema, SessionError, trimSlash } from 'koishi'
+import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { Yande } from './types'
 
@@ -12,7 +12,7 @@ class YandeImageSource extends ImageSource<YandeImageSource.Config> {
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://yande.re/help/api
     const params = {
-      tags: query.tags.map((t) => t.replace(/ /g, '_')).join('+') + "+order:random",
+      tags: query.tags.join('+') + "+order:random",
       limit: query.count
     }
     const url = trimSlash(this.config.endpoint) + '/post.json' + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')

@@ -1,4 +1,4 @@
-import { Context, Dict, Element, Schema, Service, Session, SessionError } from 'koishi'
+import { Context, Dict, Element, Schema, Service, Session } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
 

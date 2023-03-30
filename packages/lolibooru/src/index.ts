@@ -1,4 +1,4 @@
-import { Context, Schema, SessionError, trimSlash } from 'koishi'
+import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { Lolibooru } from './types'
 
@@ -12,7 +12,7 @@ class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://lolibooru.moe/help/api
     const params = {
-      tags: query.tags.map((t) => t.replace(/ /g, '_')).join('+') + "+order:random",
+      tags: query.tags.join('+') + "+order:random",
       limit: query.count
     }
 
