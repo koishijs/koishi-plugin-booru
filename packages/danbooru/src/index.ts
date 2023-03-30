@@ -11,7 +11,7 @@ class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     const resp = await this.ctx.http.axios<Danbooru.Post[]>(trimSlash(this.config.endpoint) + '/posts.json', { params: {
-      tags: query.tags.map((t) => t.replace(/ /g, '_')).join(' '),
+      tags: query.tags.join(' '),
       random: true,
       limit: query.count,
     }})

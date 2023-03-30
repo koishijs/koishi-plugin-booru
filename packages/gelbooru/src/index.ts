@@ -12,7 +12,7 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://gelbooru.com/index.php?page=help&topic=dapi
     const params = {
-      tags: query.tags.map((t) => t.replace(/ /g, '_')).join('+') + "+sort:random",
+      tags: query.tags.join('+') + "+sort:random",
       page: 'dapi',
       s: 'post',
       q: "index",

@@ -1,4 +1,4 @@
-import { Context, Schema, SessionError, trimSlash } from 'koishi'
+import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { Safebooru } from './types'
 
@@ -13,7 +13,7 @@ class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
     // API docs: https://safebooru.org/index.php?page=help&topic=dapi
     const params = {
       // TODO random 无效
-      tags: query.tags.map((t) => t.replace(/ /g, '_')).join('+') + "+sort:random",
+      tags: query.tags.join('+') + "+sort:random",
       page: 'dapi',
       s: 'post',
       q: "index",
