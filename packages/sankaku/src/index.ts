@@ -15,7 +15,7 @@ class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Co
       tags: query.tags.join('+') + "+order:random",
       limit: query.count
     }
-    const url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
+    const url = trimSlash(this.config.endpoint) + 'posts?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
 
     const { data } = await this.ctx.http.axios<SankakuComplex.Response[]>(url)
 
@@ -41,7 +41,7 @@ namespace SankakuComplexImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'sankaku' }),
     Schema.object({
-      endpoint: Schema.string().description('SankakuComplex 的 URL。').default('https://capi-v2.sankakucomplex.com/posts'),
+      endpoint: Schema.string().description('SankakuComplex 的 URL。').default('https://capi-v2.sankakucomplex.com/'),
     }).description('搜索设置'),
   ])
 }
