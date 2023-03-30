@@ -1,4 +1,4 @@
-import { Context, Schema, SessionError, trimSlash } from 'koishi'
+import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { Yande } from './types'
 
