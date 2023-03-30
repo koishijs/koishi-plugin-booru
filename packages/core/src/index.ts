@@ -1,8 +1,10 @@
-import { Context, Dict, Element, Schema, Service, Session } from 'koishi'
+import { Context, Dict, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
 
 export * from './source'
+
+const logger = new Logger('booru')
 
 declare module 'koishi' {
   interface Context {
@@ -50,7 +52,14 @@ class ImageService extends Service {
     // return the first non-empty result
     for (const source of sources) {
       const tags = source.tokenize(query.query)
-      const images = await source.get({ ...query, tags, raw: query.query })
+      const images = await source.get({ ...query, tags, raw: query.query }).catch((err) => {
+        if (Quester.isAxiosError(err)) {
+          logger.warn(`source ${source.config.label} request failed with code ${err.status} ${JSON.stringify(err.response?.data)}`)
+        } else {
+          logger.error(`source ${source.config.label} unknown error: ${err.message}`)
+        }
+        return []
+      })
       if (images?.length) return images
     }
 
