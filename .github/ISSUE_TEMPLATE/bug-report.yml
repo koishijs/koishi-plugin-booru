@@ -60,6 +60,7 @@ body:
         - Lolicon
         - Pixiv
         - Safebooru
+        - SankakuComplex
         - Yande.re
     validations:
       required: true
