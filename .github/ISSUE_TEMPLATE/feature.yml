@@ -11,6 +11,7 @@ body:
       description: 使用的图源及方式
       multiple: true
       options:
+        - [New Image Sources]
         - Danbooru
         - Gelbooru
         - Konachan.com (NSFW)
@@ -19,6 +20,7 @@ body:
         - Lolicon
         - Pixiv
         - Safebooru
+        - SankakuComplex
         - Yande.re
     validations:
       required: true
