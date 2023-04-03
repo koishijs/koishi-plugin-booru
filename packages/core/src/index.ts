@@ -87,6 +87,7 @@ export interface Config {
   confidence: number
   maxCount: number
   output: OutputType
+  nsfw: boolean
 }
 
 export const Config = Schema.intersect([
@@ -102,6 +103,7 @@ export const Config = Schema.intersect([
     ]),
     Schema.object({
       maxCount: Schema.number().default(10).description('每次搜索的最大数量。'),
+      nsfw: Schema.boolean().default(false).description('是否允许输出 NSFW 内容。'),
     }),
   ]).description('搜索设置'),
   Schema.object({
@@ -135,13 +137,15 @@ export function apply(ctx: Context, config: Config) {
     .action(async ({ session, options }, query) => {
       query = query?.trim() ?? ''
 
-      const images = await ctx.booru.get({
+      let images = await ctx.booru.get({
         query,
         count: options.count,
         labels: options.label?.split(',')?.map((x) => x.trim())?.filter(Boolean) ?? [],
       })
 
       if (!images || !images.length) return session?.text('.no-result')
+
+      images = images.filter((image) => config.nsfw || !image.nsfw)
 
       const output: (string | Element)[] = []
       for (const image of images) {
