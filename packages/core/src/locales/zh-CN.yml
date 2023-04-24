@@ -6,6 +6,7 @@ commands:
       label: 指定图源标签
 
     messages:
+      no-source: 没有添加图源, 请前往插件市场添加 booru-xxx 图源
       no-result: 没有找到符合条件的图片
       output:
         image: <message><image url={url}></image></message>

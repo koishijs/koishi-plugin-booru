@@ -30,6 +30,10 @@ class ImageService extends Service {
     return this.caller.collect('booru', () => delete this.sources[id])
   }
 
+  check() {
+    return this.counter > 0
+  }
+
   async get(query: ImageService.Query) {
     const sources = Object.values(this.sources)
       .filter((source) => {
@@ -136,6 +140,8 @@ export function apply(ctx: Context, config: Config) {
     .option('label', '-l <label:string>')
     .action(async ({ session, options }, query) => {
       query = query?.trim() ?? ''
+
+      if (!ctx.booru.check()) return session.text('.no-source')
 
       let images = await ctx.booru.get({
         query,
