@@ -123,7 +123,7 @@ export const Config = Schema.intersect([
 export function apply(ctx: Context, config: Config) {
   ctx.plugin(ImageService, config)
 
-  ctx.i18n.define('zh', require('./locales/zh-cn'))
+  ctx.i18n.define('zh', require('./locales/zh-CN'))
 
   const count = (value: string, session: Session) => {
     const count = parseInt(value)
