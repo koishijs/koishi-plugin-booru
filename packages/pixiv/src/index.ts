@@ -55,7 +55,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
 
           if (this.config.proxy) {
             const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy.endpoint
-            url = trimSlash(proxy) + url.replace(/^https?:\/\/i\.pximg\.net/, '')
+            url = url.replace(/^https?:\/\/i\.pximg\.net/, trimSlash(proxy))
           }
 
           return {
