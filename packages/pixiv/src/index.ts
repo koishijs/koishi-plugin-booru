@@ -144,6 +144,7 @@ namespace PixivImageSource {
       proxy: Schema.union([
         Schema.const('https://i.pixiv.re').description('i.pixiv.re'),
         Schema.const('https://i.pixiv.cat').description('i.pixiv.cat'),
+        Schema.const('https://i.pixiv.nl').description('i.pixiv.nl'),
         Schema.object({
           endpoint: Schema.string().required().description('反代服务的地址。'),
         }).description('自定义'),
