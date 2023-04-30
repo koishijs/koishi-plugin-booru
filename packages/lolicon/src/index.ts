@@ -55,6 +55,7 @@ namespace LoliconImageSource {
       proxy: Schema.union([
         Schema.const('i.pixiv.re'),
         Schema.const('i.pixiv.cat'),
+        Schema.const('i.pixiv.nl'),
         Schema.object({
           endpoint: Schema.string().required().description('反代服务的地址。'),
         }).description('自定义'),
