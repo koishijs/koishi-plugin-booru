@@ -31,6 +31,10 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
       return {
         url: setu.urls.original,
         title: setu.title,
+        author: setu.author,
+        nsfw: setu.r18,
+        tags: setu.tags,
+        pageUrl: `https://pixiv.net/i/${setu.pid}`,
       }
     })
   }
