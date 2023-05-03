@@ -4,3 +4,9 @@ pull_request_labels:
 files:
   - source: /packages/*/src/locales/zh-CN.yml
     translation: /%original_path%/%locale%.yml
+  - source: /docs/zh-CN/**/*.md
+    translation: /docs/%locale%/**/%file_name%.md
+  - source: /docs/zh-CN/**/*.json
+    translation: /docs/%locale%/**/%file_name%.json
+  - source: /docs/.vitepress/config/zh-CN.json
+    translation: /docs/.vitepress/config/%locale%.json

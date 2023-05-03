@@ -50,6 +50,6 @@
     "koishi-plugin-booru": "^1.0.3"
   },
   "devDependencies": {
-    "koishi": "^4.12.1"
+    "koishi": "^4.12.4"
   }
 }
