@@ -30,7 +30,7 @@ class ImageService extends Service {
     return this.caller.collect('booru', () => delete this.sources[id])
   }
 
-  check() {
+  hasSource() {
     return this.counter > 0
   }
 
@@ -139,7 +139,7 @@ export function apply(ctx: Context, config: Config) {
     .option('count', '-c <count:number>', { type: count, fallback: 1 })
     .option('label', '-l <label:string>')
     .action(async ({ session, options }, query) => {
-      if (!ctx.booru.check()) return session.text('.no-source')
+      if (!ctx.booru.hasSource()) return session.text('.no-source')
 
       query = query?.trim() ?? ''
 
