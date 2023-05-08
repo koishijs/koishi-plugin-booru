@@ -24,7 +24,9 @@
 
 ## 开发图源插件
 
-此处以 `lolicon` 插件为例，可以从 `https://api.lolicon.net/` 的 API 获取图片及元信息。
+此处以简化版的 `lolicon` 插件为例，可以从 `https://api.lolicon.net/` 的 API 获取图片及元信息。
+
+你也可以直接在 [GitHub](https://github.com/koishijs/koishi-plugin-booru/tree/main/packages/lolicon) 上阅读其源码。
 
 ```ts
 import { Context, Schema } from 'koishi'
@@ -35,19 +37,22 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
     super(ctx, config)
   }
 
-  // 由于 `booru` 默认将标签转换为类 `danbooru` 的形式，即「空格分割标签，下划线替代空格」。
-  // lolicon 支持的标签不带空格，因此此处需要将其重载为空格分割。
+  // `booru` 默认将标签转换为类 `danbooru` 的形式，即「空格分割标签，下划线替代空格」。
+  // 而 lolicon 支持的标签不带空格，因此此处需要将其重载为空格分割。
   override tokenize(query: string): string[] {
     return query.split(/\s+/)
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     const param = {
-      tag: query.tags, // `tags` 是一个字符串数组，根据 Lolicon API 的文档，传入数组等于「与」操作。
-      num: query.count, // 指定获取数量
+      // `tags` 是一个字符串数组，根据 Lolicon API 的文档，传入数组等于「与」操作。
+      tag: query.tags,
+      // 指定获取数量
+      num: query.count,
     }
     // 注：根据图源设计规范，当 `query.tags` 为空数组或空时，应当返回随机图片。
-    // 由于 Lolicon API 默认对空标签会返回随机图，因此不需要做特别处理，但对其他图源可能需要。
+    // 由于 Lolicon API 默认对空标签会返回随机图，因此不需要做特别处理，
+    // 但对于其他图源可能需要传入特别的参数才能使用随机图片功能。
     const resp = await this.ctx.http.post('https://api.lolicon.app/setu/v2', param)
 
     if (!Array.isArray(resp.data)) {
@@ -73,6 +78,8 @@ namespace LoliconImageSource {
   export interface Config extends ImageSource.Config {}
 
   export const Config: Schema<Config> = Schema.intersect([
+    // 结合使用 `Svchema.intersect` 和 `createSchema` 辅助函数，
+    // 向图源插件的配置项里添加全局的通用配置，`label` 一般为图源插件名。
     ImageSource.createSchema({ label: 'lolicon' }),
   ])
 }
