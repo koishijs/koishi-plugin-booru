@@ -8,6 +8,7 @@ export namespace LocalStorage {
 
   export interface Type {
     storeId: string
+    storeName: string
     imageCount: number
     images: Response[]
     imagePaths: string[]

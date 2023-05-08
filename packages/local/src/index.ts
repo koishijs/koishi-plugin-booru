@@ -3,7 +3,7 @@ import { ImageSource } from 'koishi-plugin-booru'
 import { LocalStorage } from './types'
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync, readdirSync, statSync, writeFile } from 'node:fs'
-import { basename, extname, isAbsolute, join, resolve } from 'node:path'
+import { basename, extname, isAbsolute, join, resolve, sep } from 'node:path'
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   languages = ['en', 'zh-CN', 'ja']
@@ -55,6 +55,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
           if (!mapset)
             mapset = {
               storeId: this.hash(path),
+              storeName: path.split(sep).at(-1),
               imageCount: 0,
               images: [],
               imagePaths: []
@@ -124,20 +125,6 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    // const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy?.endpoint
-    // const param: LocalStorage.Request = {
-    //   r18: this.config.r18,
-    //   tag: query.tags,
-    //   num: query.count,
-    //   proxy,
-    // }
-    // const resp = await this.ctx.http.post<LocalStorage.Response>(this.config.endpoint, param)
-
-    // if (!Array.isArray(resp.data)) {
-    //   return
-    // }
-
-    // return resp.data.map((setu) => {
     //   return {
     //     url: setu.urls.original,
     //     title: setu.title,
@@ -146,8 +133,14 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     //     tags: setu.tags,
     //     pageUrl: `https://pixiv.net/i/${setu.pid}`,
     //   }
-    // })
-    return
+    if (this.imageMap.length === 1) {
+
+    } else if (this.imageMap.length < 1) {
+      return
+    } else {
+      //TODO: 多个图源时的处理
+    }
+
   }
 }
 
