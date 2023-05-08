@@ -10,6 +10,6 @@ export namespace LocalStorage {
     storeId: string
     imageCount: number
     images: Response[]
-    hashMap: string[]
+    imagePaths: string[]
   }
 }
