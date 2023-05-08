@@ -1,104 +1,104 @@
 {
-  "description": "最好的涩图插件！",
+  "description": "",
   "head": [
     [
-      "link",
+      "",
       {
-        "rel": "icon",
-        "href": "https://koishi.chat/logo.png"
+        "rel": "",
+        "href": ""
       }
     ],
     [
-      "link",
+      "",
       {
-        "rel": "manifest",
-        "href": "/manifest/zh-CN.json"
+        "rel": "",
+        "href": ""
       }
     ],
     [
-      "meta",
+      "",
       {
-        "name": "theme-color",
-        "content": "#5546a3"
+        "name": "",
+        "content": ""
       }
     ]
   ],
   "themeConfig": {
     "editLink": {
       "text": "Übersetzen dieser Seite auf Crowdin",
-      "pattern": "https://github.com/koishijs/koishi-plugin-booru/edit/main/docs/:path"
+      "pattern": ""
     },
     "sidebar": {
       "/": [
         {
-          "text": "指南",
+          "text": "",
           "items": [
             {
-              "text": "介绍",
-              "link": "/"
+              "text": "",
+              "link": ""
             },
             {
-              "text": "配置项",
-              "link": "/config"
+              "text": "",
+              "link": ""
             }
           ]
         },
         {
-          "text": "插件",
+          "text": "",
           "items": [
             {
-              "text": "Danbooru",
-              "link": "/plugins/danbooru"
+              "text": "",
+              "link": ""
             },
             {
-              "text": "Gelbooru",
-              "link": "/plugins/gelbooru"
+              "text": "",
+              "link": ""
             },
             {
-              "text": "Konachan",
-              "link": "/plugins/konachan"
+              "text": "",
+              "link": ""
             },
             {
-              "text": "Lolibooru",
-              "link": "/plugins/lolibooru"
+              "text": "",
+              "link": ""
             },
             {
-              "text": "Lolicon",
-              "link": "/plugins/lolicon"
+              "text": "",
+              "link": ""
             },
             {
-              "text": "Pixiv",
-              "link": "/plugins/pixiv"
+              "text": "",
+              "link": ""
             },
             {
-              "text": "Safebooru",
-              "link": "/plugins/safebooru"
+              "text": "",
+              "link": ""
             },
             {
-              "text": "Yande",
-              "link": "/plugins/yande"
+              "text": "",
+              "link": ""
             }
           ]
         },
         {
-          "text": "开发",
+          "text": "",
           "items": [
             {
-              "text": "API",
-              "link": "/develop/api"
+              "text": "",
+              "link": ""
             }
           ]
         },
         {
-          "text": "更多",
+          "text": "",
           "items": [
             {
-              "text": "Koishi 官网",
-              "link": "https://koishi.chat"
+              "text": "",
+              "link": ""
             },
             {
-              "text": "爱发电：@迷子",
-              "link": "https://afdian.net/a/ff14_hamster"
+              "text": "",
+              "link": ""
             }
           ]
         }
