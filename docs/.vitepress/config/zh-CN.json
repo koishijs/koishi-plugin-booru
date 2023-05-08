@@ -28,6 +28,7 @@
           { "text": "Lolicon", "link": "/plugins/lolicon" },
           { "text": "Pixiv", "link": "/plugins/pixiv" },
           { "text": "Safebooru", "link": "/plugins/safebooru" },
+          { "text": "Sankaku", "link": "/plugins/sankaku" },
           { "text": "Yande", "link": "/plugins/yande" }
         ]
       }, {
