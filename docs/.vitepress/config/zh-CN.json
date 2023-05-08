@@ -15,7 +15,7 @@
         "text": "指南",
         "items": [
           { "text": "介绍", "link": "/" },
-          { "text": "使用", "link": "/usage "},
+          { "text": "使用", "link": "/usage"},
           { "text": "配置项", "link": "/config" }
         ]
       }, {
