@@ -10,11 +10,10 @@
 import { Context } from 'koishi'
 
 export function apply(ctx: Context) {
-  ctx.command('恋恋最可爱')
-    .action(async () => {
-      const image = await ctx.booru.get({ tags: 'komeiji koishi', raw: 'komeiji koishi', count: 1 })
-      return <image url={image.url} />
-    })
+  ctx.command('恋恋最可爱').action(async () => {
+    const image = await ctx.booru.get({ tags: 'komeiji koishi', raw: 'komeiji koishi', count: 1 })
+    return <image url={image.url} />
+  })
 }
 ```
 
