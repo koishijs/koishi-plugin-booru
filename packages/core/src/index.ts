@@ -31,8 +31,9 @@ class ImageService extends Service {
   }
 
   hasSource(name?: string): boolean {
-    if (name)
+    if (name) {
       return Object.values(this.sources).some((source) => source.config.label === name)
+    }
     return Object.keys(this.sources).length > 0
   }
 
