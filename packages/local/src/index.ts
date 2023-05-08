@@ -1,4 +1,4 @@
-import { Context, Logger, Schema } from 'koishi'
+import { Context, Logger, Random, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { LocalStorage } from './types'
 import { createHash } from 'node:crypto'
@@ -125,16 +125,16 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    //   return {
-    //     url: setu.urls.original,
-    //     title: setu.title,
-    //     author: setu.author,
-    //     nsfw: setu.r18,
-    //     tags: setu.tags,
-    //     pageUrl: `https://pixiv.net/i/${setu.pid}`,
-    //   }
     if (this.imageMap.length === 1) {
-
+      const picker = Random.pick(this.imageMap[0].images, query.count)
+      return picker.map(img => {
+        return {
+          url: `file://${img.path}`,
+          title: img.name,
+          // nsfw: img.nsfw,
+          tags: img.tags
+        }
+      })
     } else if (this.imageMap.length < 1) {
       return
     } else {
