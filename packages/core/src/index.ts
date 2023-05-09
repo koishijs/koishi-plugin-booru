@@ -30,8 +30,11 @@ class ImageService extends Service {
     return this.caller.collect('booru', () => delete this.sources[id])
   }
 
-  hasSource() {
-    return this.counter > 0
+  hasSource(name?: string): boolean {
+    if (name) {
+      return Object.values(this.sources).some((source) => source.config.label === name)
+    }
+    return Object.keys(this.sources).length > 0
   }
 
   async get(query: ImageService.Query) {
