@@ -7,18 +7,14 @@ import { basename, extname, isAbsolute, join, resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
-  languages = ['en', 'zh-CN', 'ja']
+  languages = []
   source = 'local'
-  static usage = `
-## 使用说明
-
-插件启动时会扫描文件夹并建立数据标记，这将会耗费较长的时间，请耐心等待。
-`
   private imageMap: LocalStorage.Type[] = []
   private logger: Logger
 
   constructor(ctx: Context, config: LocalImageSource.Config) {
     super(ctx, config)
+    this.languages = config.languages
     this.logger = ctx.logger('booru-local')
 
     ctx.on('ready', () => {
@@ -37,7 +33,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
   async init(paths: string[]) {
     const _name = 'booru-map.json'
-    paths.forEach(path => {
+    paths.forEach((path) => {
       if (existsSync(path)) {
         const mapfile = resolve(this.ctx.root.baseDir, path, _name)
         const files = readdirSync(path)
@@ -142,9 +138,15 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 }
 
 namespace LocalImageSource {
+  export const usage = `
+  ## 使用说明
+  
+  插件启动时会扫描文件夹并建立数据标记，这将会耗费较长的时间，请耐心等待。
+  `
   export interface Config extends ImageSource.Config {
     endpoint: string[]
     extension: string[]
+    languages: string[]
     scraper: string
   }
 
@@ -152,7 +154,8 @@ namespace LocalImageSource {
     ImageSource.createSchema({ label: 'local' }),
     Schema.object({
       endpoint: Schema.array(String).description('图源文件夹，支持多个不同的文件夹'),
-      scraper: Schema.string().description('文件名元信息生成格式，详见<a herf="">文档</a>').default('{filename}-{tag}'),
+      scraper: Schema.string().description('文件名元信息生成格式，详见<a herf="https://booru.koishi.chat/plugins/local.html">文档</a>').default('{filename}-{tag}'),
+      languages: Schema.array(String).description('支持的语言').default(['zh-CN']),
       extension: Schema.array(String).description('支持的扩展名').default(['.jpg', '.png', '.jpeg', '.gif'])
     }).description('图源设置')
   ])

@@ -9,8 +9,8 @@
     "dist"
   ],
   "author": {
-    "name": "Maiko Tan",
-    "email": "maiko.tan.coding@gmail.com"
+    "name": "Lipraty",
+    "email": "i@lonay.me"
   },
   "license": "MIT",
   "repository": {
@@ -32,8 +32,7 @@
     "picture",
     "random",
     "setu",
-    "local",
-    "本地"
+    "local"
   ],
   "koishi": {
     "description": {
