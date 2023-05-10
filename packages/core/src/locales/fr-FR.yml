@@ -11,7 +11,7 @@ commands:
         info: |
           <message>
             <p>{title}</p>
-            <p>Créateur : {author}</p>
+            <p>Le créateur : {author}</p>
             <p>{desc}</p>
           </message>
         link: |
