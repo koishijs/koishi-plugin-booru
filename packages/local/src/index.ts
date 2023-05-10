@@ -14,7 +14,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
 插件启动时会扫描文件夹并建立数据标记，这将会耗费较长的时间，请耐心等待。
 `
-  private imageMap: LocalStorage.Type[]
+  private imageMap: LocalStorage.Type[] = []
   private logger: Logger
 
   constructor(ctx: Context, config: LocalImageSource.Config) {
@@ -31,15 +31,15 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     })
   }
 
-  private hash(path: PathOrFileDescriptor) {
-    return createHash('md5').update(readFileSync(path)).digest('hex')
+  private hash(path: PathOrFileDescriptor, file: boolean = false) {
+    return createHash('md5').update(file ? readFileSync(path) : path.toString()).digest('hex')
   }
 
   async init(paths: string[]) {
     const _name = 'booru-map.json'
     paths.forEach(path => {
       if (existsSync(path)) {
-        const mapfile = join(path, _name)
+        const mapfile = resolve(this.ctx.root.baseDir, path, _name)
         const files = readdirSync(path)
         let mapset: LocalStorage.Type
         if (existsSync(mapfile)) {
@@ -66,12 +66,12 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         mapset['imageCount'] = files.length
         // load image files
         files.forEach(f => {
-          f = this.pathFormat(f)
+          f = this.pathFormat(resolve(path, f))
           if (!mapset.imagePaths.includes(f)
             && statSync(f).isFile()
             && this.config.extension.includes(extname(f))
           ) {
-            const imageHash = this.hash(readFileSync(f))
+            const imageHash = this.hash(f, true)
             mapset.images.push(this.scraperFormat(f, imageHash))
             mapset.imagePaths.push(imageHash)
           }
@@ -93,28 +93,25 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   }
 
   scraperFormat(path: string, hash: string): LocalStorage.Response {
-    const eleRule = {
+    const element = {
       filename: '(.+)',
-      tag: '(\[(.+)\])'
+      tag: '(\\[.+\\])'
     }
 
     const filename = basename(path, extname(path))
     const scraper = this.config.scraper.toLowerCase()
-    const rules = []
-    let pattren = '^'
+    const start = scraper.charAt(0) === '.' ? '^\.' : '^'
     const end = scraper.charAt(-1) === '+' ? '(.+)' : '$'
-    const rule = new RegExp(pattren + rules.join('-') + end)
+    const pattren = []
+    scraper.replace(/^\./gm, '').replace(/\+$/gm, '') // delete `.` and `+`
+    scraper.split('-').forEach(key => {
+      key = key.slice(1, -1)
+      if (Object.keys(element).includes(key)) pattren.push(element[key])
+    })
+    const rule = new RegExp(start + pattren.join('-') + end, 'gm')
     const unitData = rule.exec(filename)
     let name: string = ''
     let tags: string[] = []
-
-    if (scraper.charAt(0) === '.') pattren += '\.'
-    scraper.replace(/^\./gm, '').replace(/\+$/gm, '') // delete `.` and `+`
-    scraper.split('-').forEach(ele => {
-      ele = ele.slice(1, -1)
-      if (Object.keys(eleRule).includes(ele)) rules.push(eleRule[ele])
-    })
-
     if (unitData == null) name = filename
     else {
       for (let i = 1; i < unitData.length; i++) {
