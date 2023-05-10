@@ -27,6 +27,7 @@
 ### `{nsfw}`（WIP）
 
 - 类型：`boolean | 'furry' | 'guro' | 'shota' | 'bl'`
+- 默认值：`nsfw=false`
 
 限制级图片
 

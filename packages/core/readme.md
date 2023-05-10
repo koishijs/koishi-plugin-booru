@@ -13,6 +13,7 @@
 - [koishi-plugin-booru-safebooru](https://booru.koishi.chat/plugins/safebooru.html)
 - [koishi-plugin-booru-sankaku](https://booru.koishi.chat/plugins/sankaku.html)
 - [koishi-plugin-booru-yande](https://booru.koishi.chat/plugins/yande.html)
+- [koishi-plugin-booru-local](https://booru.koishi.chat/plugins/local.html)
 
 ## 许可证
 
