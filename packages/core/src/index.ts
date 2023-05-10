@@ -37,7 +37,7 @@ class ImageService extends Service {
     return Object.keys(this.sources).length > 0
   }
 
-  async get(query: ImageService.Query) {
+  async get(query: ImageService.Query): Promise<ImageArray> {
     const sources = Object.values(this.sources)
       .filter((source) => {
         if (query.labels.length && !query.labels.includes(source.config.label)) return false
