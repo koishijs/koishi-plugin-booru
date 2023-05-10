@@ -2,11 +2,13 @@ import { Context, Logger, Random, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { LocalStorage } from './types'
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync, readdirSync, statSync, writeFile } from 'node:fs'
+import { PathOrFileDescriptor, existsSync, readFileSync, readdirSync, statSync, writeFile } from 'node:fs'
 import { basename, extname, isAbsolute, join, resolve, sep } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   languages = ['en', 'zh-CN', 'ja']
+  static source = 'local'
   static usage = `
 ## 使用说明
 
@@ -21,7 +23,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
     ctx.on('ready', () => {
       if (config.endpoint.length <= 0) {
-        this.logger.warn('no folder set')
+        this.logger.warn('no folder yet')
         return
       } else {
         this.init(config.endpoint)
@@ -29,8 +31,8 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     })
   }
 
-  private hash(buf: any) {
-    return createHash('md5').update(readFileSync(buf)).digest('hex')
+  private hash(path: PathOrFileDescriptor) {
+    return createHash('md5').update(readFileSync(path)).digest('hex')
   }
 
   async init(paths: string[]) {
@@ -125,22 +127,20 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    if (this.imageMap.length === 1) {
-      const picker = Random.pick(this.imageMap[0].images, query.count)
-      return picker.map(img => {
-        return {
-          url: `file://${img.path}`,
-          title: img.name,
-          // nsfw: img.nsfw,
-          tags: img.tags
-        }
-      })
-    } else if (this.imageMap.length < 1) {
-      return
-    } else {
-      //TODO: 多个图源时的处理
+    if (this.imageMap.length < 1) return undefined
+    const map = this.imageMap.length === 1 ? this.imageMap[0] : Random.pick(this.imageMap)
+    if (query.tags.length > 0) {
+      map.images = map.images.filter(img => [...new Set([...img.tags, ...query.tags])].length > 0)
     }
-
+    const picker = Random.pick(map.images, query.count)
+    return picker.map(img => {
+      return {
+        url: pathToFileURL(img.path).href,
+        title: img.name,
+        // nsfw: img.nsfw,
+        tags: img.tags
+      }
+    })
   }
 }
 
@@ -154,7 +154,7 @@ namespace LocalImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'local' }),
     Schema.object({
-      endpoint: Schema.array(String).description('图源文件夹，支持多个不同的文件夹').required(),
+      endpoint: Schema.array(String).description('图源文件夹，支持多个不同的文件夹'),
       scraper: Schema.string().description('文件名元信息生成格式，详见<a herf="">文档</a>').default('{filename}-{tag}'),
       extension: Schema.array(String).description('支持的扩展名').default(['.jpg', '.png', '.jpeg', '.gif'])
     }).description('图源设置')
