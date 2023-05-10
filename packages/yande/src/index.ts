@@ -4,6 +4,7 @@ import { Yande } from './types'
 
 class YandeImageSource extends ImageSource<YandeImageSource.Config> {
   languages = ['en']
+  source = 'yande'
 
   constructor(ctx: Context, config: YandeImageSource.Config) {
     super(ctx, config)

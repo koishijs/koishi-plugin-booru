@@ -8,6 +8,7 @@ const HASH_SECRET = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0
 
 class PixivImageSource extends ImageSource<PixivImageSource.Config> {
   languages = ['en', 'zh', 'zh-CN', 'zh-TW', 'ja', 'ko']
+  source = 'pixiv'
 
   private userId?: string
   private accessToken?: string
