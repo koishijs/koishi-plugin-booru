@@ -32,6 +32,25 @@ ctx.booru.get(query: ImageService.Query): Promise<ImageSource.Result[]>
 
 ## 类型定义
 
+### `ImageSource`
+
+```ts
+export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
+  languages: string[] = ['en'] // 图源支持的语言
+
+  constructor(public ctx: Context, public config: Config) {
+    this.ctx.booru.register(this)
+  }
+
+  // 对标签进行分词，返回一个标签数组
+  tokenize(query: string): string[]
+
+  // 获取图片
+  abstract get(query: ImageSource.Query): Promise<ImageSource.Result[]>
+}
+```
+
+
 ### `ImageSource.Query`
 
 ```ts

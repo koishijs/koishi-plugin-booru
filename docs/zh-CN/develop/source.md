@@ -31,7 +31,12 @@ import { Context, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
 class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
+  // 定义图源支持的语言
+  // 如 lolicon 支持日语、英语和汉语-简体中文等
+  languages: string[] = ['en', 'zh-CN', 'ja']
+
   constructor(ctx: Context, config: LoliconImageSource.Config) {
+    // 调用父类的拟构函数以注册图源
     super(ctx, config)
   }
 
