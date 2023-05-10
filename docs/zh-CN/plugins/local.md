@@ -10,13 +10,15 @@
 
 这是一个在文件名中指定该图片元信息的方式，用于获得本地存储图片的元信息。
 
-举个栗子，假设我们有一张文件名为 `genshin paimon-[gril,loli,genshin].jpg` 的图片，那么在刮削器对应的格式为：`{filename}-{tag}`。另外，当有一张文件名为 `genshin paimon-[gril,loli,genshin]114514.jpg` 的图片，在刮削器格式为 `{filename}-{tag}+` 时，tag 后面的 `114514` 将被忽略。
+举个栗子，假设我们有一张文件名为 `genshin paimon-[girl,loli,genshin].jpg` 的图片，那么在刮削器对应的格式为：`{filename}-{tag}`。另外，当有一张文件名为 `genshin paimon-[girl,loli,genshin]114514.jpg` 的图片，在刮削器格式为 `{filename}-{tag}+` 时，tag 后面的 `114514` 将被忽略。
 
 下列是刮削器支持的匹配格式：
 
 > 为减少边界情况，仅支持使用 `-` 分割，且文件名不可缺少 `-`
 
 ### `{filename}`
+
+> 当 `{filename}` 被放置在最后时，`+` 将失效（也就是 `{filename}+`）
 
 文件名
 
