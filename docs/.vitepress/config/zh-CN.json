@@ -15,6 +15,7 @@
         "text": "指南",
         "items": [
           { "text": "介绍", "link": "/" },
+          { "text": "使用", "link": "/usage"},
           { "text": "配置项", "link": "/config" }
         ]
       }, {
@@ -27,11 +28,14 @@
           { "text": "Lolicon", "link": "/plugins/lolicon" },
           { "text": "Pixiv", "link": "/plugins/pixiv" },
           { "text": "Safebooru", "link": "/plugins/safebooru" },
+          { "text": "Sankaku", "link": "/plugins/sankaku" },
           { "text": "Yande", "link": "/plugins/yande" }
         ]
       }, {
         "text": "开发",
         "items": [
+          { "text": "图源", "link": "/develop/source" },
+          { "text": "服务", "link": "/develop/service" },
           { "text": "API", "link": "/develop/api" }
         ]
       }, {
