@@ -66,7 +66,8 @@ class ImageService extends Service {
           logger.error(`source ${source.config.label} unknown error: ${err.message}`)
         }
         return []
-      })
+      }) as ImageArray
+      images.source = source.source
       if (images?.length) return images
     }
 
@@ -95,6 +96,10 @@ export interface Config {
   maxCount: number
   output: OutputType
   nsfw: boolean
+}
+
+class ImageArray extends Array<ImageSource.Result> {
+  source: string
 }
 
 export const Config = Schema.intersect([
@@ -151,17 +156,18 @@ export function apply(ctx: Context, config: Config) {
         count: options.count,
         labels: options.label?.split(',')?.map((x) => x.trim())?.filter(Boolean) ?? [],
       })
+      const source = images.source
 
       if (!images || !images.length) return session?.text('.no-result')
 
-      images = images.filter((image) => config.nsfw || !image.nsfw)
+      images = images.filter((image) => config.nsfw || !image.nsfw) as ImageArray
 
       const output: (string | Element)[] = []
       for (const image of images) {
         switch (config.output) {
           case OutputType.All:
             if (image.tags)
-              output.unshift(session.text('.output.source', { ...image, tags: image.tags.join(' ') }))
+              output.unshift(session.text('.output.source', { ...image, source, tags: image.tags.join(' ') }))
           case OutputType.ImageAndLink:
             if (image.pageUrl || image.authorUrl)
               output.unshift(session.text('.output.link', image))
