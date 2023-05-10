@@ -2,8 +2,8 @@ import { Context, Logger, Random, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { LocalStorage } from './types'
 import { createHash } from 'node:crypto'
-import { PathOrFileDescriptor, existsSync, readFileSync, readdirSync, statSync, writeFile } from 'node:fs'
-import { basename, extname, isAbsolute, join, resolve, sep } from 'node:path'
+import { PathOrFileDescriptor, existsSync, readFileSync, readdir, statSync, writeFile } from 'node:fs'
+import { basename, extname, isAbsolute, resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
@@ -35,22 +35,26 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     const _name = 'booru-map.json'
     paths.forEach((path) => {
       if (existsSync(path)) {
-        const mapfile = resolve(this.ctx.root.baseDir, path, _name)
-        const files = readdirSync(path)
-        let mapset: LocalStorage.Type
-        if (existsSync(mapfile)) {
-          try {
-            mapset = require(mapfile) as LocalStorage.Type
-            if (files.length === mapset.imageCount) {
-              this.imageMap.push(mapset)
-              return
-            }
-          } catch (error) {
-            this.logger.error(error)
-            return
+        path = this.pathFormat(path) //to absolut path
+        const mapfile = resolve(path, _name)
+        readdir(path, (err, files) => {
+          if (err) {
+            this.logger.error(err)
+            return //jump to next folder
           }
-        } else {
-          if (!mapset)
+          let mapset: LocalStorage.Type
+          if (existsSync(mapfile)) {
+            try {
+              mapset = require(mapfile) as LocalStorage.Type
+              if (files.length === mapset.imageCount) {
+                this.imageMap.push(mapset)
+                return //jump to next folder
+              }
+            } catch (error) {
+              this.logger.error(error)
+              return //jump to next folder
+            }
+          } else if (!mapset) {
             mapset = {
               storeId: this.hash(path),
               storeName: path.split(sep).at(-1),
@@ -58,28 +62,30 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
               images: [],
               imagePaths: []
             }
-        }
-        mapset['imageCount'] = files.length
-        // load image files
-        files.forEach(f => {
-          f = this.pathFormat(resolve(path, f))
-          if (!mapset.imagePaths.includes(f)
-            && statSync(f).isFile()
-            && this.config.extension.includes(extname(f))
-          ) {
-            const imageHash = this.hash(f, true)
-            mapset.images.push(this.scraperFormat(f, imageHash))
-            mapset.imagePaths.push(imageHash)
           }
+          mapset['imageCount'] = files.length
+          // load image files
+          files.forEach(f => {
+            f = this.pathFormat(f)
+            if (!mapset.imagePaths.includes(f)
+              && statSync(f).isFile()
+              && this.config.extension.includes(extname(f))
+            ) {
+              const imageHash = this.hash(f, true)
+              mapset.images.push(this.scraperFormat(f, imageHash))
+              mapset.imagePaths.push(imageHash)
+            }
+          })
+
+          this.imageMap.push(mapset)
+          this.logger.debug(`created image map '${mapset.storeId}' from memory`)
+
+          writeFile(mapfile, JSON.stringify(mapset), (err) => {
+            if (err) this.logger.error(`failed store image map to '${mapfile}'`)
+            this.logger.debug(`stored image map '${mapset.storeId}' to '${mapfile}'`)
+          })
         })
-        this.imageMap.push(mapset)
-        this.logger.debug(`created image map '${mapset.storeId}' from memory`)
-        writeFile(mapfile, JSON.stringify(mapset), err => {
-          if (err) {
-            this.logger.error(`failed store image map to '${mapfile}'`)
-          }
-          this.logger.debug(`stored image map '${mapset.storeId}' to '${mapfile}'`)
-        })
+
       } else this.logger.error(`folder '${path}' is not found`)
     })
   }
