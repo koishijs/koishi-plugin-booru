@@ -4,7 +4,7 @@
 
 图源插件是用于获取图片的插件，它可以从网络、本地文件、剪贴板、数据库等地方获取图片。
 
-由于图源插件本身也是一个标准的 Koishi 插件，这意味着它必须导出一个函数，或者一个带有 `apply` 方法的对象。为了方便开发，我们提供了一个抽象类 `ImageSource`，你可以继承它并实现相应方法之后以默认方式导出，就可以作为 Koishi 插件被加载，便于快速开发图源插件。
+由于图源插件本身也是一个标准的 Koishi 插件，这意味着它必须导出一个函数，或者一个带有 `apply` 方法的对象。为了方便开发，我们提供了一个抽象类 `ImageSource`，当你继承它并实现相应方法后以默认方式导出，就可以作为 Koishi 插件被加载，这有助于插件作者快速开发图源插件。
 
 ## 准备工作
 
@@ -25,8 +25,6 @@
 ## 开发图源插件
 
 此处以简化版的 `lolicon` 插件为例，可以从 `https://api.lolicon.net/` 的 API 获取图片及元信息。
-
-你也可以直接在 [GitHub](https://github.com/koishijs/koishi-plugin-booru/tree/main/packages/lolicon) 上阅读其源码。
 
 ```ts
 import { Context, Schema } from 'koishi'
@@ -74,6 +72,8 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
   }
 }
 
+// 图源插件还需要导出配置项，因此我们采用 TypeScript 的 namespace
+// 将配置项 Config 与上面的 class 定义合并。
 namespace LoliconImageSource {
   export interface Config extends ImageSource.Config {}
 
@@ -87,3 +87,7 @@ namespace LoliconImageSource {
 // 以默认导出方式导出整个命名空间
 export default LoliconImageSource
 ```
+
+:::tip
+上述代码为介绍与解释 `booru` 图源的开发步骤有一定简化，你可以直接在 [GitHub](https://github.com/koishijs/koishi-plugin-booru/tree/main/packages/lolicon) 上阅读 lolicon 插件真正的源码。
+:::
