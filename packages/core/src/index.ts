@@ -66,9 +66,10 @@ class ImageService extends Service {
           logger.error(`source ${source.config.label} unknown error: ${err.message}`)
         }
         return []
-      }) as ImageArray
-      images.source = source.source
-      if (images?.length) return images
+      })
+      if (images?.length) return Object.assign(images, {
+        source: source.source
+      })
     }
 
     return undefined
