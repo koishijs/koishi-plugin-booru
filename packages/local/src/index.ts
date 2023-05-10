@@ -8,7 +8,7 @@ import { pathToFileURL } from 'node:url'
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   languages = ['en', 'zh-CN', 'ja']
-  static source = 'local'
+  source = 'local'
   static usage = `
 ## 使用说明
 
