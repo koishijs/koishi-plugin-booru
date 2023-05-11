@@ -99,7 +99,7 @@ export interface Config {
   nsfw: boolean
 }
 
-class ImageArray extends Array<ImageSource.Result> {
+interface ImageArray extends Array<ImageSource.Result> {
   source: string
 }
 
@@ -152,19 +152,19 @@ export function apply(ctx: Context, config: Config) {
 
       query = query?.trim() ?? ''
 
-      let images = await ctx.booru.get({
+      const images = await ctx.booru.get({
         query,
         count: options.count,
         labels: options.label?.split(',')?.map((x) => x.trim())?.filter(Boolean) ?? [],
       })
       const source = images.source
 
-      if (!images || !images.length) return session?.text('.no-result')
+      const filtered = images.filter((image) => config.nsfw || !image.nsfw)
 
-      images = images.filter((image) => config.nsfw || !image.nsfw) as ImageArray
+      if (!filtered?.length) return session?.text('.no-result')
 
       const output: (string | Element)[] = []
-      for (const image of images) {
+      for (const image of filtered) {
         switch (config.output) {
           case OutputType.All:
             if (image.tags)
