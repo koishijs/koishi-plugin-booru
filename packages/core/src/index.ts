@@ -37,7 +37,7 @@ class ImageService extends Service {
     return Object.keys(this.sources).length > 0
   }
 
-  async get(query: ImageService.Query) {
+  async get(query: ImageService.Query): Promise<ImageArray> {
     const sources = Object.values(this.sources)
       .filter((source) => {
         if (query.labels.length && !query.labels.includes(source.config.label)) return false
@@ -67,7 +67,9 @@ class ImageService extends Service {
         }
         return []
       })
-      if (images?.length) return images
+      if (images?.length) return Object.assign(images, {
+        source: source.source
+      })
     }
 
     return undefined
@@ -95,6 +97,10 @@ export interface Config {
   maxCount: number
   output: OutputType
   nsfw: boolean
+}
+
+interface ImageArray extends Array<ImageSource.Result> {
+  source: string
 }
 
 export const Config = Schema.intersect([
@@ -146,22 +152,23 @@ export function apply(ctx: Context, config: Config) {
 
       query = query?.trim() ?? ''
 
-      let images = await ctx.booru.get({
+      const images = await ctx.booru.get({
         query,
         count: options.count,
         labels: options.label?.split(',')?.map((x) => x.trim())?.filter(Boolean) ?? [],
       })
+      const source = images.source
 
-      if (!images || !images.length) return session?.text('.no-result')
+      const filtered = images.filter((image) => config.nsfw || !image.nsfw)
 
-      images = images.filter((image) => config.nsfw || !image.nsfw)
+      if (!filtered?.length) return session?.text('.no-result')
 
       const output: (string | Element)[] = []
-      for (const image of images) {
+      for (const image of filtered) {
         switch (config.output) {
           case OutputType.All:
             if (image.tags)
-              output.unshift(session.text('.output.source', { ...image, tags: image.tags.join(' ') }))
+              output.unshift(session.text('.output.source', { ...image, source, tags: image.tags.join(' ') }))
           case OutputType.ImageAndLink:
             if (image.pageUrl || image.authorUrl)
               output.unshift(session.text('.output.link', image))

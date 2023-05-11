@@ -4,6 +4,7 @@ import { Lolicon } from './types'
 
 class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
   languages = ['en', 'zh-CN', 'ja']
+  source = 'lolicon'
 
   constructor(ctx: Context, config: LoliconImageSource.Config) {
     super(ctx, config)

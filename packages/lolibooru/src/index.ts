@@ -4,6 +4,7 @@ import { Lolibooru } from './types'
 
 class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
   languages = ['en']
+  source = 'lolibooru'
 
   constructor(ctx: Context, config: LolibooruImageSource.Config) {
     super(ctx, config)

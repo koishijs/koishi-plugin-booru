@@ -4,6 +4,7 @@ import { Danbooru } from './types'
 
 class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
   languages = ['en']
+  source = 'danbooru'
 
   constructor(ctx: Context, config: DanbooruImageSource.Config) {
     super(ctx, config)
