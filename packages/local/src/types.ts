@@ -14,3 +14,14 @@ export namespace LocalStorage {
     imagePaths: string[]
   }
 }
+
+export namespace Scraper {
+  export type String = `#${Type}#${string}` | string
+  export type Type = 'name' | 'meta'
+  export type Function = (path: string, hash: string) => LocalStorage.Response
+}
+
+export namespace Mapping {
+  export type Storage = 'file' | 'cache' | 'database'
+  export const FileName = 'booru-map.json'
+}
