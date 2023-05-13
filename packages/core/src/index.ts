@@ -68,6 +68,11 @@ class ImageService extends Service {
   async imgUrlToAssetUrl(image) {
     return 'http://' + await this.ctx.assets.upload(image.url, process.uptime().toString())
   }
+
+  async imgUrlToBase64(image) {
+    const buffer = await this.ctx.http.get(image.url, { responseType: 'arraybuffer' })
+    return Buffer.from(buffer, 'binary').toString('base64')
+  }
 }
 
 namespace ImageService {
@@ -92,6 +97,7 @@ export interface Config {
   output: OutputType
   nsfw: boolean
   asset: boolean
+  base64: boolean
 }
 
 export const Config = Schema.intersect([
@@ -118,6 +124,7 @@ export const Config = Schema.intersect([
       Schema.const(3).description('发送全部信息'),
     ]).description('输出方式。').default(1),
     asset: Schema.boolean().default(false).description('优先使用 assets 服务转存图片。'),
+    base64: Schema.boolean().default(false).description('使用 base64 发送图片。')
   }).description('输出设置'),
 ])
 
@@ -166,7 +173,11 @@ export function apply(ctx: Context, config: Config) {
             if (image.title && image.author && image.desc)
               output.unshift(session.text('.output.info', image))
           case OutputType.ImageOnly:
-            output.unshift(session.text('.output.image', image))
+            if (config.base64) {
+              image.buffer = await ctx.booru.imgUrlToBase64(image)
+              output.unshift(session.text('.output.imgbase64', image))
+            }
+            else output.unshift(session.text('.output.image', image))
         }
       }
 

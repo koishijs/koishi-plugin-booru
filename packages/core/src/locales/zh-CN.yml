@@ -9,6 +9,7 @@ commands:
       no-result: 没有找到符合条件的图片
       output:
         image: <message><image url={url}></image></message>
+        imgbase64: <message><image url={'data:image/png;base64,'+buffer}/></message>
         info: |
           <message>
             <p>{title}</p>
