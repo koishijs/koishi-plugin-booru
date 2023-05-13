@@ -1,0 +1,124 @@
+{
+  "description": "",
+  "head": [
+    [
+      "",
+      {
+        "rel": "",
+        "href": ""
+      }
+    ],
+    [
+      "",
+      {
+        "rel": "",
+        "href": ""
+      }
+    ],
+    [
+      "",
+      {
+        "name": "",
+        "content": ""
+      }
+    ]
+  ],
+  "themeConfig": {
+    "editLink": {
+      "text": "",
+      "pattern": ""
+    },
+    "sidebar": {
+      "/": [
+        {
+          "text": "",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
