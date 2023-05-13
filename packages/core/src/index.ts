@@ -1,9 +1,10 @@
-import { Context, Dict, Element, Quester, Schema, Service, Session } from 'koishi'
+import { Context, Dict, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
 import { } from '@koishijs/assets'
 export * from './source'
 
+const logger = new Logger('booru')
 
 declare module 'koishi' {
   interface Context {
@@ -68,7 +69,7 @@ class ImageService extends Service {
   async imgUrlToAssetUrl(image) {
     return 'http://' + await this.ctx.assets.upload(image.url, process.uptime().toString())
   }
-
+  
   async imgUrlToBase64(image) {
     const buffer = await this.ctx.http.get(image.url, { responseType: 'arraybuffer' })
     return Buffer.from(buffer, 'binary').toString('base64')
