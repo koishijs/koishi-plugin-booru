@@ -1,0 +1,124 @@
+{
+  "description": "",
+  "head": [
+    [
+      "",
+      {
+        "rel": "",
+        "href": ""
+      }
+    ],
+    [
+      "",
+      {
+        "rel": "",
+        "href": ""
+      }
+    ],
+    [
+      "",
+      {
+        "name": "",
+        "content": ""
+      }
+    ]
+  ],
+  "themeConfig": {
+    "editLink": {
+      "text": "Crowdin でこのページの翻訳を修正する",
+      "pattern": ""
+    },
+    "sidebar": {
+      "/": [
+        {
+          "text": "",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "使い方",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "プラグイン",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "開発",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "Service",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "さらに表示",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
