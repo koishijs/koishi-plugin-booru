@@ -1,0 +1,124 @@
+{
+  "description": "",
+  "head": [
+    [
+      "link",
+      {
+        "rel": "icon",
+        "href": "https://koishi.chat/logo.png"
+      }
+    ],
+    [
+      "link",
+      {
+        "rel": "manifest",
+        "href": "/manifest/en-US.json"
+      }
+    ],
+    [
+      "meta",
+      {
+        "name": "theme-color",
+        "content": "#5546a3"
+      }
+    ]
+  ],
+  "themeConfig": {
+    "editLink": {
+      "text": "Translate this page on Crowdin",
+      "pattern": ""
+    },
+    "sidebar": {
+      "/": [
+        {
+          "text": "Developing Guide",
+          "items": [
+            {
+              "text": "Introduction",
+              "link": ""
+            },
+            {
+              "text": "Usage",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "plugin",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "Develop",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "service",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "About",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
