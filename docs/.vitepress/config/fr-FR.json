@@ -1,0 +1,124 @@
+{
+  "description": "",
+  "head": [
+    [
+      "",
+      {
+        "rel": "",
+        "href": ""
+      }
+    ],
+    [
+      "",
+      {
+        "rel": "",
+        "href": ""
+      }
+    ],
+    [
+      "",
+      {
+        "name": "",
+        "content": ""
+      }
+    ]
+  ],
+  "themeConfig": {
+    "editLink": {
+      "text": "Traduire cette page sur Crowdin",
+      "pattern": ""
+    },
+    "sidebar": {
+      "/": [
+        {
+          "text": "",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "plugin",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "service",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "text": "",
+          "items": [
+            {
+              "text": "",
+              "link": ""
+            },
+            {
+              "text": "",
+              "link": ""
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
