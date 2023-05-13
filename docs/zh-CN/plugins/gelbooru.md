@@ -1,4 +1,4 @@
-# koishi-plugin-booru-yande
+# koishi-plugin-booru-gelbooru
 
 ## 安装
 
@@ -14,9 +14,11 @@
 
 ### 搜索设置
 
+<br>
+
 #### endpoint
 
 - 类型：`string`
-- 默认值：`https://yande.re/`
+- 默认值：`https://gelbooru.com/index.php`
 
-Yande 的 API 地址。
+Gelbooru 的 API 地址。

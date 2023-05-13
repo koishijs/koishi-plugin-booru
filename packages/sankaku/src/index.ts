@@ -4,6 +4,7 @@ import { SankakuComplex } from './types'
 
 class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Config> {
   languages = ['en']
+  source = 'sankaku'
 
   constructor(ctx: Context, config: SankakuComplexImageSource.Config) {
     super(ctx, config)

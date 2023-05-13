@@ -4,6 +4,7 @@ import { Konachan } from './types'
 
 class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
   languages = ['en']
+  source = 'konachan'
 
   constructor(ctx: Context, config: KonachanImageSource.Config) {
     super(ctx, config)

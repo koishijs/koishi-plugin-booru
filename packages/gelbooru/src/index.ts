@@ -4,6 +4,7 @@ import { Gelbooru } from './types'
 
 class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
   languages = ['en']
+  source = 'gelbooru'
 
   constructor(ctx: Context, config: GelbooruImageSource.Config) {
     super(ctx, config)

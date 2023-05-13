@@ -1,4 +1,4 @@
-# koishi-plugin-booru-lolibooru
+# koishi-plugin-booru-danbooru
 
 ## 安装
 
@@ -14,9 +14,11 @@
 
 ### 搜索设置
 
+<br>
+
 #### endpoint
 
 - 类型：`string`
-- 默认值：`https://lolibooru.moe/`
+- 默认值：`https://danbooru.donmai.us`
 
-Lolibooru 的 API 地址。
+Danbooru 的 API 地址。
