@@ -1,10 +1,9 @@
-import { Context, Dict, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
+import { Context, Dict, Element, Quester, Schema, Service, Session } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
-
+import { } from '@koishijs/assets'
 export * from './source'
 
-const logger = new Logger('booru')
 
 declare module 'koishi' {
   interface Context {
@@ -65,6 +64,10 @@ class ImageService extends Service {
 
     return undefined
   }
+
+  async imgUrlToAssetUrl(image) {
+    return 'http://' + await this.ctx.assets.upload(image.url, process.uptime().toString())
+  }
 }
 
 namespace ImageService {
@@ -88,6 +91,7 @@ export interface Config {
   maxCount: number
   output: OutputType
   nsfw: boolean
+  asset: boolean
 }
 
 export const Config = Schema.intersect([
@@ -113,6 +117,7 @@ export const Config = Schema.intersect([
       Schema.const(2).description('发送图片、相关信息和链接'),
       Schema.const(3).description('发送全部信息'),
     ]).description('输出方式。').default(1),
+    asset: Schema.boolean().default(false).description('优先使用 assets 服务转存图片。'),
   }).description('输出设置'),
 ])
 
@@ -149,6 +154,7 @@ export function apply(ctx: Context, config: Config) {
 
       const output: (string | Element)[] = []
       for (const image of images) {
+        if (config.asset && ctx.assets) image.url = await ctx.booru.imgUrlToAssetUrl(image)
         switch (config.output) {
           case OutputType.All:
             if (image.tags)
