@@ -55,5 +55,6 @@ export namespace ImageSource {
     desc?: string
     tags?: string[]
     nsfw?: boolean | NsfwType
+    buffer?: string
   }
 }
