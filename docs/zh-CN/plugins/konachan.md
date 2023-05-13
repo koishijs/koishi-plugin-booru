@@ -1,4 +1,4 @@
-# koishi-plugin-booru-danbooru
+# koishi-plugin-booru-konachan
 
 ## 安装
 
@@ -14,9 +14,11 @@
 
 ### 搜索设置
 
+<br>
+
 #### endpoint
 
 - 类型：`string`
-- 默认值：`https://danbooru.donmai.us`
+- 默认值：`https://konachan.com/`
 
-Danbooru 的 API 地址。
+Konachan 的 API 地址。

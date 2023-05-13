@@ -4,6 +4,7 @@ import { Safebooru } from './types'
 
 class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
   languages = ['en']
+  source = 'safebooru'
 
   constructor(ctx: Context, config: SafebooruImageSource.Config) {
     super(ctx, config)

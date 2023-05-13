@@ -4,6 +4,7 @@ import { Lolicon } from './types'
 
 class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
   languages = ['en', 'zh-CN', 'ja']
+  source = 'lolicon'
 
   constructor(ctx: Context, config: LoliconImageSource.Config) {
     super(ctx, config)
@@ -31,6 +32,10 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
       return {
         url: setu.urls.original,
         title: setu.title,
+        author: setu.author,
+        nsfw: setu.r18,
+        tags: setu.tags,
+        pageUrl: `https://pixiv.net/i/${setu.pid}`,
       }
     })
   }
@@ -55,6 +60,7 @@ namespace LoliconImageSource {
       proxy: Schema.union([
         Schema.const('i.pixiv.re'),
         Schema.const('i.pixiv.cat'),
+        Schema.const('i.pixiv.nl'),
         Schema.object({
           endpoint: Schema.string().required().description('反代服务的地址。'),
         }).description('自定义'),

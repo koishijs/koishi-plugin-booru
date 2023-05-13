@@ -4,6 +4,7 @@ export abstract class ImageSource<Config extends ImageSource.Config = ImageSourc
   static using = ['booru']
 
   languages: string[] = []
+  source: string
 
   constructor(public ctx: Context, public config: Config) {
     this.ctx.booru.register(this)

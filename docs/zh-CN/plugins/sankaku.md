@@ -1,4 +1,4 @@
-# koishi-plugin-booru-konachan
+# koishi-plugin-booru-sankaku
 
 ## 安装
 
@@ -14,9 +14,11 @@
 
 ### 搜索设置
 
+<br>
+
 #### endpoint
 
 - 类型：`string`
-- 默认值：`https://konachan.com/`
+- 默认值：`https://capi-v2.sankakucomplex.com/`
 
-Konachan 的 API 地址。
+SankakuComplex 的 API 地址。

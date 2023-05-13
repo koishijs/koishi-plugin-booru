@@ -1,4 +1,4 @@
-# koishi-plugin-booru-gelbooru
+# koishi-plugin-booru-lolibooru
 
 ## 安装
 
@@ -14,9 +14,11 @@
 
 ### 搜索设置
 
+<br>
+
 #### endpoint
 
 - 类型：`string`
-- 默认值：`https://gelbooru.com/index.php`
+- 默认值：`https://lolibooru.moe/`
 
-Gelbooru 的 API 地址。
+Lolibooru 的 API 地址。
