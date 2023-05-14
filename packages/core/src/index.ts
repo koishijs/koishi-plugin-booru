@@ -1,7 +1,7 @@
 import { Context, Dict, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
-import { } from '@koishijs/assets'
+
 export * from './source'
 
 const logger = new Logger('booru')
@@ -78,9 +78,16 @@ class ImageService extends Service {
   async imgUrlToAssetUrl(image) {
     return 'http://' + await this.ctx.assets.upload(image.url, process.uptime().toString())
   }
-  
+
   async imgUrlToBase64(image) {
-    const buffer = await this.ctx.http.get(image.url, { responseType: 'arraybuffer' })
+    const buffer = await this.ctx.http.get(image.url, { responseType: 'arraybuffer' }).catch((err) => {
+      if (Quester.isAxiosError(err)) {
+        logger.warn(`request failed when switch a iamge to base64 format with code ${err.status} ${JSON.stringify(err.response?.data)}`)
+      } else {
+        logger.error(`unknown error when switch a iamge to base64 format: ${err.message}`)
+      }
+      return ''
+    })
     return Buffer.from(buffer, 'binary').toString('base64')
   }
 }
@@ -180,6 +187,10 @@ export function apply(ctx: Context, config: Config) {
 
       for (const image of filtered) {
         if (config.asset && ctx.assets) image.url = await ctx.booru.imgUrlToAssetUrl(image)
+        if (config.base64) {
+          image.buffer = await ctx.booru.imgUrlToBase64(image)
+          if (!image.buffer) output.unshift(session.text('.no-result'))
+        }
         switch (config.output) {
           case OutputType.All:
             if (image.tags)
@@ -191,11 +202,7 @@ export function apply(ctx: Context, config: Config) {
             if (image.title && image.author && image.desc)
               output.unshift(session.text('.output.info', image))
           case OutputType.ImageOnly:
-            if (config.base64) {
-              image.buffer = await ctx.booru.imgUrlToBase64(image)
-              output.unshift(session.text('.output.imgbase64', image))
-            }
-            else output.unshift(session.text('.output.image', image))
+            output.unshift(session.text('.output.'+`${config.base64?'imgbase64':'image'}`, image))
         }
       }
 
