@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto'
 import { PathOrFileDescriptor, existsSync, readFileSync, readdir, statSync, writeFile } from 'node:fs'
 import { basename, extname, isAbsolute, resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { Mapping } from './mapping'
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   languages = []
@@ -154,12 +155,14 @@ namespace LocalImageSource {
     extension: string[]
     languages: string[]
     scraper: string
+    storage: Mapping.Storage
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'local' }),
     Schema.object({
       endpoint: Schema.array(String).description('图源文件夹，支持多个不同的文件夹'),
+      storage: Schema.union<Mapping.Storage>(['file', 'cache', 'database']).description('图源数据保存方式').default('file'),
       scraper: Schema.string().description('文件名元信息生成格式，详见<a herf="https://booru.koishi.chat/plugins/local.html">文档</a>').default('{filename}-{tag}'),
       languages: Schema.array(String).description('支持的语言').default(['zh-CN']),
       extension: Schema.array(String).description('支持的扩展名').default(['.jpg', '.png', '.jpeg', '.gif'])
