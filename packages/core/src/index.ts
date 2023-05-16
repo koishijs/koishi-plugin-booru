@@ -148,7 +148,7 @@ export function apply(ctx: Context, config: Config) {
     .option('count', '-c <count:number>', { type: count, fallback: 1 })
     .option('label', '-l <label:string>')
     .action(async ({ session, options }, query) => {
-      if (!ctx.booru.hasSource()) return session.text('.no-source')
+      if (!ctx.booru.hasSource(options.label)) return session.text('.no-source')
 
       query = query?.trim() ?? ''
 
