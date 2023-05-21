@@ -1,5 +1,5 @@
 import { PathLike, existsSync, statSync } from "fs";
-import { readFile, readdir } from "fs/promises";
+import { readdir } from "fs/promises";
 import { extname, isAbsolute, resolve, sep } from "path";
 import { LocalStorage } from "./types";
 import { hash } from "./utils/hash";
@@ -23,18 +23,14 @@ export class Mapping {
 
     const storeId = hash(folderPath.toString())
     const storage: LocalStorage.Type = this.map.filter(s => s.storeId === storeId)[0]
-    const images: LocalStorage.Response[] = []
     const imagePaths: string[] = []
     try {
       const files = await readdir(folderPath)
       await files.forEach(async (file) => {
         file = this.absPath(file)
         if (storage.imagePaths.includes(file)) return
-        if (statSync(file).isFile() && options.extnames.includes(extname(file))) {
-          const fileHash = hash((await readFile(file)))
-          images.push()
+        if (statSync(file).isFile() && options.extnames.includes(extname(file)))
           imagePaths.push(file)
-        }
       })
     } catch (error) {
       throw new Error(error)
@@ -43,7 +39,7 @@ export class Mapping {
       storeId,
       storeName: folderPath.toString().split(sep).at(-1),
       imageCount: 0,
-      images,
+      images: [], // image meta information can be created later
       imagePaths
     }
   }
@@ -51,7 +47,6 @@ export class Mapping {
 
 export namespace Mapping {
   export type Storage = 'file' | 'cache' | 'database'
-  export const FileName = 'booru-map.json'
   export type Options = {
     extnames: string[]
   }
