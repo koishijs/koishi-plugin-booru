@@ -6,7 +6,7 @@ import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { scraper } from './scraper'
 import { Mapping } from './mapping'
-import { hash } from './utils/hash'
+import { hash, mkdirs } from './utils'
 import { LocalStorage } from './types'
 
 declare module 'koishi' {
@@ -44,6 +44,9 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
     if (this.config.storage === 'file') {
       const absMap = resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap)
+      if (!existsSync(resolve(ctx.root.baseDir, LocalImageSource.DataDir)))
+        mkdirs(resolve(ctx.root.baseDir, LocalImageSource.DataDir))
+
       if (existsSync(absMap)) {
         try {
           this.imageMap = require(absMap) as LocalStorage.Type[]
