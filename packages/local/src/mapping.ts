@@ -26,7 +26,7 @@ export class Mapping {
     const imagePaths: string[] = []
     try {
       const files = await readdir(folderPath)
-      await files.forEach(async (file) => {
+      await files.forEach((file) => {
         file = this.absPath(file)
         if (storage.imagePaths.includes(file)) return
         if (statSync(file).isFile() && options.extnames.includes(extname(file)))
