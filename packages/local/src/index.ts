@@ -78,6 +78,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
           const imageHash = hash(await readFile(image))
           store.images.push(imgScrap(image, imageHash))
         }
+        store.imageCount = store.images.length
         count.folder++
         count.images = count.images + store.imagePaths.length
         this.imageMap.push(store)
