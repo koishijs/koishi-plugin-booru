@@ -30,8 +30,7 @@ function name(scraper: string, path: string, hash: string): LocalStorage.Respons
 
   const rule = new RegExp(start + pattren.map((key) => element[key]).join('-') + end, 'g')
   const unitData = rule.exec(filename)
-
-  return Object.fromEntries([...pattren.map((k, i) => [mapping[k], format[k](unitData[i + 1])]),
+  return Object.fromEntries([...unitData === null ? [['name', filename], ['tags', []]] : pattren.map((k, i) => [mapping[k], format[k](unitData[i + 1])]),
   ['hash', hash],
   ['path', path]
   ])

@@ -24,10 +24,11 @@ export class Mapping {
     const storeId = hash(folderPath.toString())
     const storage: LocalStorage.Type = this.map.filter(s => s.storeId === storeId)[0]
     const imagePaths: string[] = []
+    const images = storage ? storage.images : []
     try {
       const files = await readdir(folderPath)
       await files.forEach((file) => {
-        file = this.absPath(file)
+        file = this.absPath(resolve(folderPath.toString(), file))
         if (statSync(file).isFile() && options.extnames.includes(extname(file)))
           imagePaths.push(file)
       })
@@ -38,7 +39,7 @@ export class Mapping {
       storeId,
       storeName: folderPath.toString().split(sep).at(-1),
       imageCount: 0,
-      images: storage.images || [],
+      images,
       imagePaths
     }
   }
