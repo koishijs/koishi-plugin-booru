@@ -1,11 +1,19 @@
 import { Context, Logger, Random, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { pathToFileURL } from 'node:url'
-import { readFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
+import { existsSync, readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { scraper } from './scraper'
 import { Mapping } from './mapping'
 import { hash } from './utils/hash'
 import { LocalStorage } from './types'
+
+declare module 'koishi' {
+  interface Tables {
+    booru_local: LocalStorage.Type
+  }
+}
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   languages = []
@@ -18,27 +26,66 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     this.languages = config.languages
     this.logger = ctx.logger('booru-local')
 
-    ctx.on('ready', async () => {
-      if (config.endpoint.length <= 0) {
-        this.logger.warn('no folder yet')
-        return
-      } else {  
-        const mapper = new Mapping(ctx.root.baseDir, config.storage)
-        const imgScrap = scraper(config.scraper)
-        this.logger.info('Initializing storages...')
-        for await (let path of config.endpoint) {
-          const store = await mapper.create(path, {
-            extnames: config.extension
-          })
-          // create image informations
-          for await (const image of store.imagePaths) {
-            const imageHash = hash(await readFile(image))
-            store.images.push(imgScrap(image, imageHash))
-          }
-        }
-        this.logger.info('')
-      }
+    if (this.config.storage === 'database') this.ctx.using(['database'], async (ctx, options) => {
+      ctx.model.extend('booru_local', {
+        storeId: 'string',
+        storeName: 'text',
+        imageCount: 'integer',
+        imagePaths: 'list',
+        images: 'json'
+      }, {
+        autoInc: false,
+        primary: 'storeId',
+        unique: ['storeId', 'storeName']
+      })
+
+      this.imageMap = await ctx.database.get('booru_local', {})
     })
+
+    if (this.config.storage === 'file') {
+      const absMap = resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap)
+      if (existsSync(absMap)) {
+        try {
+          this.imageMap = require(absMap) as LocalStorage.Type[]
+        } catch (err) {
+          this.imageMap = JSON.parse(readFileSync(absMap, 'utf-8'))
+        }
+      }
+    }
+
+    // TODO: cache storage
+    if (this.config.storage === 'cache') this.ctx.using(['cache'], () => { })
+
+    ctx.on('ready', async () => {
+      if (config.endpoint.length <= 0) return this.logger.warn('no folder yet')
+      let mapping: Mapping = new Mapping(ctx.root.baseDir, config.storage)
+      const imgScrap = scraper(config.scraper)
+      const count = {
+        folder: 0,
+        images: 0
+      }
+      this.logger.info('Initializing storages...')
+      if (this.imageMap.length > 0) mapping = mapping.update(this.imageMap)
+      // mapping the folders to memory by loop
+      for await (let path of config.endpoint) {
+        const store = await mapping.create(path, { extnames: config.extension })
+        const images = store.imagePaths.filter((path) => !store.images.map((img) => img.path).includes(path))
+        // create image informations
+        for await (const image of images) {
+          const imageHash = hash(await readFile(image))
+          store.images.push(imgScrap(image, imageHash))
+        }
+        count.folder++
+        count.images = count.images + store.imagePaths.length
+        this.imageMap.push(store)
+      }
+      this.logger.info(`${count.images} images in ${count.folder} folders is loaded.`)
+      // save mapping
+      if (config.storage === 'database')
+        ctx.database.upsert('booru_local', this.imageMap, ['storeId', 'storeName'])
+      else if (config.storage === 'file')
+        writeFile(resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap), JSON.stringify(this.imageMap))
+    }, true)
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
@@ -60,15 +107,14 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 }
 
 namespace LocalImageSource {
-  export const usage = `
-  ## 使用说明
-  
-  插件启动时会扫描文件夹并建立数据标记，这将会耗费较长的时间，请耐心等待。
-  `
+  export const RootMap = 'booru-maps.json'
+  // export const FileRegex = /^booru\-M(.*).json$/g
+  export const DataDir = './data/booru-local'
   export interface Config extends ImageSource.Config {
     endpoint: string[]
     extension: string[]
     languages: string[]
+    reload: boolean
     scraper: string
     storage: Mapping.Storage
   }
@@ -76,12 +122,16 @@ namespace LocalImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'local' }),
     Schema.object({
+      // TODO: Schema.path()?
       endpoint: Schema.array(String).description('图源文件夹，支持多个不同的文件夹'),
-      storage: Schema.union<Mapping.Storage>(['file', 'cache', 'database']).description('图源数据保存方式').default('file'),
+      storage: Schema.union<Mapping.Storage>(['file', 'database']).description('图源数据保存方式').default('file'),
+      reload: Schema.boolean().description('每次启动时重新加载所有图片').default(false),
+      languages: Schema.array(String).description('支持的语言').default(['zh-CN'])
+    }).description('图源设置'),
+    Schema.object({
       scraper: Schema.string().description('文件名元信息生成格式，详见<a herf="https://booru.koishi.chat/plugins/local.html">文档</a>').default('{filename}-{tag}'),
-      languages: Schema.array(String).description('支持的语言').default(['zh-CN']),
       extension: Schema.array(String).description('支持的扩展名').default(['.jpg', '.png', '.jpeg', '.gif'])
-    }).description('图源设置')
+    }).description('文件设置')
   ])
 }
 

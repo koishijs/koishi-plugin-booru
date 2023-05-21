@@ -28,7 +28,6 @@ export class Mapping {
       const files = await readdir(folderPath)
       await files.forEach((file) => {
         file = this.absPath(file)
-        if (storage.imagePaths.includes(file)) return
         if (statSync(file).isFile() && options.extnames.includes(extname(file)))
           imagePaths.push(file)
       })
@@ -39,7 +38,7 @@ export class Mapping {
       storeId,
       storeName: folderPath.toString().split(sep).at(-1),
       imageCount: 0,
-      images: [], // image meta information can be created later
+      images: storage.images || [],
       imagePaths
     }
   }
