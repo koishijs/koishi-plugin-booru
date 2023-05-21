@@ -1,11 +1,11 @@
 import { Context, Logger, Random, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
-import { LocalStorage } from './types'
-import { createHash } from 'node:crypto'
-import { PathOrFileDescriptor, existsSync, readFileSync, readdir, statSync, writeFile } from 'node:fs'
-import { basename, extname, isAbsolute, resolve, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { readFile } from 'node:fs/promises'
+import { scraper } from './scraper'
 import { Mapping } from './mapping'
+import { hash } from './utils/hash'
+import { LocalStorage } from './types'
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   languages = []
@@ -18,112 +18,27 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     this.languages = config.languages
     this.logger = ctx.logger('booru-local')
 
-    ctx.on('ready', () => {
+    ctx.on('ready', async () => {
       if (config.endpoint.length <= 0) {
         this.logger.warn('no folder yet')
         return
-      } else {
-        this.init(config.endpoint)
+      } else {  
+        const mapper = new Mapping(ctx.root.baseDir, config.storage)
+        const imgScrap = scraper(config.scraper)
+        this.logger.info('Initializing storages...')
+        for await (let path of config.endpoint) {
+          const store = await mapper.create(path, {
+            extnames: config.extension
+          })
+          // create image informations
+          for await (const image of store.imagePaths) {
+            const imageHash = hash(await readFile(image))
+            store.images.push(imgScrap(image, imageHash))
+          }
+        }
+        this.logger.info('')
       }
     })
-  }
-
-  private hash(path: PathOrFileDescriptor, file: boolean = false) {
-    return createHash('md5').update(file ? readFileSync(path) : path.toString()).digest('hex')
-  }
-
-  async init(paths: string[]) {
-    const _name = 'booru-map.json'
-    paths.forEach((path) => {
-      if (existsSync(path)) {
-        path = this.pathFormat(path) //to absolut path
-        const mapfile = resolve(path, _name)
-        readdir(path, (err, files) => {
-          if (err) {
-            this.logger.error(err)
-            return //jump to next folder
-          }
-          let mapset: LocalStorage.Type
-          if (existsSync(mapfile)) {
-            try {
-              mapset = require(mapfile) as LocalStorage.Type
-              if (files.length === mapset.imageCount) {
-                this.imageMap.push(mapset)
-                return //jump to next folder
-              }
-            } catch (error) {
-              this.logger.error(error)
-              return //jump to next folder
-            }
-          } else if (!mapset) {
-            mapset = {
-              storeId: this.hash(path),
-              storeName: path.split(sep).at(-1),
-              imageCount: 0,
-              images: [],
-              imagePaths: []
-            }
-          }
-          mapset['imageCount'] = files.length
-          // load image files
-          files.forEach(f => {
-            f = this.pathFormat(f)
-            if (!mapset.imagePaths.includes(f)
-              && statSync(f).isFile()
-              && this.config.extension.includes(extname(f))
-            ) {
-              const imageHash = this.hash(f, true)
-              mapset.images.push(this.scraperFormat(f, imageHash))
-              mapset.imagePaths.push(imageHash)
-            }
-          })
-
-          this.imageMap.push(mapset)
-          this.logger.debug(`created image map '${mapset.storeId}' from memory`)
-
-          writeFile(mapfile, JSON.stringify(mapset), (err) => {
-            if (err) this.logger.error(`failed store image map to '${mapfile}'`)
-            this.logger.debug(`stored image map '${mapset.storeId}' to '${mapfile}'`)
-          })
-        })
-
-      } else this.logger.error(`folder '${path}' is not found`)
-    })
-  }
-
-  pathFormat(path: string) {
-    return path = isAbsolute(path) ? path : resolve(this.ctx.root.baseDir, path)
-  }
-
-  scraperFormat(path: string, hash: string): LocalStorage.Response {
-    const element = {
-      filename: '(.+)',
-      tag: '(\\[.+\\])'
-    }
-
-    const filename = basename(path, extname(path))
-    const scraper = this.config.scraper.toLowerCase()
-    const start = scraper.charAt(0) === '.' ? '^\.' : '^'
-    const end = scraper.charAt(-1) === '+' ? '(.+)' : '$'
-    const pattren = []
-    scraper.replace(/^\./gm, '').replace(/\+$/gm, '') // delete `.` and `+`
-    scraper.split('-').forEach(key => {
-      key = key.slice(1, -1)
-      if (Object.keys(element).includes(key)) pattren.push(element[key])
-    })
-    const rule = new RegExp(start + pattren.join('-') + end, 'gm')
-    const unitData = rule.exec(filename)
-    let name: string = ''
-    let tags: string[] = []
-    if (unitData == null) name = filename
-    else {
-      for (let i = 1; i < unitData.length; i++) {
-        const e = unitData[i]
-        if (/\[([^\]]+)\]/gm.test(e)) tags = e.slice(1, -1).replace('，', ',').split(',').map(s => s.trim())
-        else if (/(.+)/gm.test(e) && i < unitData.length - 1) name = e
-      }
-    }
-    return { name, tags, hash, path }
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
