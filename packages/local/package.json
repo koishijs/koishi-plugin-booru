@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-booru-local",
-  "description": "Image service by local collection for Koishi",
-  "version": "0.1.0",
+  "description": "Image service from local directories for Koishi",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [

@@ -1,6 +1,6 @@
 # koishi-plugin-booru-local
 
-Booru plugin for your local folder.
+Booru plugin for your local directories.
 
 ## Documentation
 
