@@ -71,6 +71,10 @@
               "link": "/plugins/lolicon"
             },
             {
+              "text": "Local",
+              "link": "/plugins/local"
+            },
+            {
               "text": "Pixiv",
               "link": "/plugins/pixiv"
             },
