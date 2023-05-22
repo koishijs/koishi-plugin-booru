@@ -2,7 +2,7 @@ import { Context, Logger, Random, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { pathToFileURL } from 'node:url'
 import { readFile, writeFile } from 'node:fs/promises'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { scraper } from './scraper'
 import { Mapping } from './mapping'
@@ -51,7 +51,11 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         try {
           this.imageMap = require(absMap) as LocalStorage.Type[]
         } catch (err) {
-          this.imageMap = JSON.parse(readFileSync(absMap, 'utf-8'))
+          readFile(absMap, 'utf-8').then((map) => {
+            this.imageMap = JSON.parse(map)
+          }).catch((err) => {
+            this.logger.error(err)
+          })
         }
       }
     }

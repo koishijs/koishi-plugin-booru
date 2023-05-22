@@ -3,12 +3,16 @@ import { LocalStorage, Scraper } from "./types"
 
 const element = {
   filename: '(.+)',
-  tag: '(\\[.+\\])'
+  tag: '(\\[.+\\])',
 }
+
+const nfsw = [true, false, 'furry', 'guro', 'shota', 'bl']
+type Nfsw = boolean | 'furry' | 'guro' | 'shota' | 'bl'
 
 const format = {
   filename: (name: string) => name,
   tag: (tags: string) => tags.slice(1, -1).replace('，', ',').split(',').map(s => s.trim()),
+  nfsw: (tag: string) => nfsw.includes(tag.split('=')[1])
 }
 
 const mapping = {
