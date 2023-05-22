@@ -85,14 +85,18 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         store.imageCount = store.images.length
         count.folder++
         count.images = count.images + store.imagePaths.length
-        this.imageMap.push(store)
+        const imgIndex = this.imageMap.findIndex(img => img.storeId === store.storeId)
+        if (imgIndex >= 0)
+          this.imageMap[imgIndex] = store
+        else
+          this.imageMap.push(store)
       }
       this.logger.info(`${count.images} images in ${count.folder} folders is loaded.`)
       // save mapping
       if (config.storage === 'database')
         ctx.database.upsert('booru_local', this.imageMap, ['storeId', 'storeName'])
-      else if (config.storage === 'file')
-        writeFile(resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap), JSON.stringify(this.imageMap))
+      else if (config.storage === 'file') { }
+      writeFile(resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap), JSON.stringify(this.imageMap))
     }, true)
   }
 

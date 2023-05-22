@@ -22,22 +22,27 @@ export class Mapping {
     if (options.extnames.length === 0) return // no extname set is ignore all files for this folder
 
     const storeId = hash(folderPath.toString())
-    const storage: LocalStorage.Type = this.map.filter(s => s.storeId === storeId)[0]
-    const imagePaths: string[] = []
-    const images = storage ? storage.images : []
+    const storage: LocalStorage.Type[] = this.map.filter(s => s.storeId === storeId)
+    const storeName = storage.length > 0 ? storage[0].storeName : folderPath.toString().split(sep).at(-1)
+    const imagePaths: string[] = storage.length > 0 ? storage[0].imagePaths : []
+    const images = storage.length > 0 ? storage[0].images : []
+
     try {
       const files = await readdir(folderPath)
       await files.forEach((file) => {
         file = this.absPath(resolve(folderPath.toString(), file))
-        if (statSync(file).isFile() && options.extnames.includes(extname(file)))
-          imagePaths.push(file)
+        if (statSync(file).isFile()
+          && options.extnames.includes(extname(file))
+          && !imagePaths.includes(file)
+        ) imagePaths.push(file)
       })
     } catch (error) {
-      throw new Error(error)
+      //ignore error task
     }
+
     return {
       storeId,
-      storeName: folderPath.toString().split(sep).at(-1),
+      storeName,
       imageCount: 0,
       images,
       imagePaths
