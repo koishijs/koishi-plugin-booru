@@ -1,5 +1,5 @@
 import { PathLike, existsSync } from "fs";
-import { mkdir } from "node:fs/promises";
+import { mkdir } from "fs/promises";
 import { dirname } from "path";
 
 export function mkdirs(path: PathLike) {

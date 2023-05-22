@@ -1,4 +1,4 @@
-import { basename, extname } from "node:path"
+import { basename, extname } from "path"
 import { LocalStorage, Scraper } from "./types"
 
 const element = {
