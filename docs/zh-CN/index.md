@@ -31,3 +31,4 @@ Booru 插件支持多个图源站点，每个图源站点都有一个对应的�
 | [Safebooru](https://safebooru.org/) | [`koishi-plugin-booru-safebooru`](./plugins/safebooru.md) |
 | [SankakuComplex](https://chan.sankakucomplex.com/) | [`koishi-plugin-booru-sankaku`](./plugins/sankaku.md) |
 | [Yande.re](https://yande.re/) | [`koishi-plugin-booru-yande`](./plugins/yande.md) |
+| 本地文件夹 | [`koishi-plugin-booru-local`](./plugins/local.md) |
