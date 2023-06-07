@@ -1,6 +1,7 @@
-import { Context, Dict, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
+import { Context, Dict, Logger, Quester, Schema, Service, Session, h } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
+import { filterEmptyElement } from './utils'
 
 export * from './source'
 
@@ -91,6 +92,16 @@ export enum OutputType {
   All = 3,
 }
 
+interface OutputElement {
+  image?: h
+  title?: h
+  author?: h
+  desc?: h
+  page?: h
+  source?: h
+  tags?: h
+}
+
 export interface Config {
   detectLanguage: boolean
   confidence: number
@@ -157,27 +168,41 @@ export function apply(ctx: Context, config: Config) {
         count: options.count,
         labels: options.label?.split(',')?.map((x) => x.trim())?.filter(Boolean) ?? [],
       })
-      const source = images.source
 
       const filtered = images.filter((image) => config.nsfw || !image.nsfw)
 
       if (!filtered?.length) return session?.text('.no-result')
 
-      const output: (string | Element)[] = []
+      const output = []
       for (const image of filtered) {
+        const elem: OutputElement = {}
         switch (config.output) {
           case OutputType.All:
-            if (image.tags)
-              output.unshift(session.text('.output.source', { ...image, source, tags: image.tags.join(' ') }))
+            if (images.source)
+              elem.tags = h('i18n', { path: '.output.source' }, [images.source])
+            if (image.tags?.length)
+              elem.tags = h('i18n', { path: '.output.tags' }, [image.tags.join(' ')])
           case OutputType.ImageAndLink:
-            if (image.pageUrl || image.authorUrl)
-              output.unshift(session.text('.output.link', image))
+            if (image.pageUrl)
+              elem.page = h('i18n', { path: '.output.page' }, [image.pageUrl])
+            if (image.authorUrl)
+              elem.author = h('i18n', { path: '.output.author-with-link' }, [
+                image.authorUrl,
+                image.author ?? image.authorUrl,
+              ])
           case OutputType.ImageAndInfo:
-            if (image.title && image.author && image.desc)
-              output.unshift(session.text('.output.info', image))
+            if (image.title)
+              elem.title = h('i18n', { path: '.output.title' }, [image.title])
+            if (image.author)
+              elem.author ??= h('i18n', { path: '.output.author' }, [image.author])
+            if (image.desc)
+              elem.desc = h('i18n', { path: '.output.desc' }, [image.desc])
           case OutputType.ImageOnly:
-            output.unshift(session.text('.output.image', image))
+            elem.image = h('i18n', { path: '.output.image' }, [image.url])
         }
+
+        const final = h.parse(session.text('.output.layout', elem))
+        output.push(filterEmptyElement(final, ['p', 'message']))
       }
 
       return output.length === 1 ? output[0] : `<message forward>${output.join('\n')}</message>`
