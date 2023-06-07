@@ -177,7 +177,7 @@ export function apply(ctx: Context, config: Config) {
             delete image.tags
           case OutputType.All:
         }
-        output.push(session.text('.output.layout', {...image, source: images.source }))
+        output.push(session.text('.output.layout', { ...image, source: images.source }))
       }
 
       return output.length === 1 ? output[0] : `<message forward>${output.join('\n')}</message>`

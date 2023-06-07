@@ -7,24 +7,20 @@ commands:
       no-source: Aucune source images n'est disponible actuellement. Veuillez ajouter et activer plugins source du booru depuis la place de marché (les noms de plugins commencent généralement par « booru- »).
       no-result: Aucune image correspondante trouvée
       output:
-        image: '{0}'
-        title: '{0}'
-        author: 'Le créateur : {0}'
-        desc: '{0}'
-        author-with-link: '<a href={0}>[Le créateur : {1}]</a>'
-        page: '<a href={0}>[L'URL de la page]</a>'
-        source: 'La source images : {0}'
-        tags: 'Les balises : {0}'
-
-        layout: |
-          <message>{image}</message>
+        image: <message><image url={url}></image></message>
+        info: |
           <message>
             <p>{title}</p>
-            <p>{author}</p>
-            <p>{description}</p>
+            <p>Le créateur : {author}</p>
+            <p>{desc}</p>
           </message>
+        link: |
           <message>
-            <p>{source}</p>
-            <p>{page}</p>
-            <p>{tags}</p>
+            <p>L'URL de la page : {pageUrl}</p>
+            <p>La page d'accueil du créateur : {authorUrl}</p>
+          </message>
+        source: |
+          <message>
+            <p>La source images : {source}</p>
+            <p>Les balises : {tags}</p>
           </message>
