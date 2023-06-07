@@ -21,6 +21,8 @@ Booru 插件支持多个图源站点，每个图源站点都有一个对应的�
 | 图源                                                 | plugin                                                    |
 | -------------------------------------------------- | --------------------------------------------------------- |
 | [Danbooru](https://danbooru.donmai.us/)            | [`koishi-plugin-booru-danbooru`](./plugins/danbooru.md)   |
+| [e621](https://e621.net/)                          | [`koishi-plugin-booru-e621`](./plugins/e621.md)           |
+| [e926](https://e926.net/)                          | [`koishi-plugin-booru-e621`](./plugins/e621.md)           |
 | [Gelbooru](https://gelbooru.com/)                  | [`koishi-plugin-booru-gelbooru`](./plugins/gelbooru.md)   |
 | [Konachan](https://konachan.com/)                  | [`koishi-plugin-booru-konachan`](./plugins/konachan.md)   |
 | [Konachan.net](https://konachan.net/)              | [`koishi-plugin-booru-konachan`](./plugins/konachan.md)   |
