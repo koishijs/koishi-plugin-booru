@@ -7,20 +7,24 @@ commands:
       no-source: No available sources were found. Please install and/or enable any booru source plugins from the marketplace (The names of those plugins usually starts with booru-).
       no-result: No pictures match your query were found.
       output:
-        image: <message><image url={url}></image></message>
-        info: |
+        image: '{0}'
+        title: '{0}'
+        author: 'Author: {0}'
+        desc: '{0}'
+        author-with-link: '<a href={0}>[Author: {1}]</a>'
+        page: '<a href={0}>[Page URL]</a>'
+        source: 'Source: {0}'
+        tags: 'Tags: {0}'
+
+        layout: |
+          <message>{image}</message>
           <message>
             <p>{title}</p>
-            <p>Author: {author}</p>
-            <p>{desc}</p>
+            <p>{author}</p>
+            <p>{description}</p>
           </message>
-        link: |
           <message>
-            <p>Page URL: {pageUrl}</p>
-            <p>Author Homepage: {authorUrl}</p>
-          </message>
-        source: |
-          <message>
-            <p>Source: {source}</p>
-            <p>Tags: {tags}</p>
+            <p>{source}</p>
+            <p>{page}</p>
+            <p>{tags}</p>
           </message>

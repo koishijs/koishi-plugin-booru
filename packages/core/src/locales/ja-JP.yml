@@ -7,20 +7,24 @@ commands:
       no-source: ソースプラグインが見つかりませんでした。プラグインマーケットプレイスから booru ソースプラグインを追加及び有効にしてください (一般的に、booru ソースプラグイン名は「booru₋」で始まります)。
       no-result: クエリが一致する画像が見つかりません。
       output:
-        image: <message><image url={url}></image></message>
-        info: |
+        image: '{0}'
+        title: '{0}'
+        author: '絵師: {0}'
+        desc: '{0}'
+        author-with-link: '<a href={0}>[絵師: {1}]</a>'
+        page: '<a href={0}>[ページURL]</a>'
+        source: 'ソース: {0}'
+        tags: 'タグ: {0}'
+
+        layout: |
+          <message>{image}</message>
           <message>
             <p>{title}</p>
-            <p>絵師: {author}</p>
-            <p>{desc}</p>
+            <p>{author}</p>
+            <p>{description}</p>
           </message>
-        link: |
           <message>
-            <p>ページURL: {pageUrl}</p>
-            <p>絵師ホームページ: {authorUrl}</p>
-          </message>
-        source: |
-          <message>
-            <p>ソース: {source}</p>
-            <p>タグ: {tags}</p>
+            <p>{source}</p>
+            <p>{page}</p>
+            <p>{tags}</p>
           </message>
