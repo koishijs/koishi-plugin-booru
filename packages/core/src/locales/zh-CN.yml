@@ -17,7 +17,7 @@ commands:
             <p>{desc && '简介: ' + desc}</p>
           </message>
           <message>
-            <p>{source}</p>
+            <p>{source && '图源: ' + source}</p>
             <p><a href={pageUrl}>{pageUrl && '[页面地址]'}</a></p>
             <p>{tags && '标签: ' + tags.join(', ')}</p>
           </message>
