@@ -9,24 +9,15 @@ commands:
       no-source: 当前未找到可用图源。请从插件市场添加 booru 系图源插件并启用 (插件名通常以 booru- 开头)。
       no-result: 没有找到符合条件的图片
       output:
-        image: '{0}'
-        title: '{0}'
-        author: '作者: {0}'
-        desc: '{0}'
-        author-with-link: '<a href={0}>[作者: {1}]</a>'
-        page: '<a href={0}>[页面地址]</a>'
-        source: '图源: {0}'
-        tags: '标签: {0}'
-
         layout: |
-          <message>{image}</message>
+          <message><image url={url} /></message>
           <message>
             <p>{title}</p>
-            <p>{author}</p>
-            <p>{description}</p>
+            <p><a href={authorUrl}>{author && '作者: ' + author}</a></p>
+            <p>{desc && '简介: ' + desc}</p>
           </message>
           <message>
             <p>{source}</p>
-            <p>{page}</p>
-            <p>{tags}</p>
+            <p><a href={pageUrl}>{pageUrl && '[页面地址]'}</a></p>
+            <p>{tags && '标签: ' + tags.join(', ')}</p>
           </message>
