@@ -173,13 +173,13 @@ export function apply(ctx: Context, config: Config) {
 
       if (!filtered?.length) return session?.text('.no-result')
 
-      const output = []
+      const output: h[] = []
       for (const image of filtered) {
-        const elem: OutputElement = {}
+        let elem: OutputElement = {}
         switch (config.output) {
           case OutputType.All:
             if (images.source)
-              elem.tags = h('i18n', { path: '.output.source' }, [images.source])
+              elem.source = h('i18n', { path: '.output.source' }, [images.source])
             if (image.tags?.length)
               elem.tags = h('i18n', { path: '.output.tags' }, [image.tags.join(' ')])
           case OutputType.ImageAndLink:
@@ -198,13 +198,13 @@ export function apply(ctx: Context, config: Config) {
             if (image.desc)
               elem.desc = h('i18n', { path: '.output.desc' }, [image.desc])
           case OutputType.ImageOnly:
-            elem.image = h('i18n', { path: '.output.image' }, [image.url])
+            elem.image = h('i18n', { path: '.output.image' }, [h.image(image.url)])
         }
 
         const final = h.parse(session.text('.output.layout', elem))
-        output.push(filterEmptyElement(final, ['p', 'message']))
+        output.push(h('message', filterEmptyElement(final, ['p', 'message'])))
       }
 
-      return output.length === 1 ? output[0] : `<message forward>${output.join('\n')}</message>`
+      return output.length === 1 ? output[0] : h('message', { forward: true }, output)
     })
 }
