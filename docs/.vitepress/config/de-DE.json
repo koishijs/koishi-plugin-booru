@@ -55,6 +55,10 @@
               "link": "/plugins/danbooru"
             },
             {
+              "text": "e621",
+              "link": "/plugins/e621"
+            },
+            {
               "text": "Gelbooru",
               "link": "/plugins/gelbooru"
             },
