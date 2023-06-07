@@ -5,6 +5,7 @@
 ## 图源插件
 
 - [koishi-plugin-booru-danbooru](https://booru.koishi.chat/plugins/danbooru.html)
+- [koishi-plugin-booru-e621](https://booru.koishi.chat/plugins/e621.html)
 - [koishi-plugin-booru-gelbooru](https://booru.koishi.chat/plugins/gelbooru.html)
 - [koishi-plugin-booru-konachan](https://booru.koishi.chat/plugins/konachan.html)
 - [koishi-plugin-booru-lolibooru](https://booru.koishi.chat/plugins/lolibooru.html)
