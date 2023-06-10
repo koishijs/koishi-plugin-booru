@@ -85,10 +85,26 @@ namespace ImageService {
 }
 
 export enum OutputType {
-  ImageOnly = 0,
-  ImageAndInfo = 1,
-  ImageAndLink = 2,
-  All = 3,
+  IMAGE = 1 << 0,
+  TITLE = 1 << 1,
+  AUTHOR = 1 << 2,
+  DESCRIPTION = 1 << 3,
+  PAGE_URL = 1 << 4,
+  TAGS = 1 << 5,
+  SOURCE_PLUGIN = 1 << 6,
+}
+
+export interface OutputElement {
+  url?: string
+  image?: string
+  author?: string
+  authorUrl?: string
+  page?: string
+  pageUrl?: string
+  plugin?: string
+  tags?: string
+  desc?: string
+  title?: string
 }
 
 export interface Config {
@@ -120,16 +136,16 @@ export const Config = Schema.intersect([
     }),
   ]).description('搜索设置'),
   Schema.object({
-    output: Schema.union([
-      Schema.const(0).description('仅发送图片'),
-      Schema.const(1).description('发送图片和相关信息'),
-      Schema.const(2).description('发送图片、相关信息和链接'),
-      Schema.const(3).description('发送全部信息'),
-    ]).description('输出方式。').default(1),
+    output: Schema.bitset(OutputType).description('选择输出哪些内容。').default(
+      OutputType.IMAGE |
+      OutputType.AUTHOR |
+      OutputType.PAGE_URL
+    ),
   }).description('输出设置'),
 ])
 
 export function apply(ctx: Context, config: Config) {
+  logger.info('asd')
   ctx.plugin(ImageService, config)
 
   ctx.i18n.define('zh', require('./locales/zh-CN'))
@@ -164,20 +180,31 @@ export function apply(ctx: Context, config: Config) {
 
       const output: string[] = []
       for (const image of filtered) {
-        switch (config.output) {
-          case OutputType.ImageOnly:
-            delete image.title
-            delete image.author
-            delete image.desc
-          case OutputType.ImageAndInfo:
-            delete image.pageUrl
-            delete image.authorUrl
-          case OutputType.ImageAndLink:
-            delete images.source
-            delete image.tags
-          case OutputType.All:
+        const elem: OutputElement = {}
+        if (image.url && config.output & OutputType.IMAGE) {
+          elem.url = image.url
         }
-        output.push(session.text('.output.layout', { ...image, source: images.source }))
+        if (image.title && config.output & OutputType.TITLE) {
+          elem.title = session.text('.output.title', [image.title])
+        }
+        if (image.author && config.output & OutputType.AUTHOR) {
+          elem.author = session.text('.output.author', [image.author])
+          elem.authorUrl = image.authorUrl
+        }
+        if (image.desc && config.output & OutputType.DESCRIPTION) {
+          elem.desc = session.text('.output.desc', [image.desc])
+        }
+        if (image.pageUrl && config.output & OutputType.PAGE_URL) {
+          elem.page = session.text('.output.page')
+          elem.pageUrl = image.pageUrl
+        }
+        if (image.tags && config.output & OutputType.TAGS) {
+          elem.tags = session.text('.output.tags', [image.tags.join(', ')])
+        }
+        if (config.output & OutputType.SOURCE_PLUGIN && images.source) {
+          elem.plugin = session.text('.output.source', [images.source])
+        }
+        output.push(session.text('.output.layout', elem))
       }
 
       return output.length === 1 ? output[0] : `<message forward>${output.join('\n')}</message>`
