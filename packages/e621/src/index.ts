@@ -51,7 +51,7 @@ namespace e621ImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'e621' }),
     Schema.object({
-      endpoint: Schema.string().description('e621/e926 的 URL。').default('https:/e621.net/'),
+      endpoint: Schema.string().description('e621/e926 的 URL。').default('https://e621.net/'),
       userAgent: Schema
       .string().description('设置请求的 User Agent。')
       .default('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37')
