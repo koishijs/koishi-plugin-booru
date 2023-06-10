@@ -22,6 +22,7 @@
         "text": "插件",
         "items": [
           { "text": "Danbooru", "link": "/plugins/danbooru" },
+          { "text": "e621", "link": "/plugins/e621" },
           { "text": "Gelbooru", "link": "/plugins/gelbooru" },
           { "text": "Konachan", "link": "/plugins/konachan" },
           { "text": "Lolibooru", "link": "/plugins/lolibooru" },
