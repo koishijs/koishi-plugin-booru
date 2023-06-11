@@ -89,7 +89,7 @@ class ImageService extends Service {
       }
       return ''
     })
-    return 'data:image/png;base64,' + Buffer.from(buffer, 'binary').toString('base64')
+    return 'data:image/*;base64,' + Buffer.from(buffer, 'binary').toString('base64')
   }
 }
 
