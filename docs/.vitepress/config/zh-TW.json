@@ -2,14 +2,14 @@
   "description": "最好的涩图插件！",
   "head": [
     [
-      "link",
+      "連結",
       {
         "rel": "icon",
         "href": "https://koishi.chat/logo.png"
       }
     ],
     [
-      "link",
+      "連結",
       {
         "rel": "manifest",
         "href": "/manifest/zh-CN.json"
