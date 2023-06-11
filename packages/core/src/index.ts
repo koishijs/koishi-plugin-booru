@@ -1,6 +1,7 @@
 import { Context, Dict, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
+import { } from 'koishi-plugin-assets-local'
 
 export * from './source'
 
@@ -88,7 +89,7 @@ class ImageService extends Service {
       }
       return ''
     })
-    return Buffer.from(buffer, 'binary').toString('base64')
+    return 'data:image/png;base64,' + Buffer.from(buffer, 'binary').toString('base64')
   }
 }
 
@@ -188,8 +189,11 @@ export function apply(ctx: Context, config: Config) {
       for (const image of filtered) {
         if (config.asset && ctx.assets) image.url = await ctx.booru.imgUrlToAssetUrl(image)
         if (config.base64) {
-          image.buffer = await ctx.booru.imgUrlToBase64(image)
-          if (!image.buffer) output.unshift(session.text('.no-result'))
+          image.url = await ctx.booru.imgUrlToBase64(image)
+          if (!image.url) {
+            output.unshift(session.text('.no-image'))
+            continue
+          }
         }
         switch (config.output) {
           case OutputType.All:
@@ -202,7 +206,7 @@ export function apply(ctx: Context, config: Config) {
             if (image.title && image.author && image.desc)
               output.unshift(session.text('.output.info', image))
           case OutputType.ImageOnly:
-            output.unshift(session.text('.output.'+`${config.base64?'imgbase64':'image'}`, image))
+            output.unshift(session.text('.output.image', image))
         }
       }
 
