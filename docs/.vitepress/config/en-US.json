@@ -12,7 +12,7 @@
       "link",
       {
         "rel": "manifest",
-        "href": "/manifest/en-US.json"
+        "href": "/manifest/zh-CN.json"
       }
     ],
     [
@@ -25,20 +25,20 @@
   ],
   "themeConfig": {
     "editLink": {
-      "text": "Translate this page on Crowdin",
+      "text": "在 GitHub 编辑此页面",
       "pattern": "https://github.com/koishijs/koishi-plugin-booru/edit/main/docs/:path"
     },
     "sidebar": {
       "/": [
         {
-          "text": "Developing Guide",
+          "text": "指南",
           "items": [
             {
-              "text": "Introduction",
+              "text": "介绍",
               "link": "/"
             },
             {
-              "text": "Usage",
+              "text": "使用",
               "link": "/usage"
             },
             {
@@ -48,7 +48,7 @@
           ]
         },
         {
-          "text": "plugin",
+          "text": "插件",
           "items": [
             {
               "text": "Danbooru",
@@ -97,14 +97,14 @@
           ]
         },
         {
-          "text": "Develop",
+          "text": "开发",
           "items": [
             {
               "text": "图源",
               "link": "/develop/source"
             },
             {
-              "text": "service",
+              "text": "服务",
               "link": "/develop/service"
             },
             {
