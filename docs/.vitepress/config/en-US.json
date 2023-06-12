@@ -48,7 +48,7 @@
           ]
         },
         {
-          "text": "Plugins",
+          "text": "plugin",
           "items": [
             {
               "text": "Danbooru",
@@ -104,7 +104,7 @@
               "link": "/develop/source"
             },
             {
-              "text": "服务",
+              "text": "service",
               "link": "/develop/service"
             },
             {
