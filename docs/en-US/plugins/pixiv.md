@@ -1,6 +1,6 @@
 # koishi-plugin-booru-pixiv
 
-## 安装
+## Install
 
 1. 在 Koishi 中下载并安装本插件，若你还未安装 [Booru 插件](../index.md)，请先安装。
 2. 在 [Pixiv](https://www.pixiv.net/) 注册账号并登录。
