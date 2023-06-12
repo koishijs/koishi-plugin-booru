@@ -1,4 +1,4 @@
-# 介绍
+# Introduction
 
 > 「最好的涩图插件！」 —— Shigma
 
@@ -8,7 +8,7 @@ Booru 是一个基于 [Koishi](https://koishi.chat/) 的图片检索插件，支
 你需要安装至少一个图源插件才能使用 Booru 插件。
 :::
 
-## 特性
+## Fonctionnalités
 
 - 支持多个[图源站点](#图源插件)
 - 支持多种发送方式
