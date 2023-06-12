@@ -1,26 +1,26 @@
 commands:
   booru:
-    description: Search for pictures
+    description: 搜索图片
     options:
-      label: Specify Source Label
+      label: 指定图源标签
     messages:
-      no-source: No available sources were found. Please install and/or enable any booru source plugins from the marketplace (The names of those plugins usually starts with booru-).
-      no-result: No pictures match your query were found.
+      no-source: 当前未找到可用图源。请从插件市场添加 booru 系图源插件并启用 (插件名通常以 booru- 开头)。
+      no-result: 没有找到符合条件的图片
       output:
         image: <message><image url={url}></image></message>
         info: |
           <message>
             <p>{title}</p>
-            <p>Author: {author}</p>
+            <p>作者: {author}</p>
             <p>{desc}</p>
           </message>
         link: |
           <message>
-            <p>Page URL: {pageUrl}</p>
-            <p>Author Homepage: {authorUrl}</p>
+            <p>页面地址: {pageUrl}</p>
+            <p>作者主页: {authorUrl}</p>
           </message>
         source: |
           <message>
-            <p>Source: {source}</p>
-            <p>Tags: {tags}</p>
+            <p>图源: {source}</p>
+            <p>标签: {tags}</p>
           </message>
