@@ -1,0 +1,26 @@
+commands:
+  booru:
+    description: Search for pictures
+    options:
+      label: Specify Source Label
+    messages:
+      no-source: No available sources were found. Please install and/or enable any booru source plugins from the marketplace (The names of those plugins usually starts with booru-).
+      no-result: No pictures match your query were found.
+      output:
+        image: <message><image url={url}></image></message>
+        info: |
+          <message>
+            <p>{title}</p>
+            <p>Author: {author}</p>
+            <p>{desc}</p>
+          </message>
+        link: |
+          <message>
+            <p>Page URL: {pageUrl}</p>
+            <p>Author Homepage: {authorUrl}</p>
+          </message>
+        source: |
+          <message>
+            <p>Source: {source}</p>
+            <p>Tags: {tags}</p>
+          </message>

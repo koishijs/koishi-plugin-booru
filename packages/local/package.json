@@ -1,0 +1,54 @@
+{
+  "name": "koishi-plugin-booru-local",
+  "description": "Image service from local directories for Koishi",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "author": {
+    "name": "Lipraty",
+    "email": "i@lonay.me"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
+    "directory": "packages/local"
+  },
+  "bugs": {
+    "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
+  },
+  "homepage": "https://booru.koishi.chat/plugins/local.html",
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "service",
+    "plugin",
+    "booru",
+    "image",
+    "picture",
+    "random",
+    "setu",
+    "local"
+  ],
+  "koishi": {
+    "description": {
+      "zh": "最好的涩图插件！ - 本地图源支持"
+    },
+    "service": {
+      "require": [
+        "booru"
+      ],
+      "optional": [
+        "database"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "koishi": "^4.10.0",
+    "koishi-plugin-booru": "^1.0.3"
+  }
+}
