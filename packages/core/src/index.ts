@@ -146,7 +146,7 @@ export const Config = Schema.intersect([
       Schema.const(2).description('发送图片、相关信息和链接'),
       Schema.const(3).description('发送全部信息'),
     ]).description('输出方式。').default(1),
-    asset: Schema.boolean().default(false).description('优先使用 assets 服务转存图片。'),
+    asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
     base64: Schema.boolean().default(false).description('使用 base64 发送图片。')
   }).description('输出设置'),
 ])
