@@ -37,6 +37,9 @@
     "service": {
       "implements": [
         "booru"
+      ],
+      "optional": [
+        "assets"
       ]
     }
   },
