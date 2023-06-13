@@ -1,7 +1,7 @@
 import { Context, Dict, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
-import { } from 'koishi-plugin-assets-local'
+import { } from '@koishijs/assets'
 
 export * from './source'
 
