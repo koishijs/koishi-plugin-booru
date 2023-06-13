@@ -81,7 +81,9 @@ class ImageService extends Service {
   }
 
   async imgUrlToBase64(image) {
-    const buffer = await this.ctx.http.get(image.url, { responseType: 'arraybuffer' }).catch((err) => {
+    return this.ctx.http.axios(image.url, { method: 'GET', responseType: 'arraybuffer' }).then(resp => {
+      return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data, 'binary').toString('base64')}`
+    }).catch(err => {
       if (Quester.isAxiosError(err)) {
         logger.warn(`request failed when switch a iamge to base64 format with code ${err.status} ${JSON.stringify(err.response?.data)}`)
       } else {
@@ -89,7 +91,6 @@ class ImageService extends Service {
       }
       return ''
     })
-    return 'data:image/*;base64,' + Buffer.from(buffer, 'binary').toString('base64')
   }
 }
 
