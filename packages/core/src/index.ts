@@ -145,7 +145,6 @@ export const Config = Schema.intersect([
 ])
 
 export function apply(ctx: Context, config: Config) {
-  logger.info('asd')
   ctx.plugin(ImageService, config)
 
   ctx.i18n.define('zh', require('./locales/zh-CN'))
