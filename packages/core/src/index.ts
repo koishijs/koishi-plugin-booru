@@ -77,7 +77,7 @@ class ImageService extends Service {
   }
 
   async imgUrlToAssetUrl(image) {
-    return 'http://' + await this.ctx.assets.upload(image.url, process.uptime().toString())
+    return 'http://' + await this.ctx.assets.upload(image.url, Date.now().toString())
   }
 
   async imgUrlToBase64(image) {
@@ -89,7 +89,7 @@ class ImageService extends Service {
       } else {
         logger.error(`unknown error when switch a iamge to base64 format: ${err.message}`)
       }
-      return ''
+      return null
     })
   }
 }
