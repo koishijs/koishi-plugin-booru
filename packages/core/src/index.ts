@@ -77,7 +77,10 @@ class ImageService extends Service {
   }
 
   async imgUrlToAssetUrl(image) {
-    return 'http://' + await this.ctx.assets.upload(image.url, Date.now().toString())
+    return await this.ctx.assets.upload(image.url, Date.now().toString()).catch(() => {
+      logger.warn('request failed when using assets service to store an image')
+      return null
+    })
   }
 
   async imgUrlToBase64(image) {
@@ -188,7 +191,14 @@ export function apply(ctx: Context, config: Config) {
       const output: (string | Element)[] = []
 
       for (const image of filtered) {
-        if (config.asset && ctx.assets) image.url = await ctx.booru.imgUrlToAssetUrl(image)
+        if (config.asset && ctx.assets) {
+          const temp = await ctx.booru.imgUrlToAssetUrl(image)
+          if (!temp?.length) {
+            output.unshift(session.text('.no-image'))
+            continue
+          }
+          image.url = 'http://' + temp
+        }
         if (config.base64) {
           image.url = await ctx.booru.imgUrlToBase64(image)
           if (!image.url) {
