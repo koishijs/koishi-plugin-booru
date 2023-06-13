@@ -26,7 +26,7 @@
   "themeConfig": {
     "editLink": {
       "text": "Translate this page on Crowdin",
-      "pattern": "https://github.com/koishijs/koishi-plugin-booru/edit/main/docs/:path"
+      "pattern": "https://crowdin.com/translate/koishi/:id/zhcn-enus"
     },
     "sidebar": {
       "/": [
