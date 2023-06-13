@@ -26,7 +26,7 @@
   "themeConfig": {
     "editLink": {
       "text": "在 GitHub 编辑此页面",
-      "pattern": "https://github.com/koishijs/koishi-plugin-booru/edit/main/docs/:path"
+      "pattern": "https://crowdin.com/translate/koishi/:id/zhcn-zhtw"
     },
     "sidebar": {
       "/": [
