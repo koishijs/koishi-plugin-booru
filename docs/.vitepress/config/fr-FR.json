@@ -12,7 +12,7 @@
       "link",
       {
         "rel": "manifest",
-        "href": "/manifest/zh-CN.json"
+        "href": "/manifest/fr-FR.json"
       }
     ],
     [
@@ -97,7 +97,7 @@
           ]
         },
         {
-          "text": "开发",
+          "text": "Développement",
           "items": [
             {
               "text": "图源",
