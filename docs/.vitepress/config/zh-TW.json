@@ -25,7 +25,7 @@
   ],
   "themeConfig": {
     "editLink": {
-      "text": "在 GitHub 编辑此页面",
+      "text": "在 Crowdin 上翻譯此頁面",
       "pattern": "https://crowdin.com/translate/koishi/:id/zhcn-zhtw"
     },
     "sidebar": {
@@ -97,7 +97,7 @@
           ]
         },
         {
-          "text": "开发",
+          "text": "開發",
           "items": [
             {
               "text": "图源",
