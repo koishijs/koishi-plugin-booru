@@ -6,7 +6,7 @@
 
 由于图源插件本身也是一个标准的 [Koishi 插件](https://koishi.chat/zh-CN/guide/plugin/#%E6%8F%92%E4%BB%B6%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%BD%A2%E5%BC%8F)，这意味着它必须导出一个函数，或者一个带有 `apply` 方法的对象。为了方便开发，我们提供了一个抽象类 `ImageSource`，当你继承它并实现相应方法后以默认方式导出，就可以作为 Koishi 插件被加载，这有助于插件作者快速开发图源插件。
 
-## Be Prepared
+## Prerequisite
 
 在此，我们将假设你已经阅读了[认识插件](https://koishi.chat/zh-CN/guide/plugin/)，并且配置好了 Koishi 插件的开发环境。
 
