@@ -192,12 +192,11 @@ export function apply(ctx: Context, config: Config) {
 
       for (const image of filtered) {
         if (config.asset && ctx.assets) {
-          const temp = await ctx.booru.imgUrlToAssetUrl(image)
-          if (!temp?.length) {
+          image.url = await ctx.booru.imgUrlToAssetUrl(image)
+          if (!image.url) {
             output.unshift(session.text('.no-image'))
             continue
           }
-          image.url = 'http://' + temp
         }
         if (config.base64) {
           image.url = await ctx.booru.imgUrlToBase64(image)
