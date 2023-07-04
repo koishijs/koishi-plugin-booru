@@ -37,6 +37,9 @@
     "service": {
       "implements": [
         "booru"
+      ],
+      "optional": [
+        "assets"
       ]
     }
   },
@@ -44,6 +47,7 @@
     "koishi": "^4.10.0"
   },
   "devDependencies": {
+    "@koishijs/assets": "^1.0.2",
     "koishi": "^4.12.4"
   },
   "dependencies": {
