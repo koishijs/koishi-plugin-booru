@@ -76,21 +76,21 @@ class ImageService extends Service {
     return undefined
   }
 
-  async imgUrlToAssetUrl(image) {
+  async imgUrlToAssetUrl(image: ImageSource.Result): Promise<string> {
     return await this.ctx.assets.upload(image.url, Date.now().toString()).catch(() => {
-      logger.warn('request failed when using assets service to store an image')
+      logger.warn('Request failed when trying to store image with assets service.')
       return null
     })
   }
 
-  async imgUrlToBase64(image) {
+  async imgUrlToBase64(image:ImageSource.Result): Promise<string> {
     return this.ctx.http.axios(image.url, { method: 'GET', responseType: 'arraybuffer' }).then(resp => {
       return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data, 'binary').toString('base64')}`
     }).catch(err => {
       if (Quester.isAxiosError(err)) {
-        logger.warn(`request failed when switch a iamge to base64 format with code ${err.status} ${JSON.stringify(err.response?.data)}`)
+        logger.warn(`Request images failed with HTTP status ${err.status}: ${JSON.stringify(err.response?.data)}.`)
       } else {
-        logger.error(`unknown error when switch a iamge to base64 format: ${err.message}`)
+        logger.error(`Request images failed with unknown error: ${err.message}.`)
       }
       return null
     })
