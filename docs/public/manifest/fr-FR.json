@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-booru",
   "short_name": "Booru",
-  "description": "最好的涩图插件！",
+  "description": "Recherche d'images, c'est très bien !",
   "start_url": "/zh-CN/",
   "display": "standalone",
   "background_color": "#ffffff",
