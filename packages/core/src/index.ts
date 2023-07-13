@@ -1,4 +1,4 @@
-import { Context, Dict, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
+import { Context, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
 import { } from '@koishijs/assets'
@@ -14,32 +14,29 @@ declare module 'koishi' {
 }
 
 class ImageService extends Service {
-  private config: Config
-  private sources: Dict<ImageSource> = {}
-  private counter = 0
-
+  private sources: ImageSource[] = []
   private languageDetect = new LanguageDetect()
 
-  constructor(ctx: Context, config: Config) {
+  constructor(ctx: Context, private config: Config) {
     super(ctx, 'booru', true)
     this.config = config
   }
 
   register(source: ImageSource) {
-    const id = ++this.counter
-    this.sources[id] = source
-    return this.caller.collect('booru', () => delete this.sources[id])
+    const index = this.sources.length
+    this.sources.push(source)
+    return this.caller.collect('booru', () => delete this.sources[index])
   }
 
   hasSource(name?: string): boolean {
     if (name) {
-      return Object.values(this.sources).some((source) => source.config.label === name)
+      return this.sources.some((source) => source.config.label === name)
     }
-    return Object.keys(this.sources).length > 0
+    return this.sources.some(Boolean)
   }
 
   async get(query: ImageService.Query): Promise<ImageArray> {
-    const sources = Object.values(this.sources)
+    const sources = this.sources
       .filter((source) => {
         if (query.labels.length && !query.labels.includes(source.config.label)) return false
         if (this.config.detectLanguage) {
@@ -60,7 +57,7 @@ class ImageService extends Service {
     // return the first non-empty result
     for (const source of sources) {
       const tags = source.tokenize(query.query)
-      const images = await source.get({ ...query, tags, raw: query.query }).catch((err) => {
+      const images = await source.get({ count: query.count, tags, raw: query.query }).catch((err) => {
         if (Quester.isAxiosError(err)) {
           logger.warn(`source ${source.config.label} request failed with code ${err.status} ${JSON.stringify(err.response?.data)}`)
         } else {
