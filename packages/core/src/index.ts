@@ -102,18 +102,13 @@ namespace ImageService {
   }
 }
 
-export enum OutputType {
-  ImageOnly = 0,
-  ImageAndInfo = 1,
-  ImageAndLink = 2,
-  All = 3,
-}
+export type Layout = string
 
 export interface Config {
   detectLanguage: boolean
   confidence: number
   maxCount: number
-  output: OutputType
+  layout: Layout[]
   nsfw: boolean
   asset: boolean
   base64: boolean
@@ -139,16 +134,46 @@ export const Config = Schema.intersect([
       nsfw: Schema.boolean().default(false).description('是否允许输出 NSFW 内容。'),
     }),
   ]).description('搜索设置'),
-  Schema.object({
-    output: Schema.union([
-      Schema.const(0).description('仅发送图片'),
-      Schema.const(1).description('发送图片和相关信息'),
-      Schema.const(2).description('发送图片、相关信息和链接'),
-      Schema.const(3).description('发送全部信息'),
-    ]).description('输出方式。').default(1),
-    asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
-    base64: Schema.boolean().default(false).description('使用 base64 发送图片。')
-  }).description('输出设置'),
+  Schema.intersect([
+    Schema.object({
+      asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
+      base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
+      output: Schema.union([
+        Schema.const(0).description('仅发送图片'),
+        Schema.const(1).description('发送图片和少量信息'),
+        Schema.const(2).description('发送图片和全部信息'),
+        Schema.const(3).description('自定义布局'),
+      ]).default(1),
+    }).description('输出设置'),
+    Schema.union([
+      Schema.object({
+        output: Schema.const(0),
+        layout: Schema.const(['image']).hidden()
+      }),
+      Schema.object({
+        output: Schema.const(1),
+        layout: Schema.const(['image', 'title', 'author', 'description']).hidden()
+      }),
+      Schema.object({
+        output: Schema.const(2),
+        layout: Schema.const(['image', 'title', 'author', 'description', 'pageUrl', 'sourceUrl', 'tags', 'plugin']).hidden()
+      }),
+      Schema.object({
+        output: Schema.const(3),
+        layout: Schema.array(Schema.union([
+          Schema.const('image').description('图片'),
+          Schema.const('title').description('标题'),
+          Schema.const('author').description('作者以及作者链接'),
+          Schema.const('description').description('作品简介'),
+          Schema.const('pageUrl').description('链接'),
+          Schema.const('sourceUrl').description('源网站'),
+          Schema.const('tags').description('标签'),
+          Schema.const('plugin').description('图源插件名'),
+        ]).default('image')
+        ).description('输出布局').role('table').default(['image', 'author', 'description']),
+      }),
+    ])
+  ])
 ])
 
 export function apply(ctx: Context, config: Config) {
@@ -202,19 +227,19 @@ export function apply(ctx: Context, config: Config) {
             continue
           }
         }
-        switch (config.output) {
-          case OutputType.All:
-            if (image.tags)
-              output.unshift(session.text('.output.source', { ...image, source, tags: image.tags.join(' ') }))
-          case OutputType.ImageAndLink:
-            if (image.pageUrl || image.authorUrl)
-              output.unshift(session.text('.output.link', image))
-          case OutputType.ImageAndInfo:
-            if (image.title && image.author && image.desc)
-              output.unshift(session.text('.output.info', image))
-          case OutputType.ImageOnly:
-            output.unshift(session.text('.output.image', image))
-        }
+        // switch (config.output) {
+        //   case OutputType.All:
+        //     if (image.tags)
+        //       output.unshift(session.text('.output.source', { ...image, source, tags: image.tags.join(' ') }))
+        //   case OutputType.ImageAndLink:
+        //     if (image.pageUrl || image.authorUrl)
+        //       output.unshift(session.text('.output.link', image))
+        //   case OutputType.ImageAndInfo:
+        //     if (image.title && image.author && image.desc)
+        //       output.unshift(session.text('.output.info', image))
+        //   case OutputType.ImageOnly:
+        //     output.unshift(session.text('.output.image', image))
+        // }
       }
 
       return output.length === 1 ? output[0] : `<message forward>${output.join('\n')}</message>`
