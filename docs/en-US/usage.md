@@ -1,4 +1,4 @@
-# 使用
+# Usage
 
 ## command
 
