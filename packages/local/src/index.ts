@@ -16,6 +16,10 @@ declare module 'koishi' {
 }
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
+  static inject = {
+    required: ['booru'],
+    optional: ['database', 'cache']
+  }
   languages = []
   source = 'local'
   private imageMap: LocalStorage.Type[] = []
@@ -26,7 +30,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     this.languages = config.languages
     this.logger = ctx.logger('booru-local')
 
-    if (this.config.storage === 'database') this.ctx.using(['database'], async (ctx, options) => {
+    if (config.storage === 'database') ctx.using(['database'], async (ctx) => {
       ctx.model.extend('booru_local', {
         storeId: 'string',
         storeName: 'text',
@@ -42,7 +46,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
       this.imageMap = await ctx.database.get('booru_local', {})
     })
 
-    if (this.config.storage === 'file') {
+    if (config.storage === 'file') {
       const absMap = resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap)
       if (!existsSync(resolve(ctx.root.baseDir, LocalImageSource.DataDir)))
         mkdirs(resolve(ctx.root.baseDir, LocalImageSource.DataDir))
@@ -61,7 +65,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     }
 
     // TODO: cache storage
-    if (this.config.storage === 'cache') this.ctx.using(['cache'], () => { })
+    if (config.storage === 'cache') ctx.using(['cache'], () => { })
 
     ctx.on('ready', async () => {
       if (config.endpoint.length <= 0) return this.logger.warn('no folder yet')
@@ -72,6 +76,8 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         images: 0
       }
       this.logger.info('Initializing storages...')
+      // duplicate check
+      this.config.endpoint = [...new Set(this.config.endpoint)]
       if (this.imageMap.length > 0) mapping = mapping.update(this.imageMap)
       // mapping the folders to memory by loop
       for await (let path of config.endpoint) {
@@ -102,11 +108,33 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     if (this.imageMap.length < 1) return undefined
-    const map = this.imageMap.length === 1 ? this.imageMap[0] : Random.pick(this.imageMap)
-    if (query.tags.length > 0) {
-      map.images = map.images.filter(img => [...new Set([...img.tags, ...query.tags])].length > 0)
+    let pickPool = [];
+    // Flatten all maps
+    if (this.imageMap.length === 1) {
+      for (const storage of this.imageMap) {
+        if (query.tags.length > 0) {
+          // filter by tags
+          for (const image of storage.images) {
+            if (query.tags.every(tag => image.tags.includes(tag)))
+              pickPool.push(image)
+          }
+        } else {
+          // pick from all images
+          pickPool.push(...storage.images)
+        }
+      }
+    } else {
+      pickPool = this.imageMap.map((storage) => {
+        if (query.tags.length > 0) {
+          // filter by tags
+          return storage.images.filter((image) => query.tags.every(tag => image.tags.includes(tag)))
+        } else {
+          // pick from all images
+          return storage.images
+        }
+      })
     }
-    const picker = Random.pick(map.images, query.count)
+    const picker = Random.pick(pickPool, query.count)
     return picker.map(img => {
       return {
         url: pathToFileURL(img.path).href,
@@ -137,7 +165,7 @@ namespace LocalImageSource {
       // TODO: Schema.path()?
       endpoint: Schema.array(String).description('图源文件夹，支持多个不同的文件夹'),
       storage: Schema.union<Mapping.Storage>(['file', 'database']).description('图源数据保存方式').default('file'),
-      reload: Schema.boolean().description('每次启动时重新加载所有图片').default(false),
+      reload: Schema.boolean().description('每次启动时重新构建图源数据').default(false),
       languages: Schema.array(String).description('支持的语言').default(['zh-CN'])
     }).description('图源设置'),
     Schema.object({
