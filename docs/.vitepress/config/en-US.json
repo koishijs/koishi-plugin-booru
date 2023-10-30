@@ -1,0 +1,132 @@
+{
+  "description": "A lot of image galleries, whatever you want.",
+  "head": [
+    [
+      "link",
+      {
+        "rel": "icon",
+        "href": "https://koishi.chat/logo.png"
+      }
+    ],
+    [
+      "link",
+      {
+        "rel": "manifest",
+        "href": "/manifest/en-US.json"
+      }
+    ],
+    [
+      "meta",
+      {
+        "name": "theme-color",
+        "content": "#5546a3"
+      }
+    ]
+  ],
+  "themeConfig": {
+    "editLink": {
+      "text": "Translate this page on Crowdin",
+      "pattern": "https://crowdin.com/translate/koishi/:id/zhcn-enus"
+    },
+    "sidebar": {
+      "/": [
+        {
+          "text": "Developing Guide",
+          "items": [
+            {
+              "text": "Introduction",
+              "link": "/"
+            },
+            {
+              "text": "Usage",
+              "link": "/usage"
+            },
+            {
+              "text": "配置项",
+              "link": "/config"
+            }
+          ]
+        },
+        {
+          "text": "Plugins",
+          "items": [
+            {
+              "text": "Danbooru",
+              "link": "/plugins/danbooru"
+            },
+            {
+              "text": "e621",
+              "link": "/plugins/e621"
+            },
+            {
+              "text": "Gelbooru",
+              "link": "/plugins/gelbooru"
+            },
+            {
+              "text": "Konachan",
+              "link": "/plugins/konachan"
+            },
+            {
+              "text": "Lolibooru",
+              "link": "/plugins/lolibooru"
+            },
+            {
+              "text": "Lolicon",
+              "link": "/plugins/lolicon"
+            },
+            {
+              "text": "Local",
+              "link": "/plugins/local"
+            },
+            {
+              "text": "Pixiv",
+              "link": "/plugins/pixiv"
+            },
+            {
+              "text": "Safebooru",
+              "link": "/plugins/safebooru"
+            },
+            {
+              "text": "Sankaku",
+              "link": "/plugins/sankaku"
+            },
+            {
+              "text": "Yande",
+              "link": "/plugins/yande"
+            }
+          ]
+        },
+        {
+          "text": "Develop",
+          "items": [
+            {
+              "text": "图源",
+              "link": "/develop/source"
+            },
+            {
+              "text": "service",
+              "link": "/develop/service"
+            },
+            {
+              "text": "API",
+              "link": "/develop/api"
+            }
+          ]
+        },
+        {
+          "text": "More",
+          "items": [
+            {
+              "text": "Koishi 官网",
+              "link": "https://koishi.chat"
+            },
+            {
+              "text": "爱发电：@迷子",
+              "link": "https://afdian.net/a/ff14_hamster"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
