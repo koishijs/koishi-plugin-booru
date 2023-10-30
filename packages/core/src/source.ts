@@ -1,7 +1,7 @@
 import { Context, Schema } from 'koishi'
 
 export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
-  static using = ['booru']
+  static inject = ['booru']
 
   languages: string[] = []
   source: string
