@@ -14,6 +14,10 @@ declare module 'koishi' {
 }
 
 class ImageService extends Service {
+  static inject = {
+    required: [],
+    optional: ['assets'],
+  }
   private sources: ImageSource[] = []
   private languageDetect = new LanguageDetect()
 
@@ -150,6 +154,11 @@ export const Config = Schema.intersect([
     base64: Schema.boolean().default(false).description('使用 base64 发送图片。')
   }).description('输出设置'),
 ])
+
+export const inject = {
+  required: [],
+  optional: ['assets'],
+}
 
 export function apply(ctx: Context, config: Config) {
   ctx.plugin(ImageService, config)
