@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-booru-e621",
   "description": "Image service by e621/e926 for Koishi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -50,6 +50,6 @@
     "koishi-plugin-booru": "^1.0.3"
   },
   "devDependencies": {
-    "koishi": "^4.12.4"
+    "koishi": "^4.15.2"
   }
 }
