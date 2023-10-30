@@ -6,6 +6,7 @@ commands:
     messages:
       no-source: ソースプラグインが見つかりませんでした。プラグインマーケットプレイスから booru ソースプラグインを追加及び有効にしてください (一般的に、booru ソースプラグイン名は「booru₋」で始まります)。
       no-result: クエリが一致する画像が見つかりません。
+      no-image: 获取图片失败
       output:
         image: <message><image url={url}></image></message>
         info: |

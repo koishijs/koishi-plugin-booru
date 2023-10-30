@@ -45,6 +45,8 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
 
       return data.illusts
         .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
+        .filter((illust) => illust.x_restrict <= this.config.rank)
+        .filter((illust) => illust.illust_ai_type <= this.config.ai)
         .slice(0, query.count)
         .map((illust) => {
           let url = ''
@@ -132,6 +134,8 @@ namespace PixivImageSource {
     endpoint: string
     token?: string
     minBookmarks: number
+    rank: number
+    ai: number
     proxy?: { endpoint: string } | string
   }
 
@@ -150,6 +154,16 @@ namespace PixivImageSource {
           endpoint: Schema.string().required().description('反代服务的地址。'),
         }).description('自定义'),
       ]).description('Pixiv 反代服务。').default('https://i.pixiv.re'),
+      rank: Schema.union([
+        Schema.const(0).description('全年龄'),
+        Schema.const(1).description('R18'),
+        Schema.const(2).description('R18G')
+      ]).description('年龄分级').default(0),
+      ai: Schema.union([
+        Schema.const(0).description('不允许AI作品'),
+        Schema.const(1).description('允许未知（旧画作或字段未更新）'),
+        Schema.const(2).description('允许AI作品')
+      ]).description('是否允许搜索AI作品').default(0)
     }).description('搜索设置'),
   ])
 }
