@@ -24,7 +24,7 @@ body:
         - Safebooru
         - SankakuComplex
         - Yande.re
-        - Other
+        - Others
     validations:
       required: true
   - type: textarea
