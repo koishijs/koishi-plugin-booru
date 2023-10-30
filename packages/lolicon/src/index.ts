@@ -20,6 +20,7 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
       r18: this.config.r18,
       tag: query.tags,
       num: query.count,
+      excludeAI: this.config.excludeAI,
       proxy,
     }
     const resp = await this.ctx.http.post<Lolicon.Response>(this.config.endpoint, param)
@@ -28,16 +29,19 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
       return
     }
 
-    return resp.data.map((setu) => {
-      return {
-        url: setu.urls.original,
-        title: setu.title,
-        author: setu.author,
-        nsfw: setu.r18,
-        tags: setu.tags,
-        pageUrl: `https://pixiv.net/i/${setu.pid}`,
-      }
-    })
+    return resp.data
+      .filter((setu) => !(this.config.excludeAI && setu.aiType === 2))
+      .filter((setu) => !!this.config.r18 || !!this.config.r18 === setu.r18)
+      .map((setu) => {
+        return {
+          url: setu.urls.original,
+          title: setu.title,
+          author: setu.author,
+          nsfw: setu.r18,
+          tags: setu.tags,
+          pageUrl: `https://pixiv.net/i/${setu.pid}`,
+        }
+      })
   }
 }
 
@@ -46,6 +50,7 @@ namespace LoliconImageSource {
     endpoint: string
     r18: number
     proxy: { endpoint: string } | string
+    excludeAI: boolean
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -65,6 +70,10 @@ namespace LoliconImageSource {
           endpoint: Schema.string().required().description('反代服务的地址。'),
         }).description('自定义'),
       ]).description('Pixiv 反代服务。').default('i.pixiv.re'),
+      excludeAI: Schema.union([
+        Schema.const(true).description('排除AI作品'),
+        Schema.const(false).description('不排除AI作品')
+      ]).description('是否排除 AI 作品。').default(true)
     }).description('搜索设置'),
   ])
 }
