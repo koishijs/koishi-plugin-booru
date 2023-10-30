@@ -1,7 +1,8 @@
 import { Context, Schema } from 'koishi'
+import type { Inject } from 'cordis'
 
 export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
-  static inject = ['booru']
+  static inject: string[] | Partial<Inject> = ['booru']
 
   languages: string[] = []
   source: string
