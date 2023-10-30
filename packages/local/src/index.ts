@@ -16,7 +16,7 @@ declare module 'koishi' {
 }
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
-  static inject = {
+  static override inject = {
     required: ['booru'],
     optional: ['database', 'cache']
   }
