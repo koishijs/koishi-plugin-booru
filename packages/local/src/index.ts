@@ -110,7 +110,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     if (this.imageMap.length < 1) return undefined
     let pickPool = [];
     // Flatten all maps
-    if (this.imageMap.length === 1) {
+    if (this.imageMap.length > 1) {
       for (const storage of this.imageMap) {
         if (query.tags.length > 0) {
           // filter by tags
@@ -124,6 +124,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         }
       }
     } else {
+      // pick from one image map
       pickPool = this.imageMap.map((storage) => {
         if (query.tags.length > 0) {
           // filter by tags
@@ -132,7 +133,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
           // pick from all images
           return storage.images
         }
-      })
+      }).flat()
     }
     const picker = Random.pick(pickPool, query.count)
     return picker.map(img => {
