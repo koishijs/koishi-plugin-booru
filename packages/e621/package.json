@@ -1,24 +1,27 @@
 {
-  "name": "koishi-plugin-booru",
-  "description": "Image service for Koishi",
-  "version": "1.0.3",
+  "name": "koishi-plugin-booru-e621",
+  "description": "Image service by e621/e926 for Koishi",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
     "dist"
   ],
-  "author": "Shigma <shigma10826@gmail.com>",
+  "author": {
+    "name": "Seidko",
+    "email": "seidko.coding@gmail.com"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
-    "directory": "packages/core"
+    "directory": "packages/e621"
   },
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
   },
-  "homepage": "https://booru.koishi.chat",
+  "homepage": "https://booru.koishi.chat/plugins/e621.html",
   "keywords": [
     "chatbot",
     "koishi",
@@ -28,29 +31,25 @@
     "image",
     "picture",
     "random",
-    "setu"
+    "setu",
+    "e621",
+    "e926"
   ],
   "koishi": {
     "description": {
-      "zh": "最好的涩图插件！"
+      "zh": "最好的涩图插件！ - e621/e926 图源支持"
     },
     "service": {
-      "implements": [
+      "require": [
         "booru"
-      ],
-      "optional": [
-        "assets"
       ]
     }
   },
   "peerDependencies": {
-    "koishi": "^4.10.0"
+    "koishi": "^4.10.0",
+    "koishi-plugin-booru": "^1.0.3"
   },
   "devDependencies": {
-    "@koishijs/assets": "^1.0.2",
     "koishi": "^4.12.4"
-  },
-  "dependencies": {
-    "languagedetect": "^2.0.0"
   }
 }

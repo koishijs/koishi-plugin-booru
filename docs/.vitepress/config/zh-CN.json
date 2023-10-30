@@ -22,10 +22,12 @@
         "text": "插件",
         "items": [
           { "text": "Danbooru", "link": "/plugins/danbooru" },
+          { "text": "e621", "link": "/plugins/e621" },
           { "text": "Gelbooru", "link": "/plugins/gelbooru" },
           { "text": "Konachan", "link": "/plugins/konachan" },
           { "text": "Lolibooru", "link": "/plugins/lolibooru" },
           { "text": "Lolicon", "link": "/plugins/lolicon" },
+          { "text": "Local", "link": "/plugins/local" },
           { "text": "Pixiv", "link": "/plugins/pixiv" },
           { "text": "Safebooru", "link": "/plugins/safebooru" },
           { "text": "Sankaku", "link": "/plugins/sankaku" },

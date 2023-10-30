@@ -1,6 +1,7 @@
-import { Context, Dict, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
+import { Context, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
+import { } from '@koishijs/assets'
 
 export * from './source'
 
@@ -13,32 +14,29 @@ declare module 'koishi' {
 }
 
 class ImageService extends Service {
-  private config: Config
-  private sources: Dict<ImageSource> = {}
-  private counter = 0
-
+  private sources: ImageSource[] = []
   private languageDetect = new LanguageDetect()
 
-  constructor(ctx: Context, config: Config) {
+  constructor(ctx: Context, private config: Config) {
     super(ctx, 'booru', true)
     this.config = config
   }
 
   register(source: ImageSource) {
-    const id = ++this.counter
-    this.sources[id] = source
-    return this.caller.collect('booru', () => delete this.sources[id])
+    const index = this.sources.length
+    this.sources.push(source)
+    return this.caller.collect('booru', () => delete this.sources[index])
   }
 
   hasSource(name?: string): boolean {
     if (name) {
-      return Object.values(this.sources).some((source) => source.config.label === name)
+      return this.sources.some((source) => source.config.label === name)
     }
-    return Object.keys(this.sources).length > 0
+    return this.sources.some(Boolean)
   }
 
   async get(query: ImageService.Query): Promise<ImageArray> {
-    const sources = Object.values(this.sources)
+    const sources = this.sources
       .filter((source) => {
         if (query.labels.length && !query.labels.includes(source.config.label)) return false
         if (this.config.detectLanguage) {
@@ -59,7 +57,7 @@ class ImageService extends Service {
     // return the first non-empty result
     for (const source of sources) {
       const tags = source.tokenize(query.query)
-      const images = await source.get({ ...query, tags, raw: query.query }).catch((err) => {
+      const images = await source.get({ count: query.count, tags, raw: query.query }).catch((err) => {
         if (Quester.isAxiosError(err)) {
           logger.warn(`source ${source.config.label} request failed with code ${err.status} ${JSON.stringify(err.response?.data)}`)
         } else {
@@ -73,6 +71,26 @@ class ImageService extends Service {
     }
 
     return undefined
+  }
+
+  async imgUrlToAssetUrl(image: ImageSource.Result): Promise<string> {
+    return await this.ctx.assets.upload(image.url, Date.now().toString()).catch(() => {
+      logger.warn('Request failed when trying to store image with assets service.')
+      return null
+    })
+  }
+
+  async imgUrlToBase64(image: ImageSource.Result): Promise<string> {
+    return this.ctx.http.axios(image.url, { method: 'GET', responseType: 'arraybuffer' }).then(resp => {
+      return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data, 'binary').toString('base64')}`
+    }).catch(err => {
+      if (Quester.isAxiosError(err)) {
+        logger.warn(`Request images failed with HTTP status ${err.status}: ${JSON.stringify(err.response?.data)}.`)
+      } else {
+        logger.error(`Request images failed with unknown error: ${err.message}.`)
+      }
+      return null
+    })
   }
 }
 
@@ -97,6 +115,8 @@ export interface Config {
   maxCount: number
   output: OutputType
   nsfw: boolean
+  asset: boolean
+  base64: boolean
 }
 
 interface ImageArray extends Array<ImageSource.Result> {
@@ -126,6 +146,8 @@ export const Config = Schema.intersect([
       Schema.const(2).description('发送图片、相关信息和链接'),
       Schema.const(3).description('发送全部信息'),
     ]).description('输出方式。').default(1),
+    asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
+    base64: Schema.boolean().default(false).description('使用 base64 发送图片。')
   }).description('输出设置'),
 ])
 
@@ -148,7 +170,7 @@ export function apply(ctx: Context, config: Config) {
     .option('count', '-c <count:number>', { type: count, fallback: 1 })
     .option('label', '-l <label:string>')
     .action(async ({ session, options }, query) => {
-      if (!ctx.booru.hasSource()) return session.text('.no-source')
+      if (!ctx.booru.hasSource(options.label)) return session.text('.no-source')
 
       query = query?.trim() ?? ''
 
@@ -164,7 +186,22 @@ export function apply(ctx: Context, config: Config) {
       if (!filtered?.length) return session?.text('.no-result')
 
       const output: (string | Element)[] = []
+
       for (const image of filtered) {
+        if (config.asset && ctx.assets) {
+          image.url = await ctx.booru.imgUrlToAssetUrl(image)
+          if (!image.url) {
+            output.unshift(session.text('.no-image'))
+            continue
+          }
+        }
+        if (config.base64) {
+          image.url = await ctx.booru.imgUrlToBase64(image)
+          if (!image.url) {
+            output.unshift(session.text('.no-image'))
+            continue
+          }
+        }
         switch (config.output) {
           case OutputType.All:
             if (image.tags)

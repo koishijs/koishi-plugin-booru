@@ -1,24 +1,27 @@
 {
-  "name": "koishi-plugin-booru",
-  "description": "Image service for Koishi",
-  "version": "1.0.3",
+  "name": "koishi-plugin-booru-local",
+  "description": "Image service from local directories for Koishi",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
     "dist"
   ],
-  "author": "Shigma <shigma10826@gmail.com>",
+  "author": {
+    "name": "Lipraty",
+    "email": "i@lonay.me"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
-    "directory": "packages/core"
+    "directory": "packages/local"
   },
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
   },
-  "homepage": "https://booru.koishi.chat",
+  "homepage": "https://booru.koishi.chat/plugins/local.html",
   "keywords": [
     "chatbot",
     "koishi",
@@ -28,29 +31,24 @@
     "image",
     "picture",
     "random",
-    "setu"
+    "setu",
+    "local"
   ],
   "koishi": {
     "description": {
-      "zh": "最好的涩图插件！"
+      "zh": "最好的涩图插件！ - 本地图源支持"
     },
     "service": {
-      "implements": [
+      "require": [
         "booru"
       ],
       "optional": [
-        "assets"
+        "database"
       ]
     }
   },
   "peerDependencies": {
-    "koishi": "^4.10.0"
-  },
-  "devDependencies": {
-    "@koishijs/assets": "^1.0.2",
-    "koishi": "^4.12.4"
-  },
-  "dependencies": {
-    "languagedetect": "^2.0.0"
+    "koishi": "^4.10.0",
+    "koishi-plugin-booru": "^1.0.3"
   }
 }

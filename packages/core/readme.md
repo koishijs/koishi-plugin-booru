@@ -5,10 +5,12 @@
 ## 图源插件
 
 - [koishi-plugin-booru-danbooru](https://booru.koishi.chat/plugins/danbooru.html)
+- [koishi-plugin-booru-e621](https://booru.koishi.chat/plugins/e621.html)
 - [koishi-plugin-booru-gelbooru](https://booru.koishi.chat/plugins/gelbooru.html)
 - [koishi-plugin-booru-konachan](https://booru.koishi.chat/plugins/konachan.html)
 - [koishi-plugin-booru-lolibooru](https://booru.koishi.chat/plugins/lolibooru.html)
 - [koishi-plugin-booru-lolicon](https://booru.koishi.chat/plugins/lolicon.html)
+- [koishi-plugin-booru-local](https://booru.koishi.chat/plugins/local.html)
 - [koishi-plugin-booru-pixiv](https://booru.koishi.chat/plugins/pixiv.html)
 - [koishi-plugin-booru-safebooru](https://booru.koishi.chat/plugins/safebooru.html)
 - [koishi-plugin-booru-sankaku](https://booru.koishi.chat/plugins/sankaku.html)
