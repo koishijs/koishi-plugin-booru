@@ -63,10 +63,12 @@ class ImageService extends Service {
       const tags = source.tokenize(query.query)
       const images = await source.get({ count: query.count, tags, raw: query.query }).catch((err) => {
         if (Quester.isAxiosError(err)) {
-          logger.warn(`source ${source.config.label} request failed with code ${err.status} ${JSON.stringify(err.response?.data)}`)
+          logger.warn(`source ${source.config.label} request failed ${err.status ? `with code ${err.status} ${JSON.stringify(err.response?.data)}` : ''}`)
         } else {
           logger.error(`source ${source.config.label} unknown error: ${err.message}`)
         }
+        // log full error in debug mode, if user want to see it.
+        logger.debug(err)
         return []
       })
       if (images?.length) return Object.assign(images, {
