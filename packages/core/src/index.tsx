@@ -228,6 +228,6 @@ export function apply(ctx: Context, config: Config) {
         }
       }
 
-      return output.length === 1 ? output[0] : `<message forward>${output.join('\n')}</message>`
+      return output.length === 1 ? output[0] : <message forward>{output.join('\n')}</message>
     })
 }
