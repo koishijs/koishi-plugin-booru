@@ -115,6 +115,12 @@ export enum OutputType {
   All = 3,
 }
 
+export enum SpoilerType {
+  Disabled = 0,
+  All = 1,
+  OnlyNSFW = 2,
+}
+
 export interface Config {
   detectLanguage: boolean
   confidence: number
@@ -123,6 +129,7 @@ export interface Config {
   nsfw: boolean
   asset: boolean
   base64: boolean
+  spoiler: SpoilerType
 }
 
 interface ImageArray extends Array<ImageSource.Result> {
@@ -153,7 +160,12 @@ export const Config = Schema.intersect([
       Schema.const(3).description('发送全部信息'),
     ]).description('输出方式。').default(1),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
-    base64: Schema.boolean().default(false).description('使用 base64 发送图片。')
+    base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
+    spoiler: Schema.union([
+      Schema.const(0).description('禁用'),
+      Schema.const(1).description('所有图片'),
+      Schema.const(2).description('仅色图 (NSFW)'),
+    ]).description('发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。').default(0),
   }).description('输出设置'),
 ])
 
