@@ -208,38 +208,51 @@ export function apply(ctx: Context, config: Config) {
 
       if (!filtered?.length) return session?.text('.no-result')
 
-      const output: (string | Element)[] = []
+      const output: Element[] = []
 
       for (const image of filtered) {
         if (config.asset && ctx.assets) {
           image.url = await ctx.booru.imgUrlToAssetUrl(image)
           if (!image.url) {
-            output.unshift(session.text('.no-image'))
+            output.unshift(<i18n path=".no-image"></i18n>)
             continue
           }
         }
         if (config.base64) {
           image.url = await ctx.booru.imgUrlToBase64(image)
           if (!image.url) {
-            output.unshift(session.text('.no-image'))
+            output.unshift(<i18n path=".no-image"></i18n>)
             continue
           }
         }
         switch (config.output) {
           case OutputType.All:
             if (image.tags)
-              output.unshift(session.text('.output.source', { ...image, source, tags: image.tags.join(' ') }))
+              output.unshift(<i18n path='.output.tags'>{{ ...image, source, tags: image.tags.join(' ') }}</i18n>)
           case OutputType.ImageAndLink:
             if (image.pageUrl || image.authorUrl)
-              output.unshift(session.text('.output.link', image))
+              output.unshift(<i18n path='.output.link'>{image}</i18n>)
           case OutputType.ImageAndInfo:
             if (image.title && image.author && image.desc)
-              output.unshift(session.text('.output.info', image))
+              output.unshift(<i18n path='.output.info'>{image}</i18n>)
           case OutputType.ImageOnly:
-            output.unshift(session.text('.output.image', image))
+            output.unshift(
+              <message>{(() => {
+                switch (config.spoiler) {
+                  case SpoilerType.Disabled:
+                    return <image url={image.url}></image>
+                  case SpoilerType.All:
+                    return <spl><image url={image.url}></image></spl>
+                  case SpoilerType.OnlyNSFW:
+                    return image.nsfw ? <spl><image url={image.url}></image></spl> : <image url={image.url}></image>
+                }
+              })}</message>
+            )
         }
       }
-
-      return output.length === 1 ? output[0] : <message forward>{output.join('\n')}</message>
+      if (['qq', 'red', 'onebot'].includes(session.platform) && config.spoiler !== SpoilerType.Disabled)
+        return <message forward>{output.join('\n')}</message>
+      else
+        return output.length === 1 ? output[0] : <message forward>{output.join('\n')}</message>
     })
 }
