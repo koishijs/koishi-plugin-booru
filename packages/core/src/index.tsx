@@ -228,31 +228,52 @@ export function apply(ctx: Context, config: Config) {
         switch (config.output) {
           case OutputType.All:
             if (image.tags)
-              output.unshift(<i18n path='.output.tags'>{{ ...image, source, tags: image.tags.join(' ') }}</i18n>)
+              output.unshift(<message>
+                <p><i18 path='.output.source'>{[source]}</i18></p>
+                <p><i18n path='.output.tags'>{[image.tags.join(', ')]}</i18n></p>
+              </message>)
           case OutputType.ImageAndLink:
             if (image.pageUrl || image.authorUrl)
-              output.unshift(<i18n path='.output.link'>{image}</i18n>)
+              output.unshift(<message>
+                <p><i18n path='.output.link'>{[image.pageUrl]}</i18n></p>
+                <p><i18n path='.output.homepage'>{[image.authorUrl]}</i18n></p>
+              </message>)
           case OutputType.ImageAndInfo:
             if (image.title && image.author && image.desc)
-              output.unshift(<i18n path='.output.info'>{image}</i18n>)
+              output.unshift(<message>
+                <p>{image.title}</p>
+                <p><i18n path='.output.author'>{[image.author]}</i18n></p>
+                <p><i18n path='.output.desc'>{[image.desc]}</i18n></p>
+              </message>)
           case OutputType.ImageOnly:
             output.unshift(
-              <message>{(() => {
-                switch (config.spoiler) {
-                  case SpoilerType.Disabled:
-                    return <image url={image.url}></image>
-                  case SpoilerType.All:
-                    return <spl><image url={image.url}></image></spl>
-                  case SpoilerType.OnlyNSFW:
-                    return image.nsfw ? <spl><image url={image.url}></image></spl> : <image url={image.url}></image>
-                }
-              })}</message>
+              // not working
+              // <message>{(() => {
+              //   console.log(config.spoiler)
+              //   switch (config.spoiler) {
+              //     case SpoilerType.Disabled:
+              //       return <image url={image.url}></image>
+              //     case SpoilerType.All:
+              //       return <spl><image url={image.url}></image></spl>
+              //     case SpoilerType.OnlyNSFW:
+              //       return image.nsfw ? <spl><image url={image.url}></image></spl> : <image url={image.url}></image>
+              //   }
+              // })}</message>
+              <message>{
+                config.spoiler === SpoilerType.Disabled
+                  ? <image url={image.url}></image>
+                  : config.spoiler === SpoilerType.All
+                    ? <spl><image url={image.url}></image></spl>
+                    : image.nsfw
+                      ? <spl><image url={image.url}></image></spl>
+                      : <image url={image.url}></image>
+              }</message>
             )
         }
       }
       if (['qq', 'red', 'onebot'].includes(session.platform) && config.spoiler !== SpoilerType.Disabled)
-        return <message forward>{output.join('\n')}</message>
+        return <message forward>{output}</message>
       else
-        return output.length === 1 ? output[0] : <message forward>{output.join('\n')}</message>
+        return output.length === 1 ? output[0] : <message forward>{output}</message>
     })
 }
