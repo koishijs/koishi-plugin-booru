@@ -247,27 +247,20 @@ export function apply(ctx: Context, config: Config) {
               </message>)
           case OutputType.ImageOnly:
             output.unshift(
-              // not working
-              // <message>{(() => {
-              //   console.log(config.spoiler)
-              //   switch (config.spoiler) {
-              //     case SpoilerType.Disabled:
-              //       return <image url={image.url}></image>
-              //     case SpoilerType.All:
-              //       return <spl><image url={image.url}></image></spl>
-              //     case SpoilerType.OnlyNSFW:
-              //       return image.nsfw ? <spl><image url={image.url}></image></spl> : <image url={image.url}></image>
-              //   }
-              // })}</message>
-              <message>{
-                config.spoiler === SpoilerType.Disabled
-                  ? <image url={image.url}></image>
-                  : config.spoiler === SpoilerType.All
-                    ? <spl><image url={image.url}></image></spl>
-                    : image.nsfw
-                      ? <spl><image url={image.url}></image></spl>
-                      : <image url={image.url}></image>
-              }</message>
+              /**
+               * @TODO waiting for upstream to support spoiler tag
+               */
+              <message>
+                <image spoiler={(() => {
+                  switch (config.spoiler) {
+                    case SpoilerType.Disabled:
+                      return false
+                    case SpoilerType.All:
+                      return true
+                    case SpoilerType.OnlyNSFW:
+                      return Boolean(image.nsfw)
+                  }
+                })()} url={image.url}></image></message>
             )
         }
       }
