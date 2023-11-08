@@ -10,8 +10,20 @@ commands:
       no-result: 没有找到符合条件的图片
       no-image: 获取图片失败
       output:
-        author: "作者: {0}"
-        homepage: "作者主页: {0}"
-        link: "页面地址: {0}"
-        source: "图源: {0}"
-        tags: "标签: {0}"
+        image: <message><image url={url}></image></message>
+        info: |
+          <message>
+            <p>{title}</p>
+            <p>作者: {author}</p>
+            <p>{desc}</p>
+          </message>
+        link: |
+          <message>
+            <p>页面地址: {pageUrl}</p>
+            <p>作者主页: {authorUrl}</p>
+          </message>
+        source: |
+          <message>
+            <p>图源: {source}</p>
+            <p>标签: {tags}</p>
+          </message>
