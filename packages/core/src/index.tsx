@@ -229,7 +229,7 @@ export function apply(ctx: Context, config: Config) {
           case OutputType.All:
             if (image.tags)
               output.unshift(<message>
-                <p><i18 path='.output.source'>{[source]}</i18></p>
+                <p><i18n path='.output.source'>{[source]}</i18n></p>
                 <p><i18n path='.output.tags'>{[image.tags.join(', ')]}</i18n></p>
               </message>)
           case OutputType.ImageAndLink:
