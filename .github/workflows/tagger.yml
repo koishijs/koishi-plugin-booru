@@ -1,0 +1,48 @@
+name: Tagger
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tagger:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Check current version
+        id: check_version
+        run: echo ::set-output name=VERSION::$(node -p "require('./package.json').version")
+
+      - name: Check remote tags
+        id: check_tags
+        run: |
+          git fetch --tags
+          echo ::set-output name=TAGS::$(git tag -l)
+
+      - name: Check if tag exists
+        id: check_tag
+        run: |
+          if [[ "${{ steps.check_tags.outputs.TAGS }}" == *"${{ steps.check_version.outputs.VERSION }}"* ]]; then
+            echo ::set-output name=TAG_EXISTS::true
+          else
+            echo ::set-output name=TAG_EXISTS::false
+          fi
+
+      - name: Create tag
+        id: create_tag
+        if: ${{ github.ref == 'refs/heads/master' && steps.check_tag.outputs.TAG_EXISTS == 'false' }}
+        run: echo ::set-output name=TAG::v${{ steps.check_version.outputs.VERSION }}
+
+      - name: Push tag
+        if: ${{ github.ref == 'refs/heads/master' && steps.check_tag.outputs.TAG_EXISTS == 'false' }}
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag ${{ steps.create_tag.outputs.TAG }}
+          git push origin ${{ steps.create_tag.outputs.TAG }}
