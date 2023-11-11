@@ -164,8 +164,8 @@ export const Config = Schema.intersect([
     spoiler: Schema.union([
       Schema.const(0).description('禁用'),
       Schema.const(1).description('所有图片'),
-      Schema.const(2).description('仅色图 (NSFW)'),
-    ]).description('发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。').default(0),
+      Schema.const(2).description('仅 NSFW 图片'),
+    ]).description('发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。').default(0).experimental(),
   }).description('输出设置'),
 ])
 
@@ -249,6 +249,7 @@ export function apply(ctx: Context, config: Config) {
             output.unshift(
               /**
                * @TODO waiting for upstream to support spoiler tag
+               * but is only is attribute, so it's can work now.
                */
               <message>
                 <image spoiler={(() => {
@@ -264,6 +265,8 @@ export function apply(ctx: Context, config: Config) {
             )
         }
       }
+      // the qq platform will can merge the all forward message with one element(forward message block).
+      // so can treat it as a spoiler message.
       if (['qq', 'red', 'onebot'].includes(session.platform) && config.spoiler !== SpoilerType.Disabled)
         return <message forward>{output}</message>
       else
