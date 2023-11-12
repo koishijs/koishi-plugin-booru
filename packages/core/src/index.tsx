@@ -115,6 +115,12 @@ export enum OutputType {
   All = 3,
 }
 
+export enum SpoilerType {
+  Disabled = 0,
+  All = 1,
+  OnlyNSFW = 2,
+}
+
 export interface Config {
   detectLanguage: boolean
   confidence: number
@@ -123,6 +129,7 @@ export interface Config {
   nsfw: boolean
   asset: boolean
   base64: boolean
+  spoiler: SpoilerType
 }
 
 interface ImageArray extends Array<ImageSource.Result> {
@@ -153,7 +160,12 @@ export const Config = Schema.intersect([
       Schema.const(3).description('发送全部信息'),
     ]).description('输出方式。').default(1),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
-    base64: Schema.boolean().default(false).description('使用 base64 发送图片。')
+    base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
+    spoiler: Schema.union([
+      Schema.const(0).description('禁用'),
+      Schema.const(1).description('所有图片'),
+      Schema.const(2).description('仅 NSFW 图片'),
+    ]).description('发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。').default(0).experimental(),
   }).description('输出设置'),
 ])
 
@@ -196,38 +208,68 @@ export function apply(ctx: Context, config: Config) {
 
       if (!filtered?.length) return session?.text('.no-result')
 
-      const output: (string | Element)[] = []
+      const output: Element[] = []
 
       for (const image of filtered) {
         if (config.asset && ctx.assets) {
           image.url = await ctx.booru.imgUrlToAssetUrl(image)
           if (!image.url) {
-            output.unshift(session.text('.no-image'))
+            output.unshift(<i18n path=".no-image"></i18n>)
             continue
           }
         }
         if (config.base64) {
           image.url = await ctx.booru.imgUrlToBase64(image)
           if (!image.url) {
-            output.unshift(session.text('.no-image'))
+            output.unshift(<i18n path=".no-image"></i18n>)
             continue
           }
         }
         switch (config.output) {
           case OutputType.All:
             if (image.tags)
-              output.unshift(session.text('.output.source', { ...image, source, tags: image.tags.join(' ') }))
+              output.unshift(<message>
+                <p><i18n path='.output.source'>{[source]}</i18n></p>
+                <p><i18n path='.output.tags'>{[image.tags.join(', ')]}</i18n></p>
+              </message>)
           case OutputType.ImageAndLink:
             if (image.pageUrl || image.authorUrl)
-              output.unshift(session.text('.output.link', image))
+              output.unshift(<message>
+                <p><i18n path='.output.link'>{[image.pageUrl]}</i18n></p>
+                <p><i18n path='.output.homepage'>{[image.authorUrl]}</i18n></p>
+              </message>)
           case OutputType.ImageAndInfo:
             if (image.title && image.author && image.desc)
-              output.unshift(session.text('.output.info', image))
+              output.unshift(<message>
+                <p>{image.title}</p>
+                <p><i18n path='.output.author'>{[image.author]}</i18n></p>
+                <p><i18n path='.output.desc'>{[image.desc]}</i18n></p>
+              </message>)
           case OutputType.ImageOnly:
-            output.unshift(session.text('.output.image', image))
+            output.unshift(
+              /**
+               * @TODO waiting for upstream to support spoiler tag
+               * but is only is attribute, so it's can work now.
+               */
+              <message>
+                <image spoiler={(() => {
+                  switch (config.spoiler) {
+                    case SpoilerType.Disabled:
+                      return false
+                    case SpoilerType.All:
+                      return true
+                    case SpoilerType.OnlyNSFW:
+                      return Boolean(image.nsfw)
+                  }
+                })()} url={image.url}></image></message>
+            )
         }
       }
-
-      return output.length === 1 ? output[0] : <message forward>{output.join('\n')}</message>
+      // the qq platform will can merge the all forward message with one element(forward message block).
+      // so can treat it as a spoiler message.
+      if (['qq', 'red', 'onebot'].includes(session.platform) && config.spoiler !== SpoilerType.Disabled)
+        return <message forward>{output}</message>
+      else
+        return output.length === 1 ? output[0] : <message forward>{output}</message>
     })
 }
