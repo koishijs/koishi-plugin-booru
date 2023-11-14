@@ -25,3 +25,30 @@ jobs:
 
       - name: Publish packages
         run: yarn pub
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+      - name: Install
+        run: yarn
+      - name: Build
+        run: yarn docs:build
+        env:
+          MEILISEARCH_HOST: ${{ secrets.MEILISEARCH_HOST }}
+          MEILISEARCH_READ_KEY: ${{ secrets.MEILISEARCH_READ_KEY }}
+          MEILISEARCH_WRITE_KEY: ${{ secrets.MEILISEARCH_WRITE_KEY }}
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.WORKFLOW_TOKEN }}
+          external_repository: koishi-bot/booru
+          publish_branch: pages
+          publish_dir: docs/.vitepress/dist
+          force_orphan: true
+          enable_jekyll: true
+          commit_message: '[skip ci] deploy'
