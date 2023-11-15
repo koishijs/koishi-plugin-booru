@@ -202,9 +202,9 @@ export function apply(ctx: Context, config: Config) {
         count: options.count,
         labels: options.label?.split(',')?.map((x) => x.trim())?.filter(Boolean) ?? [],
       })
-      const source = images.source
+      const source = images?.source
 
-      const filtered = images.filter((image) => config.nsfw || !image.nsfw)
+      const filtered = images?.filter((image) => config.nsfw || !image.nsfw)
 
       if (!filtered?.length) return session?.text('.no-result')
 
