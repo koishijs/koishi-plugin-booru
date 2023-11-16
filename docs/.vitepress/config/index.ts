@@ -10,7 +10,7 @@ export default defineConfig({
   },
 
   themeConfig: {
-    indexName: 'booru',
+    indexName: 'koishi-booru',
     socialLinks: {
       github: 'https://github.com/koishijs/koishi-plugin-booru',
     },
