@@ -23,7 +23,7 @@ jobs:
         id: check_tag
         run: |
           git fetch --tags
-          if [ -z "$(git tag -l | grep -w ${{ steps.check_version.outputs.TAG }})" ]; then
+          if [ -z "$(git tag -l | grep -w "^${{ steps.check_version.outputs.TAG }}\$")" ]; then
             echo "TAG_EXISTS=false" >> $GITHUB_OUTPUT
           else
             echo "TAG_EXISTS=true" >> $GITHUB_OUTPUT
