@@ -1,0 +1,27 @@
+commands:
+  booru:
+    description: 画像検索
+    options:
+      label: 検索タグを指定
+    messages:
+      no-source: ソースプラグインが見つかりませんでした。プラグインマーケットプレイスから booru ソースプラグインを追加及び有効にしてください (一般的に、booru ソースプラグイン名は「booru₋」で始まります)。
+      no-result: クエリが一致する画像が見つかりません。
+      no-image: 获取图片失败
+      output:
+        image: <message><image url={url}></image></message>
+        info: |
+          <message>
+            <p>{title}</p>
+            <p>絵師: {author}</p>
+            <p>{desc}</p>
+          </message>
+        link: |
+          <message>
+            <p>ページURL: {pageUrl}</p>
+            <p>絵師ホームページ: {authorUrl}</p>
+          </message>
+        source: |
+          <message>
+            <p>ソース: {source}</p>
+            <p>タグ: {tags}</p>
+          </message>

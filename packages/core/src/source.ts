@@ -1,9 +1,11 @@
 import { Context, Schema } from 'koishi'
+import type { Inject } from 'cordis'
 
 export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
-  static using = ['booru']
+  static inject: string[] | Partial<Inject> = ['booru']
 
   languages: string[] = []
+  source: string
 
   constructor(public ctx: Context, public config: Config) {
     this.ctx.booru.register(this)

@@ -1,0 +1,16 @@
+{
+  "name": "koishi-plugin-booru",
+  "short_name": "Booru",
+  "description": "A lot of image galleries, whatever you want.",
+  "start_url": "/en-US/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5546a3",
+  "icons": [
+    {
+      "src": "https://koishi.chat/logo.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    }
+  ]
+}

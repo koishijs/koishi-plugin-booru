@@ -1,6 +1,5 @@
 import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
-
 import { PixivAppApi } from './types'
 
 const CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
@@ -9,6 +8,7 @@ const HASH_SECRET = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0
 
 class PixivImageSource extends ImageSource<PixivImageSource.Config> {
   languages = ['en', 'zh', 'zh-CN', 'zh-TW', 'ja', 'ko']
+  source = 'pixiv'
 
   private userId?: string
   private accessToken?: string
@@ -45,6 +45,8 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
 
       return data.illusts
         .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
+        .filter((illust) => illust.x_restrict <= this.config.rank)
+        .filter((illust) => illust.illust_ai_type <= this.config.ai)
         .slice(0, query.count)
         .map((illust) => {
           let url = ''
@@ -56,7 +58,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
 
           if (this.config.proxy) {
             const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy.endpoint
-            url = proxy + url.replace(/^https?:\/\/i\.pximg\.net\//, '')
+            url = url.replace(/^https?:\/\/i\.pximg\.net/, trimSlash(proxy))
           }
 
           return {
@@ -132,6 +134,8 @@ namespace PixivImageSource {
     endpoint: string
     token?: string
     minBookmarks: number
+    rank: number
+    ai: number
     proxy?: { endpoint: string } | string
   }
 
@@ -143,12 +147,23 @@ namespace PixivImageSource {
       token: Schema.string().required().description('Pixiv 的 Refresh Token'),
       minBookmarks: Schema.number().default(0).description('最少收藏数'),
       proxy: Schema.union([
-        Schema.const('i.pixiv.re'),
-        Schema.const('i.pixiv.cat'),
+        Schema.const('https://i.pixiv.re').description('i.pixiv.re'),
+        Schema.const('https://i.pixiv.cat').description('i.pixiv.cat'),
+        Schema.const('https://i.pixiv.nl').description('i.pixiv.nl'),
         Schema.object({
           endpoint: Schema.string().required().description('反代服务的地址。'),
         }).description('自定义'),
-      ]).description('Pixiv 反代服务。').default('i.pixiv.re'),
+      ]).description('Pixiv 反代服务。').default('https://i.pixiv.re'),
+      rank: Schema.union([
+        Schema.const(0).description('全年龄'),
+        Schema.const(1).description('R18'),
+        Schema.const(2).description('R18G')
+      ]).description('年龄分级').default(0),
+      ai: Schema.union([
+        Schema.const(0).description('不允许AI作品'),
+        Schema.const(1).description('允许未知（旧画作或字段未更新）'),
+        Schema.const(2).description('允许AI作品')
+      ]).description('是否允许搜索AI作品').default(0)
     }).description('搜索设置'),
   ])
 }

@@ -1,0 +1,52 @@
+{
+  "description": "最好的涩图插件！",
+  "head": [
+    ["link", { "rel": "icon", "href": "https://koishi.chat/logo.png" }],
+    ["link", { "rel": "manifest", "href": "/manifest/zh-CN.json" }],
+    ["meta", { "name": "theme-color", "content": "#5546a3" }]
+  ],
+  "themeConfig": {
+    "editLink": {
+      "text": "在 GitHub 编辑此页面",
+      "pattern": "https://github.com/koishijs/koishi-plugin-booru/edit/main/docs/:path"
+    },
+    "sidebar": {
+      "/": [{
+        "text": "指南",
+        "items": [
+          { "text": "介绍", "link": "/" },
+          { "text": "使用", "link": "/usage"},
+          { "text": "配置项", "link": "/config" }
+        ]
+      }, {
+        "text": "插件",
+        "items": [
+          { "text": "Danbooru", "link": "/plugins/danbooru" },
+          { "text": "e621", "link": "/plugins/e621" },
+          { "text": "Gelbooru", "link": "/plugins/gelbooru" },
+          { "text": "Konachan", "link": "/plugins/konachan" },
+          { "text": "Lolibooru", "link": "/plugins/lolibooru" },
+          { "text": "Lolicon", "link": "/plugins/lolicon" },
+          { "text": "Local", "link": "/plugins/local" },
+          { "text": "Pixiv", "link": "/plugins/pixiv" },
+          { "text": "Safebooru", "link": "/plugins/safebooru" },
+          { "text": "Sankaku", "link": "/plugins/sankaku" },
+          { "text": "Yande", "link": "/plugins/yande" }
+        ]
+      }, {
+        "text": "开发",
+        "items": [
+          { "text": "图源", "link": "/develop/source" },
+          { "text": "服务", "link": "/develop/service" },
+          { "text": "API", "link": "/develop/api" }
+        ]
+      }, {
+        "text": "更多",
+        "items": [
+          { "text": "Koishi 官网", "link": "https://koishi.chat" },
+          { "text": "爱发电：@迷子", "link": "https://afdian.net/a/ff14_hamster" }
+        ]
+      }]
+    }
+  }
+}

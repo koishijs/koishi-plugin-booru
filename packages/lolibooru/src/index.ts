@@ -4,6 +4,7 @@ import { Lolibooru } from './types'
 
 class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
   languages = ['en']
+  source = 'lolibooru'
 
   constructor(ctx: Context, config: LolibooruImageSource.Config) {
     super(ctx, config)
@@ -26,7 +27,10 @@ class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
 
     return data.map((post) => {
       return {
-        url: post.file_url,
+        // Since lolibooru returns URL that contains white spaces that are not transformed
+        // into `%20`, which breaks in go-cqhttp who cannot resolve to a valid URL.
+        // Fixes: https://github.com/koishijs/koishi-plugin-booru/issues/95
+        url: encodeURI(post.file_url),
         pageUrl: post.source,
         author: post.author.replace(/ /g, ', ').replace(/_/g, ' '),
         tags: post.tags.split(' ').map((t) => t.replace(/_/g, ' ')),

@@ -53,14 +53,18 @@ body:
       multiple: true
       options:
         - Danbooru
+        - E621 (and E926)
         - Gelbooru
         - Konachan.com (NSFW)
         - Konachan.net (SFW)
+        - Local
         - Lolibooru
         - Lolicon
         - Pixiv
         - Safebooru
+        - SankakuComplex
         - Yande.re
+        - Others
     validations:
       required: true
   - type: textarea
