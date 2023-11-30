@@ -8,20 +8,8 @@ commands:
       no-result: クエリが一致する画像が見つかりません。
       no-image: 获取图片失败
       output:
-        image: <message><image url={url}></image></message>
-        info: |
-          <message>
-            <p>{title}</p>
-            <p>絵師: {author}</p>
-            <p>{desc}</p>
-          </message>
-        link: |
-          <message>
-            <p>ページURL: {pageUrl}</p>
-            <p>絵師ホームページ: {authorUrl}</p>
-          </message>
-        source: |
-          <message>
-            <p>ソース: {source}</p>
-            <p>タグ: {tags}</p>
-          </message>
+        author: "作者: {0}"
+        homepage: "作者主页: {0}"
+        link: "页面地址: {0}"
+        source: "图源: {0}"
+        tags: "标签: {0}"

@@ -8,20 +8,8 @@ commands:
       no-result: No pictures match your query were found.
       no-image: 获取图片失败
       output:
-        image: <message><image url={url}></image></message>
-        info: |
-          <message>
-            <p>{title}</p>
-            <p>Author: {author}</p>
-            <p>{desc}</p>
-          </message>
-        link: |
-          <message>
-            <p>Page URL: {pageUrl}</p>
-            <p>Author Homepage: {authorUrl}</p>
-          </message>
-        source: |
-          <message>
-            <p>Source: {source}</p>
-            <p>Tags: {tags}</p>
-          </message>
+        author: "作者: {0}"
+        homepage: "作者主页: {0}"
+        link: "页面地址: {0}"
+        source: "图源: {0}"
+        tags: "标签: {0}"
