@@ -29,7 +29,7 @@ class ImageService extends Service {
   register(source: ImageSource) {
     const index = this.sources.length
     this.sources.push(source)
-    return this.caller.collect('booru', () => delete this.sources[index])
+    return this[Context.current].collect('booru', () => delete this.sources[index])
   }
 
   hasSource(name?: string): boolean {
