@@ -23,8 +23,5 @@
       "source": "/",
       "destination": "/zh-CN/"
     }
-  ],
-  "github": {
-    "silent": true
-  }
+  ]
 }
