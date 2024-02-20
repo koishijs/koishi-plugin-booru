@@ -9,3 +9,6 @@ on:
 jobs:
   build:
     uses: cordiverse/workflows/.github/workflows/build.yml@main
+    with:
+      lint: true
+      test: true
