@@ -44,11 +44,11 @@
     }
   },
   "peerDependencies": {
-    "koishi": "^4.15.2"
+    "koishi": "^4.17.0"
   },
   "devDependencies": {
     "@koishijs/assets": "^1.0.2",
-    "koishi": "^4.15.2"
+    "koishi": "^4.17.0"
   },
   "dependencies": {
     "languagedetect": "^2.0.0"
