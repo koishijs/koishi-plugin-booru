@@ -63,8 +63,8 @@ class ImageService extends Service {
     for (const source of sources) {
       const tags = source.tokenize(query.query)
       const images = await source.get({ count: query.count, tags, raw: query.query }).catch((err) => {
-        if (Quester.isAxiosError(err)) {
-          logger.warn(`source ${source.config.label} request failed ${err.status ? `with code ${err.status} ${JSON.stringify(err.response?.data)}` : ''}`)
+        if (Quester.Error.is(err)) {
+          logger.warn(`source ${source.config.label} request failed ${err.response?.status ? `with code ${err.response?.status} ${JSON.stringify(err.response?.data)}` : ''}`)
         } else {
           logger.error(`source ${source.config.label} unknown error: ${err.message}`)
         }
@@ -91,8 +91,8 @@ class ImageService extends Service {
     return this.ctx.http.axios(image.url, { method: 'GET', responseType: 'arraybuffer' }).then(resp => {
       return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data, 'binary').toString('base64')}`
     }).catch(err => {
-      if (Quester.isAxiosError(err)) {
-        logger.warn(`Request images failed with HTTP status ${err.status}: ${JSON.stringify(err.response?.data)}.`)
+      if (Quester.Error.is(err)) {
+        logger.warn(`Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`)
       } else {
         logger.error(`Request images failed with unknown error: ${err.message}.`)
       }
