@@ -81,22 +81,23 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     const endpoint = 'https://oauth.secure.pixiv.net/' // OAuth Endpoint
     const url = trimSlash(endpoint) + '/auth/token'
 
-    const urlencoded = new URLSearchParams()
-    urlencoded.append('get_secure_url', 'true')
-    urlencoded.append('client_id', CLIENT_ID)
-    urlencoded.append('client_secret', CLIENT_SECRET)
-    urlencoded.append('grant_type', 'refresh_token')
-    urlencoded.append('refresh_token', this.refreshToken)
+    const data = new URLSearchParams({
+      get_secure_url: 'true',
+      client_id: CLIENT_ID,
+      client_secret: CLIENT_SECRET,
+      grant_type: 'refresh_token',
+      refresh_token: this.refreshToken,
+    })
 
     const resp = await this.ctx.http(url,
       {
         method: 'POST',
+        data,
         headers: {
           ...this._getHeaders(),
           'Content-Type': 'application/x-www-form-urlencoded',
           'host': 'oauth.secure.pixiv.net',
         },
-        data: urlencoded,
         validateStatus: () => true,
       }
     )
