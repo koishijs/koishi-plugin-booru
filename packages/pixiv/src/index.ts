@@ -75,8 +75,9 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     } catch (err) {
       if (Quester.Error.is(err)) {
         throw new Error('get pixiv image failed: ' + `${err.message} (${err.response?.status})`)
+      } else {
+        throw new Error('get pixiv image failed: ' + err)
       }
-      return
     }
   }
 
