@@ -1,4 +1,4 @@
-import { Context, Schema, trimSlash } from 'koishi'
+import { Context, Quester, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { PixivAppApi } from './types'
 
@@ -73,6 +73,9 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
           }
         })
     } catch (err) {
+      if (Quester.Error.is(err)) {
+        throw new Error('get pixiv image failed: ' + `${err.message} (${err.response?.status})`)
+      }
       return
     }
   }
@@ -81,17 +84,15 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     const endpoint = 'https://oauth.secure.pixiv.net/' // OAuth Endpoint
     const url = trimSlash(endpoint) + '/auth/token'
 
-    const data = {
-      get_secure_url: true,
+    const data = new URLSearchParams({
+      get_secure_url: 'true',
       client_id: CLIENT_ID,
       client_secret: CLIENT_SECRET,
       grant_type: 'refresh_token',
       refresh_token: this.refreshToken,
-    }
+    })
 
-    const resp = await this.ctx.http.axios(url, {
-      method: 'POST',
-      data,
+    const resp = await this.ctx.http.post(url, data, {
       headers: {
         ...this._getHeaders(),
         'Content-Type': 'application/x-www-form-urlencoded',
