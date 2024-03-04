@@ -1,4 +1,4 @@
-import { Context, Schema, trimSlash } from 'koishi'
+import { Context, Quester, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { PixivAppApi } from './types'
 
@@ -73,6 +73,9 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
           }
         })
     } catch (err) {
+      if (Quester.Error.is(err)) {
+        throw new Error('get pixiv image failed: ' + `${err.message} (${err.response?.status})`)
+      }
       return
     }
   }
@@ -89,18 +92,14 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       refresh_token: this.refreshToken,
     })
 
-    const resp = await this.ctx.http(url,
-      {
-        method: 'POST',
-        data,
-        headers: {
-          ...this._getHeaders(),
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'host': 'oauth.secure.pixiv.net',
-        },
-        validateStatus: () => true,
-      }
-    )
+    const resp = await this.ctx.http.post(url, data, {
+      headers: {
+        ...this._getHeaders(),
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'host': 'oauth.secure.pixiv.net',
+      },
+      validateStatus: () => true,
+    })
 
     const SUCCESS_STATUS = [200, 301, 302]
     if (!SUCCESS_STATUS.includes(resp.status)) {
