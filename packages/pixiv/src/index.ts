@@ -76,8 +76,9 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     } catch (err) {
       if (Quester.Error.is(err)) {
         throw new Error('get pixiv image failed: ' + `${err.message} (${err.response?.status})`)
+      } else {
+        throw new Error('get pixiv image failed: ' + err)
       }
-      return
     }
   }
 
@@ -93,27 +94,30 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       refresh_token: this.refreshToken,
     })
 
-    const resp = await this.ctx.http.post(url, data, {
-      headers: {
-        ...this._getHeaders(),
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'host': 'oauth.secure.pixiv.net',
-      },
-      validateStatus: () => true,
-    })
+    try {
+      const resp = await this.ctx.http.post(url, data, {
+        headers: {
+          ...this._getHeaders(),
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'host': 'oauth.secure.pixiv.net',
+        },
+        validateStatus: (status) => [200, 301, 302].includes(status),
+      })
 
-    const SUCCESS_STATUS = [200, 301, 302]
-    if (!SUCCESS_STATUS.includes(resp.status)) {
-      throw new Error('Login failed with status code ' + resp.status + JSON.stringify((resp as any).data))
+      this.userId = resp.user.id
+      this.accessToken = resp.access_token
+      this.refreshToken = resp.refresh_token
+      if (this.refreshTime) clearTimeout(this.refreshTime)
+      this.refreshTime = setTimeout(() => (this.accessToken = undefined), resp.expires_in * 1000)
+
+      return this.accessToken
+    } catch (err) {
+      if (Quester.Error.is(err)) {
+        throw new Error('Login failed with status code ' + err.response?.status + '\n' + JSON.stringify(err.response))
+      } else {
+        throw new Error('Login failed with unknown error: ' + err.message)
+      }
     }
-
-    this.userId = resp.data.user.id
-    this.accessToken = resp.data.access_token
-    this.refreshToken = resp.data.refresh_token
-    if (this.refreshTime) clearTimeout(this.refreshTime)
-    this.refreshTime = setTimeout(() => (this.accessToken = undefined), resp.data.expires_in * 1000)
-
-    return this.accessToken
   }
 
   _getHeaders() {
