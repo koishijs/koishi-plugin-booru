@@ -102,11 +102,11 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
         validateStatus: (status) => [200, 301, 302].includes(status),
       })
 
-      this.userId = resp.data.user.id
-      this.accessToken = resp.data.access_token
-      this.refreshToken = resp.data.refresh_token
+      this.userId = resp.user.id
+      this.accessToken = resp.access_token
+      this.refreshToken = resp.refresh_token
       if (this.refreshTime) clearTimeout(this.refreshTime)
-      this.refreshTime = setTimeout(() => (this.accessToken = undefined), resp.data.expires_in * 1000)
+      this.refreshTime = setTimeout(() => (this.accessToken = undefined), resp.expires_in * 1000)
 
       return this.accessToken
     } catch (err) {
