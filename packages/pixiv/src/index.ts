@@ -29,6 +29,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     const params: PixivAppApi.SearchParams = {
       word: query.tags.join(' '),
       search_target: 'partial_match_for_tags',
+      search_ai_type: this.config.ai === 0 ? PixivAppApi.SearchAIType.Filtered : PixivAppApi.SearchAIType.All,
       sort: 'date_desc', // TODO: Pixiv member could use 'popular_desc'
       filter: 'for_ios',
     }
