@@ -88,8 +88,8 @@ class ImageService extends Service {
   }
 
   async imgUrlToBase64(image: ImageSource.Result): Promise<string> {
-    return this.ctx.http.axios(image.url, { method: 'GET', responseType: 'arraybuffer' }).then(resp => {
-      return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data, 'binary').toString('base64')}`
+    return this.ctx.http(image.url, { method: 'GET', responseType: 'arraybuffer' }).then(resp => {
+      return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
     }).catch(err => {
       if (Quester.Error.is(err)) {
         logger.warn(`Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`)
