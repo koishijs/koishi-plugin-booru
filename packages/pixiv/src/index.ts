@@ -29,7 +29,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     const params: PixivAppApi.SearchParams = {
       word: query.tags.join(' '),
       search_target: 'partial_match_for_tags',
-      search_ai_type: this.config.ai === 0 ? PixivAppApi.SearchAIType.Filtered : PixivAppApi.SearchAIType.All,
+      search_ai_type: this.config.ai === 2 ? PixivAppApi.SearchAIType.SHOW_AI : PixivAppApi.SearchAIType.HIDE_AI,
       sort: 'date_desc', // TODO: Pixiv member could use 'popular_desc'
       filter: 'for_ios',
     }
@@ -166,10 +166,9 @@ namespace PixivImageSource {
         Schema.const(2).description('R18G')
       ]).description('年龄分级').default(0),
       ai: Schema.union([
-        Schema.const(0).description('不允许AI作品'),
-        Schema.const(1).description('允许未知（旧画作或字段未更新）'),
+        Schema.const(1).description('不允许AI作品'),
         Schema.const(2).description('允许AI作品')
-      ]).description('是否允许搜索AI作品').default(0)
+      ]).description('是否允许搜索AI作品').default(1)
     }).description('搜索设置'),
   ])
 }

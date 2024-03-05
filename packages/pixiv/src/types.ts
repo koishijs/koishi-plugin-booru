@@ -21,8 +21,8 @@ export namespace PixivAppApi {
 
   export type SearchTarget = 'partial_match_for_tags' | 'exact_match_for_tags' | 'title_and_caption' | 'keyword'
   export enum SearchAIType {
-    Filtered = 0,
-    All = 1,
+    SHOW_AI = 0,
+    HIDE_AI = 1,
   }
   export type Sort = 'date_desc' | 'date_asc' | 'popular_desc'
   export type Duration = 'within_last_day' | 'within_last_week' | 'within_last_month'
