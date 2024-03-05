@@ -25,23 +25,8 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    const url = '/v1/search/illust'
-    const params: PixivAppApi.SearchParams = {
-      word: query.tags.join(' '),
-      search_target: 'partial_match_for_tags',
-      sort: 'date_desc', // TODO: Pixiv member could use 'popular_desc'
-      filter: 'for_ios',
-    }
-
-    if (!this.accessToken) {
-      await this._login()
-    }
-
     try {
-      const data = await this.ctx.http.get<PixivAppApi.Result>(trimSlash(this.config.endpoint) + url, {
-        params,
-        headers: this._getHeaders(),
-      })
+      const data = await (query.raw.length ? this.search(query.tags.join(' ')) : this.recommend())
 
       return data.illusts
         .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
@@ -79,6 +64,42 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
         throw new Error('get pixiv image failed: ' + err)
       }
     }
+  }
+
+  async search(keyword: string): Promise<PixivAppApi.Result> {
+    const url = '/v1/search/illust'
+    const params: PixivAppApi.SearchParams = {
+      word: keyword,
+      search_target: 'partial_match_for_tags',
+      sort: 'date_desc', // TODO: Pixiv member could use 'popular_desc'
+      filter: 'for_ios',
+    }
+
+    if (!this.accessToken) {
+      await this._login()
+    }
+
+    return await this.ctx.http.get<PixivAppApi.Result>(trimSlash(this.config.endpoint) + url, {
+      params,
+      headers: this._getHeaders(),
+    })
+  }
+
+  async recommend(): Promise<PixivAppApi.Result> {
+    const url = /* this.config.token ?  */'/v1/illust/recommended' //: '/v1/illust/recommended-nologin'
+
+    if (/* this.config.token &&  */!this.accessToken) {
+      await this._login()
+    }
+
+    return await this.ctx.http.get<PixivAppApi.Result>(trimSlash(this.config.endpoint) + url, {
+      params: {
+        content_type: 'illust',
+        include_ranking_label: true,
+        filter: 'for_ios',
+      },
+      headers: this._getHeaders(),
+    })
   }
 
   async _login() {
@@ -150,7 +171,7 @@ namespace PixivImageSource {
       endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
       // TODO: set token as non-required for illust recommend
       token: Schema.string().required().description('Pixiv 的 Refresh Token'),
-      minBookmarks: Schema.number().default(0).description('最少收藏数'),
+      minBookmarks: Schema.number().default(0).description('最少收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用'),
       proxy: Schema.union([
         Schema.const('https://i.pixiv.re').description('i.pixiv.re'),
         Schema.const('https://i.pixiv.cat').description('i.pixiv.cat'),
