@@ -37,6 +37,12 @@ export namespace PixivAppApi {
     offset?: number
   }
 
+  export interface RecommendParams {
+    content_type: Content_type
+    include_ranking_label?: boolean
+    filter: Filter
+  }
+
   export interface Result {
     illusts: Illust[]
   }
