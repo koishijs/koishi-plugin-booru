@@ -19,7 +19,7 @@ class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
 
     const url = trimSlash(this.config.endpoint) + '/post/index.json' + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
 
-    const { data } = await this.ctx.http.axios<Lolibooru.Response[]>(url)
+    const data = await this.http.get<Lolibooru.Response[]>(url)
 
     if (!Array.isArray(data)) {
       return

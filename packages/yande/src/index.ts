@@ -18,7 +18,7 @@ class YandeImageSource extends ImageSource<YandeImageSource.Config> {
     }
     const url = trimSlash(this.config.endpoint) + '/post.json' + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
 
-    const resp = await this.ctx.http.axios<Yande.Response[]>(url)
+    const resp = await this.http.axios<Yande.Response[]>(url)
 
     if (!Array.isArray(resp.data)) {
       return

@@ -48,8 +48,8 @@
     "koishi": "^4.17.0"
   },
   "devDependencies": {
-    "@koishijs/plugin-proxy-agent": "^0.1.4",
     "@koishijs/assets": "^1.0.2",
+    "@koishijs/plugin-proxy-agent": "^0.1.4",
     "koishi": "^4.17.0"
   },
   "dependencies": {

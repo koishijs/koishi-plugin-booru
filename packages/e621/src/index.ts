@@ -9,7 +9,7 @@ class e621ImageSource extends ImageSource<e621ImageSource.Config> {
 
   constructor(ctx: Context, config: e621ImageSource.Config) {
     super(ctx, config)
-    this.http = ctx.http.extend({
+    this.http = this.http.extend({
       headers: {
         'User-Agent': config.userAgent
       }
