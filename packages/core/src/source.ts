@@ -13,7 +13,7 @@ export abstract class ImageSource<Config extends ImageSource.Config = ImageSourc
   constructor(public ctx: Context, public config: Config) {
     this.ctx.booru.register(this)
 
-    this.http = ctx.http.extend({ proxyAgent: config.proxyAgent })
+    this.http = config.proxyAgent ? ctx.http.extend({ proxyAgent: config.proxyAgent }) : ctx.http
   }
 
   /**
