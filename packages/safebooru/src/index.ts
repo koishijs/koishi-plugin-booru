@@ -23,7 +23,7 @@ class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
     }
     const url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
 
-    const { data } = await this.http.axios<Safebooru.Response[]>(url)
+    const data = await this.http.get<Safebooru.Response[]>(url)
 
     if (!Array.isArray(data)) {
       return

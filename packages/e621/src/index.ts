@@ -18,18 +18,18 @@ class e621ImageSource extends ImageSource<e621ImageSource.Config> {
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     if (!query.tags.find(t => t.startsWith('order:'))) query.tags.push('order:random')
-    const resp = await this.http.axios<{
+    const data = await this.http.get<{
       posts: e621.Post[]
     }>(trimSlash(this.config.endpoint) + '/posts.json', { params: {
       tags: query.tags.join(' '),
       limit: query.count,
     }})
 
-    if (!Array.isArray(resp.data.posts)) {
+    if (!Array.isArray(data.posts)) {
       return
     }
 
-    return resp.data.posts.map((post) => {
+    return data.posts.map((post) => {
       return {
         url: post.file.url,
         pageUrl: trimSlash(this.config.endpoint) + `/post/${post.id}`,
