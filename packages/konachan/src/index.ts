@@ -17,7 +17,7 @@ class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
       limit: query.count
     }
     const url = trimSlash(this.config.endpoint) + '/post.json' + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
-    const { data } = await this.ctx.http.axios<Konachan.Response[]>(url)
+    const data = await this.http.get<Konachan.Response[]>(url)
 
     if (!Array.isArray(data)) {
       return

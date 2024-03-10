@@ -22,7 +22,7 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
     }
     const url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
 
-    const { data } = await this.ctx.http.axios<Gelbooru.Response>(url)
+    const data = await this.http.get<Gelbooru.Response>(url)
 
     if (!Array.isArray(data.post)) {
       return

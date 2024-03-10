@@ -23,7 +23,7 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
       excludeAI: this.config.excludeAI,
       proxy,
     }
-    const resp = await this.ctx.http.post<Lolicon.Response>(this.config.endpoint, param)
+    const resp = await this.http.post<Lolicon.Response>(this.config.endpoint, param)
 
     if (!Array.isArray(resp.data)) {
       return

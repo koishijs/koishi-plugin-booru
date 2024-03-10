@@ -80,7 +80,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       await this._login()
     }
 
-    return await this.ctx.http.get<PixivAppApi.Result>(trimSlash(this.config.endpoint) + url, {
+    return await this.http.get<PixivAppApi.Result>(trimSlash(this.config.endpoint) + url, {
       params,
       headers: this._getHeaders(),
     })
@@ -93,7 +93,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       await this._login()
     }
 
-    return await this.ctx.http.get<PixivAppApi.Result>(trimSlash(this.config.endpoint) + url, {
+    return await this.http.get<PixivAppApi.Result>(trimSlash(this.config.endpoint) + url, {
       params: {
         content_type: 'illust',
         include_ranking_label: true,
@@ -116,7 +116,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     })
 
     try {
-      const resp = await this.ctx.http.post(url, data, {
+      const resp = await this.http.post(url, data, {
         headers: {
           ...this._getHeaders(),
           'Content-Type': 'application/x-www-form-urlencoded',
