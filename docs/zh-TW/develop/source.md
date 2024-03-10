@@ -56,7 +56,7 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
     // 注：根据图源设计规范，当 `query.tags` 为空数组或空时，应当返回随机图片。
     // 由于 Lolicon API 默认对空标签会返回随机图，因此不需要做特别处理，
     // 但对于其他图源可能需要传入特别的参数才能使用随机图片功能。
-    const resp = await this.ctx.http.post('https://api.lolicon.app/setu/v2', param)
+    const resp = await this.http.post('https://api.lolicon.app/setu/v2', param)
 
     if (!Array.isArray(resp.data)) {
       return
