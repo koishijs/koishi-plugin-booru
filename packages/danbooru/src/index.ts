@@ -10,12 +10,21 @@ class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
     super(ctx, config)
   }
 
+  get keyPair() {
+    if (!this.config.keyPairs.length) return
+    return this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
+  }
+
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    const data = await this.http.get<Danbooru.Post[]>(trimSlash(this.config.endpoint) + '/posts.json', { params: {
-      tags: query.tags.join(' '),
-      random: true,
-      limit: query.count,
-    }})
+    const keyPair = this.keyPair
+    const data = await this.http.get<Danbooru.Post[]>(trimSlash(this.config.endpoint) + '/posts.json', {
+      params: {
+        tags: query.tags.join(' '),
+        random: true,
+        limit: query.count,
+        ...(keyPair ? { login: keyPair.login, api_key: keyPair.apiKey } : {}),
+      },
+    })
 
     if (!Array.isArray(data)) {
       return
@@ -36,12 +45,24 @@ class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
 namespace DanbooruImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
+    keyPairs: { login: string; apiKey: string }[]
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'danbooru' }),
     Schema.object({
       endpoint: Schema.string().description('Danbooru 的 URL。').default('https://danbooru.donmai.us/'),
+      /**
+       * @see https://danbooru.donmai.us/wiki_pages/help%3Aapi
+       */
+      keyPairs: Schema.array(
+        Schema.object({
+          login: Schema.string().description('用户名。'),
+          apiKey: Schema.string().description('API 密钥。'),
+        }),
+      ).description(
+        'API 密钥对。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/danbooru.html#获取与设置登录凭据)',
+      ),
     }).description('搜索设置'),
   ])
 }
