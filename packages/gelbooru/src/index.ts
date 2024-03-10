@@ -10,6 +10,11 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
     super(ctx, config)
   }
 
+  get keyPair() {
+    if (!this.config.keyPairs.length) return
+    return this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
+  }
+
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://gelbooru.com/index.php?page=help&topic=dapi
     const params = {
@@ -20,7 +25,13 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
       json: 1,
       limit: query.count
     }
-    const url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
+    let url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
+
+    const keyPair = this.keyPair
+    if (keyPair) {
+      // The keyPair from Gelbooru is already url-encoded.
+      url += keyPair
+    }
 
     const data = await this.http.get<Gelbooru.Response>(url)
 
@@ -43,12 +54,14 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
 namespace GelbooruImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
+    keyPairs: string[]
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'gelbooru' }),
     Schema.object({
       endpoint: Schema.string().description('Gelbooru 的 URL。').default('https://gelbooru.com/index.php'),
+      keyPairs: Schema.array(Schema.string()).description('Gelbooru 的登录凭据。').default([]),
     }).description('搜索设置'),
   ])
 }
