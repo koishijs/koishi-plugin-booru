@@ -1,3 +1,7 @@
+import { Readable } from 'node:stream'
+import { ReadableStream } from 'node:stream/web'
+import {} from '@koishijs/assets'
+import {} from '@koishijs/plugin-server'
 import { Context, Quester, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { PixivAppApi } from './types'
@@ -7,6 +11,10 @@ const CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
 const HASH_SECRET = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c'
 
 class PixivImageSource extends ImageSource<PixivImageSource.Config> {
+  static inject = {
+    required: ['booru'],
+    optional: ['assets', 'server'],
+  }
   languages = ['en', 'zh', 'zh-CN', 'zh-TW', 'ja', 'ko']
   source = 'pixiv'
 
@@ -15,9 +23,29 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
   private refreshToken?: string
   private refreshTime?: NodeJS.Timeout
 
+  private logger = this.ctx.logger('booru-pixiv')
+
   constructor(ctx: Context, config: PixivImageSource.Config) {
     super(ctx, config)
     this.refreshToken = config.token
+
+    if (config.bypassMethod === 'route') {
+      if (!config.route || !this.ctx.server?.selfUrl) {
+        throw new Error('route and selfUrl are required for bypass method "route".')
+      }
+
+      this.ctx.server.get(trimSlash(config.route) + '/:url(.+)', async (ctx, next) => {
+        const url = ctx.request.url.replace(/^\/booru\/pixiv\/proxy\//, '')
+        if (typeof url !== 'string' || !url.startsWith('https://i.pximg.net/')) return next()
+        const file = await this.http<ReadableStream>(url, { headers: { Referer: 'https://www.pixiv.net/' }, responseType: 'stream' })
+        ctx.set('Content-Type', file.headers['content-type'])
+        ctx.set('Cache-Control', 'public, max-age=31536000')
+        ctx.response.status = file.status
+        ctx.response.message = file.statusText
+        ctx.body = Readable.fromWeb(file.data)
+        return next()
+      })
+    }
   }
 
   override tokenize(query: string) {
@@ -28,35 +56,32 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     try {
       const data = await (query.raw.length ? this.search(query.tags.join(' ')) : this.recommend())
 
-      return data.illusts
-        .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
-        .filter((illust) => illust.x_restrict <= this.config.rank)
-        .filter((illust) => illust.illust_ai_type <= this.config.ai)
-        .slice(0, query.count)
-        .map((illust) => {
-          let url = ''
-          if (illust.page_count > 1) {
-            url = illust.meta_pages[0].image_urls.original
-          } else {
-            url = illust.meta_single_page.original_image_url
-          }
+      return Promise.all(
+        data.illusts
+          .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
+          .filter((illust) => illust.x_restrict <= this.config.rank)
+          .filter((illust) => illust.illust_ai_type <= this.config.ai)
+          .slice(0, query.count)
+          .map(async (illust) => {
+            let url = ''
+            if (illust.page_count > 1) {
+              url = illust.meta_pages[0].image_urls.original
+            } else {
+              url = illust.meta_single_page.original_image_url
+            }
 
-          if (this.config.proxy) {
-            const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy.endpoint
-            url = url.replace(/^https?:\/\/i\.pximg\.net/, trimSlash(proxy))
-          }
-
-          return {
-            url,
-            title: illust.title,
-            pageUrl: `https://pixiv.net/i/${illust.id}`,
-            author: illust.user.name,
-            authorUrl: `https://pixiv.net/u/${illust.user.id}`,
-            desc: illust.caption,
-            tags: illust.tags.map((tag) => tag.name),
-            nsfw: illust.x_restrict >= 1,
-          }
-        })
+            return {
+              url: await this._handleImage(url),
+              title: illust.title,
+              pageUrl: `https://pixiv.net/i/${illust.id}`,
+              author: illust.user.name,
+              authorUrl: `https://pixiv.net/u/${illust.user.id}`,
+              desc: illust.caption,
+              tags: illust.tags.map((tag) => tag.name),
+              nsfw: illust.x_restrict >= 1,
+            }
+          }),
+      )
     } catch (err) {
       if (Quester.Error.is(err)) {
         throw new Error('get pixiv image failed: ' + `${err.message} (${err.response?.status})`)
@@ -87,9 +112,9 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
   }
 
   async recommend(): Promise<PixivAppApi.Result> {
-    const url = /* this.config.token ?  */'/v1/illust/recommended' //: '/v1/illust/recommended-nologin'
+    const url = /* this.config.token ?  */ '/v1/illust/recommended' //: '/v1/illust/recommended-nologin'
 
-    if (/* this.config.token &&  */!this.accessToken) {
+    if (/* this.config.token &&  */ !this.accessToken) {
       await this._login()
     }
 
@@ -154,6 +179,25 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
 
     return headers
   }
+
+  async _handleImage(url: string) {
+    if (this.config.bypassMethod === 'proxy' && this.config.proxy) {
+      const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy.endpoint
+      return url.replace(/^https?:\/\/i\.pximg\.net/, trimSlash(proxy))
+    } else if (this.config.bypassMethod === 'route' && this.config.route && this.ctx.get('server')) {
+      return trimSlash(this.ctx.server.selfUrl) + trimSlash(this.config.route) + '/' + url
+    } else if (this.config.bypassMethod === 'asset' && this.ctx.get('assets')) {
+      const filename = url.split('/').pop().split('?')[0]
+      const file = await this.http<ArrayBuffer>(url, { headers: { Referer: 'https://www.pixiv.net/' } })
+      const base64 = Buffer.from(file.data).toString('base64')
+      return this.ctx.assets.upload(`data:${file.headers['content-type']};base64,${base64}`, filename)
+    } else {
+      this.logger.warn(
+        `Bypass method is set to ${this.config.bypassMethod}, but there's no candidate to handle the image.`,
+      )
+      return url
+    }
+  }
 }
 
 namespace PixivImageSource {
@@ -163,7 +207,9 @@ namespace PixivImageSource {
     minBookmarks: number
     rank: number
     ai: number
+    bypassMethod: 'proxy' | 'route' | 'asset'
     proxy?: { endpoint: string } | string
+    route?: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -172,25 +218,55 @@ namespace PixivImageSource {
       endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
       // TODO: set token as non-required for illust recommend
       token: Schema.string().required().description('Pixiv 的 Refresh Token'),
-      minBookmarks: Schema.number().default(0).description('最少收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用'),
-      proxy: Schema.union([
-        Schema.const('https://i.pixiv.re').description('i.pixiv.re'),
-        Schema.const('https://i.pixiv.cat').description('i.pixiv.cat'),
-        Schema.const('https://i.pixiv.nl').description('i.pixiv.nl'),
-        Schema.object({
-          endpoint: Schema.string().required().description('反代服务的地址。'),
-        }).description('自定义'),
-      ]).description('Pixiv 反代服务。').default('https://i.pixiv.re'),
+      minBookmarks: Schema.number()
+        .default(0)
+        .description('最少收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用'),
       rank: Schema.union([
         Schema.const(0).description('全年龄'),
         Schema.const(1).description('R18'),
-        Schema.const(2).description('R18G')
-      ]).description('年龄分级').default(0),
-      ai: Schema.union([
-        Schema.const(1).description('不允许AI作品'),
-        Schema.const(2).description('允许AI作品')
-      ]).description('是否允许搜索AI作品').default(1)
+        Schema.const(2).description('R18G'),
+      ])
+        .description('年龄分级')
+        .default(0),
+      ai: Schema.union([Schema.const(1).description('不允许AI作品'), Schema.const(2).description('允许AI作品')])
+        .description('是否允许搜索AI作品')
+        .default(1),
     }).description('搜索设置'),
+    Schema.intersect([
+      Schema.object({
+        bypassMethod: Schema.union([
+          Schema.const('proxy').description('使用现有反代服务'),
+          Schema.const('route').description('使用插件本地反代'),
+          Schema.const('asset').description('下载到 assets 缓存'),
+        ])
+          .description('突破 Pixiv 站点图片防外部引用检测的方式')
+          .default('proxy'),
+      }),
+      Schema.union([
+        Schema.object({
+          bypassMethod: Schema.const('proxy'),
+          proxy: Schema.union([
+            Schema.const('https://i.pixiv.re').description('i.pixiv.re'),
+            Schema.const('https://i.pixiv.cat').description('i.pixiv.cat'),
+            Schema.const('https://i.pixiv.nl').description('i.pixiv.nl'),
+            Schema.object({
+              endpoint: Schema.string().required().description('反代服务的地址。'),
+            }).description('自定义'),
+          ])
+            .description('Pixiv 反代服务。')
+            .default('https://i.pixiv.re'),
+        }),
+        Schema.object({
+          bypassMethod: Schema.const('route'),
+          route: Schema.string()
+            .description('反代服务的路径（需在 server 插件配置中填写 `selfUrl`）。')
+            .default('/booru/pixiv/proxy'),
+        }),
+        Schema.object({
+          bypassMethod: Schema.const('asset'),
+        }),
+      ]),
+    ]),
   ])
 }
 
