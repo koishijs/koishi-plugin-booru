@@ -1,6 +1,19 @@
-import { Context, Schema, trimSlash } from 'koishi'
+import { createHash } from 'node:crypto'
+import { Context, Dict, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { Lolibooru } from './types'
+/**
+ * Lolibooru requires a password hash for authentication.
+ *
+ * @see https://lolibooru.moe/help/api
+ */
+function hashPassword(password: string) {
+  const salted = `--${password}--`
+  // do a SHA1 hash of the salted password
+  const hash = createHash('sha1')
+  hash.update(salted)
+  return hash.digest('hex')
+}
 
 class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
   languages = ['en']
@@ -10,16 +23,30 @@ class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
     super(ctx, config)
   }
 
+  get keyPair() {
+    if (!this.config.keyPairs.length) return
+    const key = this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
+    return {
+      login: key.login,
+      password_hash: hashPassword(key.password),
+    }
+  }
+
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://lolibooru.moe/help/api
-    const params = {
-      tags: query.tags.join('+') + "+order:random",
-      limit: query.count
+    const params: Dict<string> = {
+      tags: query.tags.join('+') + '+order:random',
+      limit: `${query.count}`,
     }
 
-    const url = trimSlash(this.config.endpoint) + '/post/index.json' + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
+    const url = trimSlash(this.config.endpoint) + '/post/index.json'
 
-    const data = await this.http.get<Lolibooru.Response[]>(url)
+    const keyPair = this.keyPair
+    if (keyPair) {
+      params['login'] = keyPair.login
+      params['password_hash'] = keyPair.password_hash
+    }
+    const data = await this.http.get<Lolibooru.Response[]>(url, { params: new URLSearchParams(params) })
 
     if (!Array.isArray(data)) {
       return
@@ -43,12 +70,19 @@ class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
 namespace LolibooruImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
+    keyPairs: { login: string; password: string }[]
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'lolibooru' }),
     Schema.object({
       endpoint: Schema.string().description('Lolibooru 的 URL。').default('https://lolibooru.moe'),
+      keyPairs: Schema.array(
+        Schema.object({
+          login: Schema.string().description('用户名'),
+          password: Schema.string().description('密码'),
+        }),
+      ).description('Konachan 的登录凭据。'),
     }).description('搜索设置'),
   ])
 }
