@@ -71,7 +71,7 @@ namespace e621ImageSource {
         }),
       )
         .default([])
-        .description('e621/e926 的 API Key。'),
+        .description('e621/e926 的登录凭据。'),
       userAgent: Schema.string()
         .description('设置请求的 User Agent。')
         .default(
