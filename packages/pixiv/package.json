@@ -42,14 +42,30 @@
     "service": {
       "require": [
         "booru"
+      ],
+      "optional": [
+        "assets",
+        "server"
       ]
     }
   },
   "peerDependencies": {
+    "@koishijs/assets": "^1.0.4",
+    "@koishijs/plugin-server": "^3.1.8",
     "koishi": "^4.17.0",
     "koishi-plugin-booru": "^1.1.6"
   },
+  "peerDependenciesMeta": {
+    "@koishijs/assets": {
+      "optional": true
+    },
+    "@koishijs/plugin-server": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@koishijs/assets": "^1.0.4",
+    "@koishijs/plugin-server": "^3.1.8",
     "koishi": "^4.17.0"
   }
 }
