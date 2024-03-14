@@ -39,7 +39,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
         // Generate a random AES key
         const aesKey = randomBytes(32).toString('hex')
         config.aesKey = aesKey
-        ctx.scope.update(config, true)
+        this.ctx.setTimeout(() => ctx.scope.update(config, true), 0)
         this.logger.info("Found empty aesKey with a bypass method set to 'route', generated a random one in config.")
       }
 
@@ -276,7 +276,7 @@ namespace PixivImageSource {
           route: Schema.string()
             .description('反代服务的路径（需在 server 插件配置中填写 `selfUrl`）。')
             .default('/booru/pixiv/proxy'),
-          aesKey: Schema.string().description('AES 加密密钥').default(''),
+          aesKey: Schema.string().hidden().description('AES 加密密钥').default(''),
         }),
         Schema.object({
           bypassMethod: Schema.const('asset'),
