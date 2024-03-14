@@ -39,7 +39,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
         // Generate a random AES key
         const aesKey = randomBytes(32).toString('hex')
         config.aesKey = aesKey
-        this.ctx.setTimeout(() => ctx.scope.update(config, true), 0)
+        this.ctx.setTimeout(() => ctx.scope.update(config, false), 0)
         this.logger.info("Found empty aesKey with a bypass method set to 'route', generated a random one in config.")
       }
 
