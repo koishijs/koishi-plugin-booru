@@ -39,13 +39,13 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
         // Generate a random AES key
         const aesKey = randomBytes(32).toString('hex')
         config.aesKey = aesKey
-        ctx.scope.update(config, false)
+        ctx.scope.update(config, true)
         this.logger.info("Found empty aesKey with a bypass method set to 'route', generated a random one in config.")
       }
 
       this.ctx.server.get(trimSlash(config.route) + '/:url(.+)', async (ctx, next) => {
         const url = ctx.request.url.replace(/^\/booru\/pixiv\/proxy\//, '')
-        const decrypted = Cipher.decrypt(url, config.aesKey)
+        const decrypted = Cipher.decrypt(decodeURIComponent(url), config.aesKey)
         if (typeof decrypted !== 'string' || !decrypted.startsWith('https://i.pximg.net/')) return next()
         const file = await this.http<ReadableStream>(decrypted, {
           headers: { Referer: 'https://www.pixiv.net/' },
