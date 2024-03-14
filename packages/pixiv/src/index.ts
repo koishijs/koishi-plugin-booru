@@ -1,3 +1,4 @@
+import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
 import { Readable } from 'node:stream'
 import { ReadableStream } from 'node:stream/web'
 import {} from '@koishijs/assets'
@@ -34,10 +35,22 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
         throw new Error('route and selfUrl are required for bypass method "route".')
       }
 
+      if (!config.aesKey) {
+        // Generate a random AES key
+        const aesKey = randomBytes(32).toString('hex')
+        config.aesKey = aesKey
+        ctx.scope.update(config, false)
+        this.logger.info("Found empty aesKey with a bypass method set to 'route', generated a random one in config.")
+      }
+
       this.ctx.server.get(trimSlash(config.route) + '/:url(.+)', async (ctx, next) => {
         const url = ctx.request.url.replace(/^\/booru\/pixiv\/proxy\//, '')
-        if (typeof url !== 'string' || !url.startsWith('https://i.pximg.net/')) return next()
-        const file = await this.http<ReadableStream>(url, { headers: { Referer: 'https://www.pixiv.net/' }, responseType: 'stream' })
+        const decrypted = Cipher.decrypt(url, config.aesKey)
+        if (typeof decrypted !== 'string' || !decrypted.startsWith('https://i.pximg.net/')) return next()
+        const file = await this.http<ReadableStream>(decrypted, {
+          headers: { Referer: 'https://www.pixiv.net/' },
+          responseType: 'stream',
+        })
         ctx.set('Content-Type', file.headers['content-type'])
         ctx.set('Cache-Control', 'public, max-age=31536000')
         ctx.response.status = file.status
@@ -185,7 +198,8 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy.endpoint
       return url.replace(/^https?:\/\/i\.pximg\.net/, trimSlash(proxy))
     } else if (this.config.bypassMethod === 'route' && this.config.route && this.ctx.get('server')) {
-      return trimSlash(this.ctx.server.selfUrl) + trimSlash(this.config.route) + '/' + url
+      const encrypted = Cipher.encrypt(url, this.config.aesKey)
+      return trimSlash(this.ctx.server.selfUrl) + trimSlash(this.config.route) + '/' + encodeURIComponent(encrypted)
     } else if (this.config.bypassMethod === 'asset' && this.ctx.get('assets')) {
       const filename = url.split('/').pop().split('?')[0]
       const file = await this.http<ArrayBuffer>(url, { headers: { Referer: 'https://www.pixiv.net/' } })
@@ -210,6 +224,7 @@ namespace PixivImageSource {
     bypassMethod: 'proxy' | 'route' | 'asset'
     proxy?: { endpoint: string } | string
     route?: string
+    aesKey?: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -261,6 +276,7 @@ namespace PixivImageSource {
           route: Schema.string()
             .description('反代服务的路径（需在 server 插件配置中填写 `selfUrl`）。')
             .default('/booru/pixiv/proxy'),
+          aesKey: Schema.string().description('AES 加密密钥').default(''),
         }),
         Schema.object({
           bypassMethod: Schema.const('asset'),
@@ -268,6 +284,31 @@ namespace PixivImageSource {
       ]),
     ]),
   ])
+}
+
+class Cipher {
+  static encrypt(data: string, key: string) {
+    try {
+      const iv = randomBytes(16)
+      const cipher = createCipheriv('aes-256-cbc', Buffer.from(key, 'hex'), iv)
+      const encrypted = Buffer.concat([iv, cipher.update(data), cipher.final()])
+      return encrypted.toString('base64')
+    } catch (err) {
+      return null
+    }
+  }
+
+  static decrypt(data: string, key: string) {
+    try {
+      const encrypted = Buffer.from(data, 'base64')
+      const iv = encrypted.slice(0, 16)
+      const decipher = createDecipheriv('aes-256-cbc', Buffer.from(key, 'hex'), iv)
+      const decrypted = Buffer.concat([decipher.update(encrypted.slice(16)), decipher.final()])
+      return decrypted.toString()
+    } catch (err) {
+      return null
+    }
+  }
 }
 
 export default PixivImageSource
