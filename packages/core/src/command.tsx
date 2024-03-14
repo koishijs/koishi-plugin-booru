@@ -81,7 +81,7 @@ export function apply(ctx: Context, config: Config) {
                * but is only is attribute, so it's can work now.
                */
               <message>
-                <image spoiler={(() => {
+                <img spoiler={(() => {
                   switch (config.spoiler) {
                     case SpoilerType.Disabled:
                       return false
@@ -90,7 +90,7 @@ export function apply(ctx: Context, config: Config) {
                     case SpoilerType.OnlyNSFW:
                       return Boolean(image.nsfw)
                   }
-                })()} url={image.url}></image></message>
+                })()} src={image.url}></img></message>
             )
         }
       }
