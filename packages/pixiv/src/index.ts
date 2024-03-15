@@ -3,7 +3,7 @@ import { Readable } from 'node:stream'
 import { ReadableStream } from 'node:stream/web'
 import {} from '@koishijs/assets'
 import {} from '@koishijs/plugin-server'
-import { Context, Quester, Schema, trimSlash } from 'koishi'
+import { Context, Quester, Random, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import { PixivAppApi } from './types'
 
@@ -70,10 +70,12 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       const data = await (query.raw.length ? this.search(query.tags.join(' ')) : this.recommend())
 
       return Promise.all(
-        data.illusts
-          .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
-          .filter((illust) => illust.x_restrict <= this.config.rank)
-          .filter((illust) => illust.illust_ai_type <= this.config.ai)
+        Random.shuffle(
+          data.illusts
+            .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
+            .filter((illust) => illust.x_restrict <= this.config.rank)
+            .filter((illust) => illust.illust_ai_type <= this.config.ai),
+        )
           .slice(0, query.count)
           .map(async (illust) => {
             let url = ''
