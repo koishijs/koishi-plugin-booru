@@ -1,6 +1,6 @@
 # koishi-plugin-booru-moehu
 
-[萌虎图源](https://img.moehu.org/)支持
+[萌虎](https://img.moehu.org/)图源支持
 
 ## 安装
 
