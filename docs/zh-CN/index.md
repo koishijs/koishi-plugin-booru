@@ -29,6 +29,7 @@ Booru 插件支持多个图源站点，每个图源站点都有一个对应的�
 | [Konachan.net](https://konachan.net/) | [`koishi-plugin-booru-konachan`](./plugins/konachan.md) |
 | [Lolibooru](https://lolibooru.moe/) | [`koishi-plugin-booru-lolibooru`](./plugins/lolibooru.md) |
 | [Lolicon](https://lolicon.app/) | [`koishi-plugin-booru-lolicon`](./plugins/lolicon.md) |
+| [萌虎](https://img.moehu.org/) | [`koishi-plugin-booru-moehu`](./plugins/moehu.md) |
 | [Pixiv](https://www.pixiv.net/) | [`koishi-plugin-booru-pixiv`](./plugins/pixiv.md) |
 | [Safebooru](https://safebooru.org/) | [`koishi-plugin-booru-safebooru`](./plugins/safebooru.md) |
 | [SankakuComplex](https://chan.sankakucomplex.com/) | [`koishi-plugin-booru-sankaku`](./plugins/sankaku.md) |
