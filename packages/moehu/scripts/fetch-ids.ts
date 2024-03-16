@@ -26,6 +26,6 @@ const url = 'https://img.moehu.org/'
       })
     })
 
-    await writeFile(resolve(__dirname, '..', 'data', 'ids.json'), JSON.stringify(keyMap))
+    await writeFile(resolve(__dirname, '..', 'src', 'data', 'ids.json'), JSON.stringify(keyMap))
   }
 })()
