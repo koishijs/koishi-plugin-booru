@@ -1,0 +1,14 @@
+name: Comment on Pull Requests
+
+on:
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+
+jobs:
+  upload:
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: cordiverse/workflows/.github/workflows/post-comment.yml@main

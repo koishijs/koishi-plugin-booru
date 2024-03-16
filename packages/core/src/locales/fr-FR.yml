@@ -8,20 +8,8 @@ commands:
       no-result: Aucune image correspondante trouvée
       no-image: 获取图片失败
       output:
-        image: <message><image url={url}></image></message>
-        info: |
-          <message>
-            <p>{title}</p>
-            <p>Le créateur : {author}</p>
-            <p>{desc}</p>
-          </message>
-        link: |
-          <message>
-            <p>L'URL de la page : {pageUrl}</p>
-            <p>La page d'accueil du créateur : {authorUrl}</p>
-          </message>
-        source: |
-          <message>
-            <p>La source images : {source}</p>
-            <p>Les balises : {tags}</p>
-          </message>
+        author: "作者: {0}"
+        homepage: "作者主页: {0}"
+        link: "页面地址: {0}"
+        source: "图源: {0}"
+        tags: "标签: {0}"
