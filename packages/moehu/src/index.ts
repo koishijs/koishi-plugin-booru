@@ -1,4 +1,4 @@
-import { closest, distance } from 'fastest-levenshtein'
+import { closest } from 'fastest-levenshtein'
 import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 import ids from '../data/ids.json'
@@ -35,6 +35,11 @@ class MoehuImageSource extends ImageSource<MoehuImageSource.Config> {
   }
 
   getSimilarTag(tags: string) {
+    if (!tags?.trim()) {
+      // Return random tag from ids
+      const t = Object.values(ids)
+      return t[Math.floor(Math.random() * t.length)]
+    }
     const c = closest(tags, availableTags)
     // TODO: Maybe we should check the distance of `c` and `tags` then only return the resonable one?
     return c
