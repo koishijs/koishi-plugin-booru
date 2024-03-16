@@ -7,7 +7,7 @@ import { Moehu } from './types'
 const availableTags: string[] = Object.entries(ids).map(([k, v]) => [k, v]).flat()
 
 class MoehuImageSource extends ImageSource<MoehuImageSource.Config> {
-  languages = ['en']
+  languages = ['en', 'zh']
 
   constructor(ctx: Context, config: MoehuImageSource.Config) {
     super(ctx, config)
