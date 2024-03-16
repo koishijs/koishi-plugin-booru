@@ -17,7 +17,7 @@ class MoehuImageSource extends ImageSource<MoehuImageSource.Config> {
       return: "json"
     }
     const url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
-    const { data } = await this.ctx.http.axios<Moehu.Response>(url)
+    const data = await this.ctx.http.get<Moehu.Response>(url)
 
     if (!Array.isArray(data.pic)) {
       return
