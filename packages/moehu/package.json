@@ -13,6 +13,13 @@
     "name": "kbd",
     "url": "https://github.com/Kabuda-czh"
   },
+  "maintainers": [
+    {
+      "name": "MaikoTan",
+      "email": "maiko.tan.coding@gmail.com",
+      "url": "https://github.com/MaikoTan"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
