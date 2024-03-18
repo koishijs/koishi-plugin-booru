@@ -38,7 +38,7 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Example to Search by Tags
+      label: Example to Search Randomly
       description: 请提供一个通过 API 搜索随机图片的例子。
       placeholder: |
         ```
@@ -48,7 +48,7 @@ body:
       required: true
   - type: checkboxes
     attributes:
-      label: Whether the source requires authentication
+      label: Whether the Source Requires Authentication
       description: 该图源是否需要登录或提供密钥才能访问？
       options:
         - label: 'Yes'
