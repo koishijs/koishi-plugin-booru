@@ -66,8 +66,8 @@ namespace e621ImageSource {
       endpoint: Schema.string().description('e621/e926 的 URL。').default('https://e621.net/'),
       keyPairs: Schema.array(
         Schema.object({
-          login: Schema.string().description('e621/e926 的用户名。'),
-          apiKey: Schema.string().description('e621/e926 的 API Key。'),
+          login: Schema.string().required().description('e621/e926 的用户名。'),
+          apiKey: Schema.string().required().role('secret').description('e621/e926 的 API Key。'),
         }),
       )
         .default([])

@@ -61,7 +61,7 @@ namespace GelbooruImageSource {
     ImageSource.createSchema({ label: 'gelbooru' }),
     Schema.object({
       endpoint: Schema.string().description('Gelbooru 的 URL。').default('https://gelbooru.com/index.php'),
-      keyPairs: Schema.array(Schema.string()).description('Gelbooru 的登录凭据。').default([]),
+      keyPairs: Schema.array(Schema.string().required().role('secret')).description('Gelbooru 的登录凭据。').default([]),
     }).description('搜索设置'),
   ])
 }

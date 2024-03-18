@@ -79,8 +79,8 @@ namespace LolibooruImageSource {
       endpoint: Schema.string().description('Lolibooru 的 URL。').default('https://lolibooru.moe'),
       keyPairs: Schema.array(
         Schema.object({
-          login: Schema.string().description('用户名'),
-          password: Schema.string().description('密码'),
+          login: Schema.string().required().description('用户名'),
+          password: Schema.string().required().role('secret').description('密码'),
         }),
       ).description('Konachan 的登录凭据。'),
     }).description('搜索设置'),
