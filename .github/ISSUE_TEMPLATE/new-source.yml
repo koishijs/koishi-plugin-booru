@@ -51,7 +51,7 @@ body:
       label: Whether the source requires authentication
       description: 该图源是否需要登录或提供密钥才能访问？
       options:
-        - label: Yes
+        - label: 'Yes'
   - type: textarea
     attributes:
       label: Example to Login
