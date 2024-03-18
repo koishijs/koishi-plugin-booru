@@ -11,8 +11,7 @@ class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Co
     super(ctx, config)
     this.http = this.http.extend({
       headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'User-Agent': config.userAgent,
       },
     })
   }
@@ -84,6 +83,7 @@ namespace SankakuComplexImageSource {
 
   export interface Config extends ImageSource.Config {
     keyPairs: KeyPair[]
+    userAgent: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -97,6 +97,9 @@ namespace SankakuComplexImageSource {
           accessToken: Schema.string().hidden().description('SankakuComplex 访问令牌'),
         }).description('SankakuComplex 的登录凭证'),
       ),
+      userAgent: Schema.string()
+          .description('设置请求的 User Agent。')
+          .default('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'),
     }).description('搜索设置'),
   ])
 }
