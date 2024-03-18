@@ -11,7 +11,6 @@ body:
       description: 使用的图源及方式
       multiple: true
       options:
-        - [New Image Sources]
         - Danbooru
         - E621 (and E926)
         - Gelbooru

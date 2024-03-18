@@ -1,0 +1,70 @@
+name: New Source Request
+description: 添加新图源支持请求
+title: 'Feature: New Source'
+labels:
+  - feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        此 Issue 模板用于提交新图源支持请求。请确保你要提交的图源满足下列要求：
+
+        - 有一个或多个相对固定的域名，具有一定程度上的稳定性。
+        - 官方提供 API，或有相对成熟的逆向工程实现方法 (如 Pixiv)。
+        - 内容丰富，支持 tag 或其他的标记系统并可以通过 API 搜索。
+  - type: input
+    attributes:
+      label: Website URL
+      description: 请提供图源的主页 URL。
+      placeholder: https://example.com/
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Website API Documentation
+      description: 请提供图源的 API 文档。
+      placeholder: https://example.com/api
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Example to Search by Tags
+      description: 请提供一个通过 API 搜索 tag 的例子。
+      placeholder: |
+        ```
+        GET https://example.com/api/posts?tags=tag1+tag2
+        ```
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Example to Search by Tags
+      description: 请提供一个通过 API 搜索随机图片的例子。
+      placeholder: |
+        ```
+        GET https://example.com/api/posts?random=true
+        ```
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Whether the source requires authentication
+      description: 该图源是否需要登录或提供密钥才能访问？
+      options:
+        - label: Yes
+  - type: textarea
+    attributes:
+      label: Example to Login
+      description: 如果该图源要求登录，请提供一个登录的例子。
+      placeholder: |
+        ```
+        POST https://example.com/api/login
+        {
+          "username": "example",
+          "password": "password"
+        }
+        ```
+  - type: textarea
+    attributes:
+      label: Additional context
+      description: 请描述其他想要补充的信息。
