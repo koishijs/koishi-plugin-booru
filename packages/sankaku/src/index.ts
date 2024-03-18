@@ -1,5 +1,6 @@
 import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+import * as consts from './constants'
 import { SankakuComplex } from './types'
 
 class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Config> {
@@ -8,17 +9,35 @@ class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Co
 
   constructor(ctx: Context, config: SankakuComplexImageSource.Config) {
     super(ctx, config)
+    this.http = this.http.extend({
+      headers: {
+        'User-Agent': config.userAgent,
+      },
+    })
+  }
+
+  get keyPair() {
+    if (!this.config.keyPairs.length) return
+    return this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    // API docs: https://chan.sankakucomplex.com/cn/help/api
+    // API docs: https://chan.sankakucomplex.com/cn/help/api (Link not available)
     const params = {
-      tags: query.tags.join('+') + "+order:random",
-      limit: query.count
+      tags: [...query.tags, 'order:random'].join('+'),
+      limit: `${query.count}`,
     }
-    const url = trimSlash(this.config.endpoint) + 'posts?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
 
-    const data = await this.http.get<SankakuComplex.Response[]>(url)
+    const keyPair = this.keyPair
+    if (!keyPair.accessToken) {
+      await this._login(keyPair)
+    }
+
+    const data = await this.http.get<SankakuComplex.Response[]>(consts.POSTS_URL, {
+      params,
+      headers: keyPair.accessToken ? { Authentication: `${keyPair.tokenType} ${keyPair.accessToken}` } : {},
+    })
+    console.log(data)
 
     if (!Array.isArray(data)) return
 
@@ -32,17 +51,55 @@ class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Co
       }
     })
   }
+
+  async _login(keyPair: SankakuComplexImageSource.KeyPair) {
+    if (!keyPair.accessToken) {
+      const data = await this.http.post<SankakuComplex.LoginResponse>(consts.LOGIN_URL, {
+        login: keyPair.login,
+        password: keyPair.password,
+      })
+      console.log(data)
+
+      if (data.access_token) {
+        keyPair.accessToken = data.access_token
+        keyPair.tokenType = data.token_type
+
+        this.ctx.setTimeout(() => {
+          this.ctx.scope.update(this.config)
+        }, 0)
+      }
+    }
+    return keyPair
+  }
 }
 
 namespace SankakuComplexImageSource {
+  export interface KeyPair {
+    login?: string
+    password?: string
+    tokenType?: string
+    accessToken?: string
+  }
+
   export interface Config extends ImageSource.Config {
-    endpoint: string
+    keyPairs: KeyPair[]
+    userAgent: string
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'sankaku' }),
     Schema.object({
-      endpoint: Schema.string().description('SankakuComplex 的 URL。').default('https://capi-v2.sankakucomplex.com/'),
+      keyPairs: Schema.array(
+        Schema.object({
+          login: Schema.string().required().description('SankakuComplex 用户名'),
+          password: Schema.string().required().role('secret').description('SankakuComplex 密码'),
+          tokenType: Schema.string().hidden().default('Bearer').description('SankakuComplex 访问令牌类型'),
+          accessToken: Schema.string().hidden().description('SankakuComplex 访问令牌'),
+        }).description('SankakuComplex 的登录凭证'),
+      ),
+      userAgent: Schema.string()
+          .description('设置请求的 User Agent。')
+          .default('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'),
     }).description('搜索设置'),
   ])
 }

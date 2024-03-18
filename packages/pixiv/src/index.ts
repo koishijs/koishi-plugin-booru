@@ -234,7 +234,7 @@ namespace PixivImageSource {
     Schema.object({
       endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
       // TODO: set token as non-required for illust recommend
-      token: Schema.string().required().description('Pixiv 的 Refresh Token'),
+      token: Schema.string().required().role('secret').description('Pixiv 的 Refresh Token'),
       minBookmarks: Schema.number()
         .default(0)
         .description('最少收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用'),

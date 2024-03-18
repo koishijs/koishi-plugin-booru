@@ -63,10 +63,44 @@ export declare namespace SankakuComplex {
     s: number
     n: number
   }
-  interface Author {
+  interface BaseUser {
     id: number
     name: string
     avatar: string
     avatar_rating: string
+  }
+  interface Author extends BaseUser {}
+  interface User extends BaseUser {
+    level: number
+    upload_limit: number
+    created_at: number
+    favs_are_private: boolean
+    avatar: string
+    post_upload_count: number
+    pool_upload_count: number
+    comment_count: number
+    post_update_count: number
+    note_update_count: number
+    wiki_update_count: number
+    forum_post_count: number
+    pool_update_count: number
+    series_update_count: number
+    tag_update_count: number
+    artist_update_count: number
+    last_logged_in_at?: number
+    favorite_count?: number
+    post_favorite_count?: number
+    pool_favorite_count?: number
+    vote_count?: number
+    post_vote_count?: number
+    pool_vote_count?: number
+    recommended_posts_for_user?: number
+    subscriptions?: Array<string>
+  }
+  export interface LoginResponse {
+    access_token: string
+    refresh_token: string
+    token_type: string
+    current_user: User
   }
 }

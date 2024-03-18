@@ -11,19 +11,30 @@ class e621ImageSource extends ImageSource<e621ImageSource.Config> {
     super(ctx, config)
     this.http = this.http.extend({
       headers: {
-        'User-Agent': config.userAgent
-      }
+        'User-Agent': config.userAgent,
+      },
     })
   }
 
+  get keyPair() {
+    if (!this.config.keyPairs.length) return
+    return this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
+  }
+
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    if (!query.tags.find(t => t.startsWith('order:'))) query.tags.push('order:random')
+    if (!query.tags.find((t) => t.startsWith('order:'))) query.tags.push('order:random')
+    const keyPair = this.keyPair
     const data = await this.http.get<{
       posts: e621.Post[]
-    }>(trimSlash(this.config.endpoint) + '/posts.json', { params: {
-      tags: query.tags.join(' '),
-      limit: query.count,
-    }})
+    }>(trimSlash(this.config.endpoint) + '/posts.json', {
+      params: {
+        tags: query.tags.join(' '),
+        limit: query.count,
+      },
+      headers: keyPair
+        ? { Authorization: 'Basic ' + Buffer.from(`${keyPair.login}:${keyPair.apiKey}`).toString('base64') }
+        : {},
+    })
 
     if (!Array.isArray(data.posts)) {
       return
@@ -45,6 +56,7 @@ class e621ImageSource extends ImageSource<e621ImageSource.Config> {
 namespace e621ImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
+    keyPairs: { login: string; apiKey: string }[]
     userAgent: string
   }
 
@@ -52,9 +64,19 @@ namespace e621ImageSource {
     ImageSource.createSchema({ label: 'e621' }),
     Schema.object({
       endpoint: Schema.string().description('e621/e926 的 URL。').default('https://e621.net/'),
-      userAgent: Schema
-      .string().description('设置请求的 User Agent。')
-      .default('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37')
+      keyPairs: Schema.array(
+        Schema.object({
+          login: Schema.string().required().description('e621/e926 的用户名。'),
+          apiKey: Schema.string().required().role('secret').description('e621/e926 的 API Key。'),
+        }),
+      )
+        .default([])
+        .description('e621/e926 的登录凭据。'),
+      userAgent: Schema.string()
+        .description('设置请求的 User Agent。')
+        .default(
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37',
+        ),
     }).description('搜索设置'),
   ])
 }
