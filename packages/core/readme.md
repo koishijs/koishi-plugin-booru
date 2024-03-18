@@ -11,6 +11,7 @@
 - [koishi-plugin-booru-lolibooru](https://booru.koishi.chat/plugins/lolibooru.html)
 - [koishi-plugin-booru-lolicon](https://booru.koishi.chat/plugins/lolicon.html)
 - [koishi-plugin-booru-local](https://booru.koishi.chat/plugins/local.html)
+- [koishi-plugin-booru-moehu](https://booru.koishi.chat/plugins/moehu.html)
 - [koishi-plugin-booru-pixiv](https://booru.koishi.chat/plugins/pixiv.html)
 - [koishi-plugin-booru-safebooru](https://booru.koishi.chat/plugins/safebooru.html)
 - [koishi-plugin-booru-sankaku](https://booru.koishi.chat/plugins/sankaku.html)

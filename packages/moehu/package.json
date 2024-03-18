@@ -1,7 +1,7 @@
 {
-  "name": "koishi-plugin-booru-yande",
-  "description": "Image service by yande for Koishi",
-  "version": "1.1.1",
+  "name": "koishi-plugin-booru-moehu",
+  "description": "Image service by moehu for Koishi",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -13,16 +13,23 @@
     "name": "kbd",
     "url": "https://github.com/Kabuda-czh"
   },
+  "maintainers": [
+    {
+      "name": "MaikoTan",
+      "email": "maiko.tan.coding@gmail.com",
+      "url": "https://github.com/MaikoTan"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
-    "directory": "packages/yande"
+    "directory": "packages/moehu"
   },
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
   },
-  "homepage": "https://booru.koishi.chat/plugins/yande.html",
+  "homepage": "https://booru.koishi.chat/plugins/moehu.html",
   "keywords": [
     "chatbot",
     "koishi",
@@ -33,11 +40,11 @@
     "picture",
     "random",
     "setu",
-    "yande"
+    "moehu"
   ],
   "koishi": {
     "description": {
-      "zh": "最好的涩图插件！ - Yande 图源支持"
+      "zh": "最好的涩图插件！ - moehu 图源支持"
     },
     "service": {
       "require": [
@@ -47,9 +54,13 @@
   },
   "peerDependencies": {
     "koishi": "^4.17.0",
-    "koishi-plugin-booru": "^1.1.6"
+    "koishi-plugin-booru": "^1.1.0"
   },
   "devDependencies": {
     "koishi": "^4.17.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "fastest-levenshtein": "^1.0.16"
   }
 }
