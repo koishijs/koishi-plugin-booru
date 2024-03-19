@@ -22,3 +22,10 @@
 - 默认值：`https://konachan.com/`
 
 Konachan 的 API 地址。
+
+#### keyPairs
+
+- 类型：`Array<{ login: string; password: string }>`
+- 默认值：`[]`
+
+Konachan 的登录凭据。如该项为空，则使用匿名登录。
