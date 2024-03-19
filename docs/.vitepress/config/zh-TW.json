@@ -79,6 +79,10 @@
               "link": "/plugins/local"
             },
             {
+              "text": "萌虎",
+              "link": "/plugins/moehu"
+            },
+            {
               "text": "Pixiv",
               "link": "/plugins/pixiv"
             },
