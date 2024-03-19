@@ -21,4 +21,11 @@
 - 类型：`string`
 - 默认值：`https://yande.re/`
 
-Yande 的 API 地址。
+Yande.re 的 API 地址。
+
+#### keyPairs
+
+- 类型：`Array<{ login: string; password: string }>`
+- 默认值：`[]`
+
+Yande.re 的登录凭据。如该项为空，则使用匿名登录。
