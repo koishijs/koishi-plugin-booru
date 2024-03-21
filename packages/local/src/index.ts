@@ -151,7 +151,9 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     const picker = Random.pick(pickPool, query.count)
     return picker.map((img) => {
       return {
-        url: pathToFileURL(img.path).href,
+        urls: {
+          original: pathToFileURL(img.path).href,
+        },
         title: img.name,
         // nsfw: img.nsfw,
         tags: img.tags,
