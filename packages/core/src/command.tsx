@@ -26,6 +26,22 @@ export function apply(ctx: Context, config: Config) {
 
       query = query?.trim() ?? ''
 
+      if (query) {
+        // Since the type of query is text, when user append options after the query, the options
+        // would not be parsed correctly. So we need to manually parse the query and options here.
+        // https://github.com/koishijs/koishi-plugin-booru/issues/39
+        const countMatch = /(-c|--count)\s+(\d+)/g.exec(query)
+        if (countMatch) {
+          options.count = count(countMatch[2], session)
+          query = query.replace(countMatch[0], '').trim()
+        }
+        const labelMatch = /(-l|--label)\s+([^\s]+)/g.exec(query)
+        if (labelMatch) {
+          options.label = labelMatch[2]
+          query = query.replace(labelMatch[0], '').trim()
+        }
+      }
+
       const images = await ctx.booru.get({
         query,
         count: options.count,
