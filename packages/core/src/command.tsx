@@ -112,27 +112,28 @@ export function apply(ctx: Context, config: Config) {
                 </message>,
               )
           case OutputType.ImageAndLink:
-            if (image.pageUrl || image.authorUrl)
-              output.unshift(
-                <message>
-                  <p>
-                    <i18n path='.output.link'>{[image.pageUrl]}</i18n>
-                  </p>
-                  <p>
-                    <i18n path='.output.homepage'>{[image.authorUrl]}</i18n>
-                  </p>
-                </message>,
-              )
           case OutputType.ImageAndInfo:
             if (image.title && image.author && image.desc)
               output.unshift(
                 <message>
                   <p>{image.title}</p>
                   <p>
-                    <i18n path='.output.author'>{[image.author]}</i18n>
+                    {config.output === OutputType.ImageAndLink && image.pageUrl ? (
+                      <a href={image.pageUrl}>
+                        <i18n path='.output.author'>{[image.author]}</i18n>
+                      </a>
+                    ) : (
+                      <i18n path='.output.author'>{[image.author]}</i18n>
+                    )}
                   </p>
                   <p>
-                    <i18n path='.output.desc'>{[image.desc]}</i18n>
+                    {config.output === OutputType.ImageAndLink && image.pageUrl ? (
+                      <a href={image.pageUrl}>
+                        <i18n path='.output.desc'>{[image.desc]}</i18n>
+                      </a>
+                    ) : (
+                      <i18n path='.output.desc'>{[image.desc]}</i18n>
+                    )}
                   </p>
                 </message>,
               )
