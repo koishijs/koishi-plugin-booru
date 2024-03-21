@@ -78,7 +78,7 @@ export namespace ImageSource {
 
   export interface Result {
     /** @deprecated Use `.urls.*` instead */
-    url: string
+    url?: string
     urls: Record<PreferSize, string>
     pageUrl?: string
     author?: string
