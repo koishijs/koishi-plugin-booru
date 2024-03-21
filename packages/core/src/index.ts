@@ -140,6 +140,7 @@ export interface Config {
   asset: boolean
   base64: boolean
   spoiler: SpoilerType
+  showTips: boolean
 }
 
 interface ImageArray extends Array<ImageSource.Result> {
@@ -181,6 +182,7 @@ export const Config = Schema.intersect([
       .description('发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。')
       .default(0)
       .experimental(),
+    showTips: Schema.boolean().default(true).description('是否输出使用提示信息。'),
   }).description('输出设置'),
 ])
 
