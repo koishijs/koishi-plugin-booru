@@ -86,7 +86,10 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
             }
 
             return {
-              url: await this._handleImage(url),
+              urls: {
+                // TODO: fill up other urls
+                original: await this._handleImage(url),
+              },
               title: illust.title,
               pageUrl: `https://pixiv.net/i/${illust.id}`,
               author: illust.user.name,
