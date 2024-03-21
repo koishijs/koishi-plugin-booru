@@ -113,11 +113,11 @@ export function apply(ctx: Context, config: Config) {
               )
           case OutputType.ImageAndLink:
           case OutputType.ImageAndInfo:
-            if (image.title && image.author && image.desc)
+            if (image.title || image.author || image.desc)
               output.unshift(
                 <message>
                   <p>
-                    {config.output === OutputType.ImageAndLink ? (
+                    {config.output === OutputType.ImageAndLink && image.pageUrl ? (
                       <a href={image.pageUrl}>{image.title}</a>
                     ) : (
                       image.title
