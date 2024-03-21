@@ -1,5 +1,5 @@
 import { Context, Session } from 'koishi'
-import { Config, OutputType, SpoilerType } from '.'
+import { Config, OutputType, SpoilerType, preferSizes } from '.'
 
 export const inject = {
   required: ['booru'],
@@ -59,7 +59,15 @@ export function apply(ctx: Context, config: Config) {
       const output: Element[] = []
 
       for (const image of filtered) {
-        let url = image.urls[config.preferSize] ?? image.url
+        let url = ''
+        for (const size of preferSizes.slice(preferSizes.indexOf(config.preferSize))) {
+          url = image.urls?.[size]
+          if (url) {
+            break
+          }
+        }
+        url ||= image.url
+
         if (config.asset && ctx.assets) {
           url = await ctx.booru.imgUrlToAssetUrl(image)
           if (!url) {
