@@ -1,4 +1,4 @@
-import { Context, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
+import { Context, Logger, Quester, Schema, Service, remove } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
 import * as Command from './command'
@@ -29,9 +29,8 @@ class ImageService extends Service {
 
   register(source: ImageSource) {
     return this[Context.origin].effect(() => {
-      const index = this.sources.length
       this.sources.push(source)
-      return { dispose: () => delete this.sources[index] }
+      return () => remove(this.sources, source)
     })
   }
 
