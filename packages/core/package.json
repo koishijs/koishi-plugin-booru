@@ -11,42 +11,34 @@
   "exports": {
     "./danbooru": {
       "types": "./lib/sources/danbooru/index.d.ts",
-      "require": "./lib/sources/danbooru/index.js",
       "default": "./lib/sources/danbooru/index.js"
     },
     "./e621": {
       "types": "./lib/sources/danbooru/index.d.ts",
-      "require": "./lib/sources/e621/index.js",
       "default": "./lib/sources/e621/index.js"
     },
     "./gelbooru": {
       "types": "./lib/sources/danbooru/index.d.ts",
-      "require": "./lib/sources/gelbooru/index.js",
       "default": "./lib/sources/gelbooru/index.js"
     },
     "./konachan": {
       "types": "./lib/sources/danbooru/index.d.ts",
-      "require": "./lib/sources/konachan/index.js",
       "default": "./lib/sources/konachan/index.js"
     },
     "./lolibooru": {
       "types": "./lib/sources/danbooru/index.d.ts",
-      "require": "./lib/sources/lolibooru/index.js",
       "default": "./lib/sources/lolibooru/index.js"
     },
     "./safebooru": {
       "types": "./lib/sources/danbooru/index.d.ts",
-      "require": "./lib/sources/safebooru/index.js",
       "default": "./lib/sources/safebooru/index.js"
     },
     "./sankaku": {
       "types": "./lib/sources/danbooru/index.d.ts",
-      "require": "./lib/sources/sankaku/index.js",
       "default": "./lib/sources/sankaku/index.js"
     },
     "./yande": {
       "types": "./lib/sources/danbooru/index.d.ts",
-      "require": "./lib/sources/yande/index.js",
       "default": "./lib/sources/yande/index.js"
     }
   },
