@@ -42,7 +42,12 @@ class e621ImageSource extends ImageSource<e621ImageSource.Config> {
 
     return data.posts.map((post) => {
       return {
-        url: post.file.url,
+        // Size: file > sample > preview
+        urls: {
+          original: post.file.url,
+          medium: post.sample.url,
+          thumbnail: post.preview.url,
+        },
         pageUrl: trimSlash(this.config.endpoint) + `/post/${post.id}`,
         author: post.tags.artist.join(', '),
         tags: Object.values(post.tags).flat(),

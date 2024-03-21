@@ -8,8 +8,17 @@ commands:
       no-result: Aucune image correspondante trouvée
       no-image: 获取图片失败
       output:
-        author: "作者: {0}"
-        homepage: "作者主页: {0}"
-        link: "页面地址: {0}"
-        source: "图源: {0}"
-        tags: "标签: {0}"
+        desc: '{0}'
+        author: '作者: {0}'
+        homepage: '作者主页: {0}'
+        link: '页面地址: {0}'
+        source: '图源: {0}'
+        tags: '标签: {0}'
+      tips: '<b>提示：</b>{0}'
+booru:
+  tips:
+    general:
+      - 不带参数调用此命令将会随机返回一张图片
+      - 可以使用 <code>-l &lt;label&gt;</code> 或 <code>--label &lt;label&gt;</code> 参数指定图源标签
+      - 可以使用 <code>-c &lt;count&gt;</code> 或 <code>--count &lt;count&gt;</code> 参数指定返回图片数量
+      - 指定的图片数量与实际返回的图片数量可能有所不同

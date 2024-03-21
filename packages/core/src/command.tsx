@@ -1,5 +1,5 @@
 import { Channel, Context, Random, Session, User } from 'koishi'
-import { Config, OutputType, SpoilerType } from '.'
+import { Config, OutputType, SpoilerType, preferSizes } from '.'
 
 export const inject = {
   required: ['booru'],
@@ -71,6 +71,14 @@ export function apply(ctx: Context, config: Config) {
       const output: Element[] = []
 
       for (const image of filtered) {
+        let url = ''
+        for (const size of preferSizes.slice(preferSizes.indexOf(config.preferSize))) {
+          url = image.urls?.[size]
+          if (url) {
+            break
+          }
+        }
+        url ||= image.url
         if (config.showTips) {
           const tips = getTips(session)
           if (tips) {
@@ -85,15 +93,14 @@ export function apply(ctx: Context, config: Config) {
         }
 
         if (config.asset && ctx.assets) {
-          image.url = await ctx.booru.imgUrlToAssetUrl(image)
-          if (!image.url) {
+          url = await ctx.booru.imgUrlToAssetUrl(url)
+          if (!url) {
             output.unshift(<i18n path='.no-image'></i18n>)
             continue
           }
-        }
-        if (config.base64) {
-          image.url = await ctx.booru.imgUrlToBase64(image)
-          if (!image.url) {
+        } else if (config.base64) {
+          url = await ctx.booru.imgUrlToBase64(url)
+          if (!url) {
             output.unshift(<i18n path='.no-image'></i18n>)
             continue
           }
@@ -112,24 +119,25 @@ export function apply(ctx: Context, config: Config) {
                 </message>,
               )
           case OutputType.ImageAndLink:
-            if (image.pageUrl || image.authorUrl)
-              output.unshift(
-                <message>
-                  <p>
-                    <i18n path='.output.link'>{[image.pageUrl]}</i18n>
-                  </p>
-                  <p>
-                    <i18n path='.output.homepage'>{[image.authorUrl]}</i18n>
-                  </p>
-                </message>,
-              )
           case OutputType.ImageAndInfo:
-            if (image.title && image.author && image.desc)
+            if (image.title || image.author || image.desc)
               output.unshift(
                 <message>
-                  <p>{image.title}</p>
                   <p>
-                    <i18n path='.output.author'>{[image.author]}</i18n>
+                    {config.output >= OutputType.ImageAndLink && image.pageUrl ? (
+                      <a href={image.pageUrl}>{image.title}</a>
+                    ) : (
+                      image.title
+                    )}
+                  </p>
+                  <p>
+                    {config.output >= OutputType.ImageAndLink && image.authorUrl ? (
+                      <a href={image.authorUrl}>
+                        <i18n path='.output.author'>{[image.author]}</i18n>
+                      </a>
+                    ) : (
+                      <i18n path='.output.author'>{[image.author]}</i18n>
+                    )}
                   </p>
                   <p>
                     <i18n path='.output.desc'>{[image.desc]}</i18n>
@@ -154,7 +162,7 @@ export function apply(ctx: Context, config: Config) {
                         return Boolean(image.nsfw)
                     }
                   })()}
-                  src={image.url}
+                  src={url}
                 ></img>
               </message>,
             )
