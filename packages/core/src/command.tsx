@@ -93,13 +93,13 @@ export function apply(ctx: Context, config: Config) {
         }
 
         if (config.asset && ctx.assets) {
-          url = await ctx.booru.imgUrlToAssetUrl(image)
+          url = await ctx.booru.imgUrlToAssetUrl(url)
           if (!url) {
             output.unshift(<i18n path='.no-image'></i18n>)
             continue
           }
         } else if (config.base64) {
-          url = await ctx.booru.imgUrlToBase64(image)
+          url = await ctx.booru.imgUrlToBase64(url)
           if (!url) {
             output.unshift(<i18n path='.no-image'></i18n>)
             continue
