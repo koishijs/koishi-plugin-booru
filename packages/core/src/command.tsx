@@ -59,16 +59,16 @@ export function apply(ctx: Context, config: Config) {
       const output: Element[] = []
 
       for (const image of filtered) {
+        let url = image.urls[config.preferSize] ?? image.url
         if (config.asset && ctx.assets) {
-          image.url = await ctx.booru.imgUrlToAssetUrl(image)
-          if (!image.url) {
+          url = await ctx.booru.imgUrlToAssetUrl(image)
+          if (!url) {
             output.unshift(<i18n path='.no-image'></i18n>)
             continue
           }
-        }
-        if (config.base64) {
-          image.url = await ctx.booru.imgUrlToBase64(image)
-          if (!image.url) {
+        } else if (config.base64) {
+          url = await ctx.booru.imgUrlToBase64(image)
+          if (!url) {
             output.unshift(<i18n path='.no-image'></i18n>)
             continue
           }
@@ -129,7 +129,7 @@ export function apply(ctx: Context, config: Config) {
                         return Boolean(image.nsfw)
                     }
                   })()}
-                  src={image.url}
+                  src={url}
                 ></img>
               </message>,
             )

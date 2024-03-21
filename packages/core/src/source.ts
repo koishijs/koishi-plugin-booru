@@ -68,8 +68,18 @@ export namespace ImageSource {
 
   export type NsfwType = 'furry' | 'guro' | 'shota' | 'bl'
 
+  export enum PreferSize {
+    Original = 'original',
+    Large = 'large',
+    Medium = 'medium',
+    Small = 'small',
+    Sample = 'sample',
+  }
+
   export interface Result {
+    /** @deprecated Use `.urls.*` instead */
     url: string
+    urls: Record<PreferSize, string>
     pageUrl?: string
     author?: string
     authorUrl?: string
