@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-booru-moehu",
   "description": "Image service by moehu for Koishi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -54,7 +54,7 @@
   },
   "peerDependencies": {
     "koishi": "^4.17.0",
-    "koishi-plugin-booru": "^1.1.0"
+    "koishi-plugin-booru": "^1.2.0"
   },
   "devDependencies": {
     "koishi": "^4.17.0"
