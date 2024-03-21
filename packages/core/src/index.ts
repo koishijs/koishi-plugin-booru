@@ -1,4 +1,4 @@
-import { Context, Element, Logger, Quester, Schema, Service, Session } from 'koishi'
+import { Context, Logger, Quester, Schema, Service, remove } from 'koishi'
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
 import * as Command from './command'
@@ -28,9 +28,10 @@ class ImageService extends Service {
   }
 
   register(source: ImageSource) {
-    const index = this.sources.length
-    this.sources.push(source)
-    return this[Context.current].collect('booru', () => delete this.sources[index])
+    return this[Context.origin].effect(() => {
+      this.sources.push(source)
+      return () => remove(this.sources, source)
+    })
   }
 
   hasSource(name?: string): boolean {
@@ -140,6 +141,7 @@ export interface Config {
   asset: boolean
   base64: boolean
   spoiler: SpoilerType
+  showTips: boolean
 }
 
 interface ImageArray extends Array<ImageSource.Result> {
@@ -190,6 +192,7 @@ export const Config = Schema.intersect([
       .description('发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。')
       .default(0)
       .experimental(),
+    showTips: Schema.boolean().default(true).description('是否输出使用提示信息。'),
   }).description('输出设置'),
 ])
 

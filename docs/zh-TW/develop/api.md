@@ -5,7 +5,7 @@
 ### `ctx.booru.register()`
 
 ```ts
-ctx.booru.register(source: ImageSource): () => boolean
+ctx.booru.register(source: ImageSource): () => void
 ```
 
 注册一个图源，返回一个 dispose 函数，调用此函数可以注销此图源。

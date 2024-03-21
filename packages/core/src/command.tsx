@@ -1,4 +1,4 @@
-import { Context, Session } from 'koishi'
+import { Channel, Context, Random, Session, User } from 'koishi'
 import { Config, OutputType, SpoilerType, preferSizes } from '.'
 
 export const inject = {
@@ -7,6 +7,18 @@ export const inject = {
 }
 
 export function apply(ctx: Context, config: Config) {
+  const getTips = (session: Session) => {
+    for (const locale of ctx.i18n.fallback([
+      ...((session.user as User.Observed)?.locales || []),
+      ...((session.channel as Channel.Observed)?.locales || []),
+    ])) {
+      if (ctx.i18n._data[locale]) {
+        const tips = Object.keys(ctx.i18n._data[locale] || {}).filter((k) => k.startsWith('booru.tips'))
+        if (tips.length) return tips
+      }
+    }
+  }
+
   const count = (value: string, session: Session) => {
     const count = parseInt(value)
     if (count < 1 || count > config.maxCount) {
@@ -67,6 +79,18 @@ export function apply(ctx: Context, config: Config) {
           }
         }
         url ||= image.url
+        if (config.showTips) {
+          const tips = getTips(session)
+          if (tips) {
+            const tip = Random.pick(tips)
+            output.unshift(
+              <p>
+                <i18n path='.tips'></i18n>
+                <i18n path={tip}></i18n>
+              </p>,
+            )
+          }
+        }
 
         if (config.asset && ctx.assets) {
           url = await ctx.booru.imgUrlToAssetUrl(image)

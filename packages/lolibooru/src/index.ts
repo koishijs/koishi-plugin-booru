@@ -86,7 +86,7 @@ namespace LolibooruImageSource {
           login: Schema.string().required().description('用户名'),
           password: Schema.string().required().role('secret').description('密码'),
         }),
-      ).description('Konachan 的登录凭据。'),
+      ).description('Lolibooru 的登录凭据。'),
     }).description('搜索设置'),
   ])
 }
