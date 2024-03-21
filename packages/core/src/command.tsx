@@ -1,4 +1,4 @@
-import { Channel, Context, Session, User } from 'koishi'
+import { Channel, Context, Random, Session, User } from 'koishi'
 import { Config, OutputType, SpoilerType } from '.'
 
 export const inject = {
@@ -73,7 +73,7 @@ export function apply(ctx: Context, config: Config) {
       for (const image of filtered) {
         const tips = getTips(session)
         if (tips) {
-          const tip = tips[Math.floor(Math.random() * tips.length)]
+          const tip = Random.pick(tips)
           output.unshift(
             <p>
               <i18n path='.tips'></i18n>
