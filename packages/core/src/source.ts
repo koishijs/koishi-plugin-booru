@@ -73,7 +73,7 @@ export namespace ImageSource {
     Large = 'large',
     Medium = 'medium',
     Small = 'small',
-    Sample = 'sample',
+    Thumbnail = 'thumbnail',
   }
 
   export interface Result {
@@ -90,4 +90,4 @@ export namespace ImageSource {
   }
 }
 
-export const preferSizes = ['sample', 'large', 'medium', 'small', 'original'] as const
+export const preferSizes = ['thumbnail', 'large', 'medium', 'small', 'original'] as const

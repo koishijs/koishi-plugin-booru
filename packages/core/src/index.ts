@@ -176,7 +176,7 @@ export const Config = Schema.intersect([
       Schema.const('large').description('较大尺寸 (通常为约 1200px)'),
       Schema.const('medium').description('中等尺寸 (通常为约 600px)'),
       Schema.const('small').description('较小尺寸 (通常为约 300px)'),
-      Schema.const('sample').description('缩略图'),
+      Schema.const('thumbnail').description('缩略图'),
     ])
       .description('优先使用图片的最大尺寸。')
       .default('large'),
