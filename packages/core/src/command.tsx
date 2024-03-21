@@ -71,15 +71,17 @@ export function apply(ctx: Context, config: Config) {
       const output: Element[] = []
 
       for (const image of filtered) {
-        const tips = getTips(session)
-        if (tips) {
-          const tip = Random.pick(tips)
-          output.unshift(
-            <p>
-              <i18n path='.tips'></i18n>
-              <i18n path={tip}></i18n>
-            </p>,
-          )
+        if (config.showTips) {
+          const tips = getTips(session)
+          if (tips) {
+            const tip = Random.pick(tips)
+            output.unshift(
+              <p>
+                <i18n path='.tips'></i18n>
+                <i18n path={tip}></i18n>
+              </p>,
+            )
+          }
         }
 
         if (config.asset && ctx.assets) {
