@@ -8,6 +8,7 @@ commands:
       no-result: No pictures match your query were found.
       no-image: 获取图片失败
       output:
+        desc: '{0}'
         author: 'By {0}'
         homepage: 'Author homepage: {0}'
         link: 'Homepage link: {0}'
