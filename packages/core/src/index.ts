@@ -28,9 +28,9 @@ class ImageService extends Service {
   }
 
   register(source: ImageSource) {
-    const index = this.sources.length
-    this.sources.push(source)
     return this[Context.origin].effect(() => {
+      const index = this.sources.length
+      this.sources.push(source)
       return { dispose: () => delete this.sources[index] }
     })
   }
