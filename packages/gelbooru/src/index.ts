@@ -46,7 +46,12 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
 
     return data.post.map((post) => {
       return {
-        url: post.file_url,
+        // Size: file_url > sample_url > preview_url
+        urls: {
+          original: post.file_url,
+          medium: post.sample_url,
+          thumbnail: post.preview_url,
+        },
         pageUrl: post.source,
         author: post.owner.replace(/ /g, ', ').replace(/_/g, ' '),
         tags: post.tags.split(' ').map((t) => t.replace(/_/g, ' ')),
