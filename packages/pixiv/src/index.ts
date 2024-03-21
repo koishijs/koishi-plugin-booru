@@ -51,9 +51,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
           headers: { Referer: 'https://www.pixiv.net/' },
           responseType: 'stream',
         })
-        ctx.set('Content-Disposition', file.headers['content-disposition'])
-        ctx.set('Content-Type', file.headers['content-type'])
-        ctx.set('Cache-Control', 'public, max-age=31536000')
+        ctx.set(Object.fromEntries(file.headers.entries()))
         ctx.response.status = file.status
         ctx.response.message = file.statusText
         ctx.body = Readable.fromWeb(file.data)
