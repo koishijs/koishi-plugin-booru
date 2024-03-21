@@ -1,7 +1,7 @@
 export namespace Lolibooru {
   export interface Response {
     id: number
-    tags: string;
+    tags: string
     created_at: number
     creator_id: number
     author: string
@@ -38,4 +38,3 @@ export namespace Lolibooru {
     frames: any[]
   }
 }
-

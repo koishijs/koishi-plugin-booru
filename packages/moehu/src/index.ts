@@ -4,7 +4,9 @@ import { ImageSource } from 'koishi-plugin-booru'
 import ids from './data/ids.json'
 import { Moehu } from './types'
 
-const availableTags: string[] = Object.entries(ids).map(([k, v]) => [k, v]).flat()
+const availableTags: string[] = Object.entries(ids)
+  .map(([k, v]) => [k, v])
+  .flat()
 
 class MoehuImageSource extends ImageSource<MoehuImageSource.Config> {
   languages = ['en', 'zh']
@@ -18,9 +20,14 @@ class MoehuImageSource extends ImageSource<MoehuImageSource.Config> {
     const params = {
       id: this.getSimilarTag(query.raw),
       num: query.count,
-      return: "json"
+      return: 'json',
     }
-    const url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
+    const url =
+      trimSlash(this.config.endpoint) +
+      '?' +
+      Object.entries(params)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&')
     const data = await this.ctx.http.get<Moehu.Response>(url, { responseType: 'json' })
 
     if (!Array.isArray(data.pic)) {

@@ -14,14 +14,19 @@ class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
     // API docs: https://safebooru.org/index.php?page=help&topic=dapi
     const params = {
       // TODO random 无效
-      tags: query.tags.join('+') + "+sort:random",
+      tags: query.tags.join('+') + '+sort:random',
       page: 'dapi',
       s: 'post',
-      q: "index",
+      q: 'index',
       json: 1,
-      limit: query.count
+      limit: query.count,
     }
-    const url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
+    const url =
+      trimSlash(this.config.endpoint) +
+      '?' +
+      Object.entries(params)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&')
 
     const data = await this.http.get<Safebooru.Response[]>(url)
 

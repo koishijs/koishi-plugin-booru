@@ -1,7 +1,7 @@
 export namespace Gelbooru {
   export interface Response {
     '@attributes': Attributes
-    post: Post[]
+    'post': Post[]
   }
 
   interface Post {

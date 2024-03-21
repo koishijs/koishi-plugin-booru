@@ -49,31 +49,31 @@ export namespace Lolicon {
    */
   export interface Setu {
     /** 作品 pid */
-    pid:	number
+    pid: number
     /** 作品所在页 */
-    p:	number
+    p: number
     /** 作者 uid */
-    uid:	number
+    uid: number
     /** 作品标题 */
-    title:	string
+    title: string
     /** 作者名（入库时，并过滤掉 @ 及其后内容） */
-    author:	string
+    author: string
     /** 是否 R18（在库中的分类，不等同于作品本身的 R18 标识） */
-    r18:	boolean
+    r18: boolean
     /** 原图宽度 px */
-    width:	number
+    width: number
     /** 原图高度 px */
-    height:	number
+    height: number
     /** 作品标签，包含标签的中文翻译（有的话） */
-    tags:	string[]
+    tags: string[]
     /** 图片扩展名 */
-    ext:	string
+    ext: string
     /** 是否是 AI 作品，0 未知（旧画作或字段未更新），1 不是，2 是 */
-    aiType:	number
+    aiType: number
     /** 作品上传日期；时间戳，单位为毫秒 */
-    uploadDate:	number
+    uploadDate: number
     /** 包含了所有指定size的图片地址 */
-    urls:	Record<Size, string>
+    urls: Record<Size, string>
   }
 
   export interface Response {
