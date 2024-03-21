@@ -15,6 +15,7 @@
     "bump": "yakumo version",
     "dep": "yakumo upgrade",
     "pub": "yakumo publish",
+    "lint": "prettier --check .",
     "format": "prettier --write .",
     "test": "yakumo mocha -r esbuild-register -r yml-register",
     "test:text": "shx rm -rf coverage && c8 -r text yarn test",

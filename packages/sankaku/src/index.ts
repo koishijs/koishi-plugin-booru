@@ -98,8 +98,10 @@ namespace SankakuComplexImageSource {
         }).description('SankakuComplex 的登录凭证'),
       ),
       userAgent: Schema.string()
-          .description('设置请求的 User Agent。')
-          .default('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'),
+        .description('设置请求的 User Agent。')
+        .default(
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        ),
     }).description('搜索设置'),
   ])
 }

@@ -1,7 +1,7 @@
 import { writeFile } from 'fs/promises'
 
 import * as cheerio from 'cheerio'
-import { resolve } from 'path';
+import { resolve } from 'path'
 
 const url = 'https://img.moehu.org/'
 

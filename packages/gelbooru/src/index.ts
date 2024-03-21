@@ -18,14 +18,19 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://gelbooru.com/index.php?page=help&topic=dapi
     const params = {
-      tags: query.tags.join('+') + "+sort:random",
+      tags: query.tags.join('+') + '+sort:random',
       page: 'dapi',
       s: 'post',
-      q: "index",
+      q: 'index',
       json: 1,
-      limit: query.count
+      limit: query.count,
     }
-    let url = trimSlash(this.config.endpoint) + '?' + Object.entries(params).map(([key, value]) => `${key}=${value}`).join('&')
+    let url =
+      trimSlash(this.config.endpoint) +
+      '?' +
+      Object.entries(params)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&')
 
     const keyPair = this.keyPair
     if (keyPair) {
@@ -61,7 +66,9 @@ namespace GelbooruImageSource {
     ImageSource.createSchema({ label: 'gelbooru' }),
     Schema.object({
       endpoint: Schema.string().description('Gelbooru 的 URL。').default('https://gelbooru.com/index.php'),
-      keyPairs: Schema.array(Schema.string().required().role('secret')).description('Gelbooru 的登录凭据。').default([]),
+      keyPairs: Schema.array(Schema.string().required().role('secret'))
+        .description('Gelbooru 的登录凭据。')
+        .default([]),
     }).description('搜索设置'),
   ])
 }

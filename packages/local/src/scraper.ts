@@ -1,5 +1,5 @@
-import { basename, extname } from "path"
-import { LocalStorage, Scraper } from "./types"
+import { basename, extname } from 'path'
+import { LocalStorage, Scraper } from './types'
 
 const element = {
   filename: '(.+)',
@@ -11,13 +11,18 @@ type Nsfw = boolean | 'furry' | 'guro' | 'shota' | 'bl'
 
 const format = {
   filename: (name: string) => name,
-  tag: (tags: string) => tags.slice(1, -1).replace('，', ',').split(',').map(s => s.trim()),
-  nsfw: (tag: string) => nsfw.includes(tag.split('=')[1])
+  tag: (tags: string) =>
+    tags
+      .slice(1, -1)
+      .replace('，', ',')
+      .split(',')
+      .map((s) => s.trim()),
+  nsfw: (tag: string) => nsfw.includes(tag.split('=')[1]),
 }
 
 const mapping = {
   filename: 'name',
-  tag: 'tags'
+  tag: 'tags',
 }
 
 function name(scraper: string, path: string, hash: string): LocalStorage.Response {
@@ -26,22 +31,31 @@ function name(scraper: string, path: string, hash: string): LocalStorage.Respons
 
   const start = scraper.charAt(0) === '.' ? '^\\.' : '^'
   const end = scraper.charAt(-1) === '+' ? '(.+)' : '$'
-  const pattren = scraper.replace(/^\./gm, '')
+  const pattren = scraper
+    .replace(/^\./gm, '')
     .replace(/\+$/gm, '')
     .split('-')
-    .map(k => k.slice(1, -1))
-    .filter(k => Object.keys(element).includes(k))
+    .map((k) => k.slice(1, -1))
+    .filter((k) => Object.keys(element).includes(k))
 
   const rule = new RegExp(start + pattren.map((key) => element[key]).join('-') + end, 'g')
   const unitData = rule.exec(filename)
-  return Object.fromEntries([...unitData === null ? [['name', filename], ['tags', []]] : pattren.map((k, i) => [mapping[k], format[k](unitData[i + 1])]),
-  ['hash', hash],
-  ['path', path]
+  return Object.fromEntries([
+    ...(unitData === null
+      ? [
+          ['name', filename],
+          ['tags', []],
+        ]
+      : pattren.map((k, i) => [mapping[k], format[k](unitData[i + 1])])),
+    ['hash', hash],
+    ['path', path],
   ])
 }
 
 // TODO: get from meta information in image file
-function meta(scraper: string, path: string, hash: string): LocalStorage.Response { return }
+function meta(scraper: string, path: string, hash: string): LocalStorage.Response {
+  return
+}
 
 export function scraper<T extends Scraper.String>(scraper: T) {
   const func: Record<Scraper.Type, Function> = { name, meta }

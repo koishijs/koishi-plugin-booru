@@ -2,7 +2,7 @@ import { Context, Element, Logger, Quester, Schema, Service, Session } from 'koi
 import LanguageDetect from 'languagedetect'
 import { ImageSource } from './source'
 import * as Command from './command'
-import { } from '@koishijs/assets'
+import {} from '@koishijs/assets'
 
 export * from './source'
 
@@ -64,7 +64,9 @@ class ImageService extends Service {
       const tags = source.tokenize(query.query)
       const images = await source.get({ count: query.count, tags, raw: query.query }).catch((err) => {
         if (Quester.Error.is(err)) {
-          logger.warn(`source ${source.config.label} request failed ${err.response?.status ? `with code ${err.response?.status} ${JSON.stringify(err.response?.data)}` : ''}`)
+          logger.warn(
+            `source ${source.config.label} request failed ${err.response?.status ? `with code ${err.response?.status} ${JSON.stringify(err.response?.data)}` : ''}`,
+          )
         } else {
           logger.error(`source ${source.config.label} unknown error: ${err.message}`)
         }
@@ -72,9 +74,10 @@ class ImageService extends Service {
         logger.debug(err)
         return []
       })
-      if (images?.length) return Object.assign(images, {
-        source: source.source
-      })
+      if (images?.length)
+        return Object.assign(images, {
+          source: source.source,
+        })
     }
 
     return undefined
@@ -88,16 +91,21 @@ class ImageService extends Service {
   }
 
   async imgUrlToBase64(image: ImageSource.Result): Promise<string> {
-    return this.ctx.http(image.url, { method: 'GET', responseType: 'arraybuffer' }).then(resp => {
-      return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
-    }).catch(err => {
-      if (Quester.Error.is(err)) {
-        logger.warn(`Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`)
-      } else {
-        logger.error(`Request images failed with unknown error: ${err.message}.`)
-      }
-      return null
-    })
+    return this.ctx
+      .http(image.url, { method: 'GET', responseType: 'arraybuffer' })
+      .then((resp) => {
+        return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
+      })
+      .catch((err) => {
+        if (Quester.Error.is(err)) {
+          logger.warn(
+            `Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
+          )
+        } else {
+          logger.error(`Request images failed with unknown error: ${err.message}.`)
+        }
+        return null
+      })
   }
 }
 
@@ -159,17 +167,21 @@ export const Config = Schema.intersect([
       Schema.const(1).description('发送图片和相关信息'),
       Schema.const(2).description('发送图片、相关信息和链接'),
       Schema.const(3).description('发送全部信息'),
-    ]).description('输出方式。').default(1),
+    ])
+      .description('输出方式。')
+      .default(1),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
     base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
     spoiler: Schema.union([
       Schema.const(0).description('禁用'),
       Schema.const(1).description('所有图片'),
       Schema.const(2).description('仅 NSFW 图片'),
-    ]).description('发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。').default(0).experimental(),
+    ])
+      .description('发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。')
+      .default(0)
+      .experimental(),
   }).description('输出设置'),
 ])
-
 
 export function apply(ctx: Context, config: Config) {
   ctx.plugin(ImageService, config)

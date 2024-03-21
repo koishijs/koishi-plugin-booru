@@ -61,7 +61,9 @@ namespace LoliconImageSource {
         Schema.const(0).description('非 R18'),
         Schema.const(1).description('仅 R18'),
         Schema.const(2).description('混合'),
-      ]).description('是否检索 R18 图片。').default(0),
+      ])
+        .description('是否检索 R18 图片。')
+        .default(0),
       proxy: Schema.union([
         Schema.const('i.pixiv.re'),
         Schema.const('i.pixiv.cat'),
@@ -69,11 +71,15 @@ namespace LoliconImageSource {
         Schema.object({
           endpoint: Schema.string().required().description('反代服务的地址。'),
         }).description('自定义'),
-      ]).description('Pixiv 反代服务。').default('i.pixiv.re'),
+      ])
+        .description('Pixiv 反代服务。')
+        .default('i.pixiv.re'),
       excludeAI: Schema.union([
         Schema.const(true).description('排除AI作品'),
-        Schema.const(false).description('不排除AI作品')
-      ]).description('是否排除 AI 作品。').default(true)
+        Schema.const(false).description('不排除AI作品'),
+      ])
+        .description('是否排除 AI 作品。')
+        .default(true),
     }).description('搜索设置'),
   ])
 }
