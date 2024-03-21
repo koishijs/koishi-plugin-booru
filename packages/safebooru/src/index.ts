@@ -36,7 +36,16 @@ class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
 
     return data.map((post) => {
       return {
-        url: `https://safebooru.org//${post.sample ? 'samples' : 'images'}/${post.directory}/${post.sample ? 'sample_' : ''}${post.image}?${post.id}`,
+        // Safebooru didn't straightly provide image urls, so we should construct them manually.
+        // `sample` url only exists when the image is too large, in that case, `post.sample`
+        // would be `true`, and then we could construct the sample url.
+        urls: {
+          original: `https://safebooru.org/images/${post.directory}/${post.image}?${post.id}`,
+          large: post.sample
+            ? `https://safebooru.org/samples/${post.directory}/sample_${post.image}?${post.id}`
+            : undefined,
+          thumbnail: `https://safebooru.org/thumbnails/${post.directory}/thumbnail_${post.image}?${post.id}`,
+        },
         // pageUrl: post.source,
         author: post.owner.replace(/ /g, ', ').replace(/_/g, ' '),
         tags: post.tags.split(' ').map((t) => t.replace(/_/g, ' ')),
