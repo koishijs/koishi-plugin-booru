@@ -68,8 +68,18 @@ export namespace ImageSource {
 
   export type NsfwType = 'furry' | 'guro' | 'shota' | 'bl'
 
+  export enum PreferSize {
+    Original = 'original',
+    Large = 'large',
+    Medium = 'medium',
+    Small = 'small',
+    Thumbnail = 'thumbnail',
+  }
+
   export interface Result {
-    url: string
+    /** @deprecated Use `.urls.*` instead */
+    url?: string
+    urls: Partial<Record<Exclude<PreferSize, 'origin'>, string>> & { original: string }
     pageUrl?: string
     author?: string
     authorUrl?: string
@@ -79,3 +89,5 @@ export namespace ImageSource {
     nsfw?: boolean | NsfwType
   }
 }
+
+export const preferSizes = ['thumbnail', 'large', 'medium', 'small', 'original'] as const

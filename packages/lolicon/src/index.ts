@@ -34,7 +34,13 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
       .filter((setu) => !!this.config.r18 || !!this.config.r18 === setu.r18)
       .map((setu) => {
         return {
-          url: setu.urls.original,
+          urls: {
+            original: setu.urls.original,
+            large: setu.urls.regular,
+            medium: setu.urls.small,
+            small: setu.urls.thumb,
+            thumbnail: setu.urls.mini,
+          },
           title: setu.title,
           author: setu.author,
           nsfw: setu.r18,

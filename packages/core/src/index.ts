@@ -136,6 +136,7 @@ export interface Config {
   confidence: number
   maxCount: number
   output: OutputType
+  preferSize: ImageSource.PreferSize
   nsfw: boolean
   asset: boolean
   base64: boolean
@@ -172,6 +173,15 @@ export const Config = Schema.intersect([
     ])
       .description('输出方式。')
       .default(1),
+    preferSize: Schema.union([
+      Schema.const('original').description('原始尺寸'),
+      Schema.const('large').description('较大尺寸 (通常为约 1200px)'),
+      Schema.const('medium').description('中等尺寸 (通常为约 600px)'),
+      Schema.const('small').description('较小尺寸 (通常为约 300px)'),
+      Schema.const('thumbnail').description('缩略图'),
+    ])
+      .description('优先使用图片的最大尺寸。')
+      .default('large'),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
     base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
     spoiler: Schema.union([

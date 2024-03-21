@@ -32,7 +32,12 @@ class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
 
     return data.map((post) => {
       return {
-        url: post.file_url,
+        // Size: file_url > large_file_url > preview_file_url
+        urls: {
+          original: post.file_url,
+          large: post.large_file_url,
+          thumbnail: post.preview_file_url,
+        },
         pageUrl: post.source,
         author: post.tag_string_artist.replace(/ /g, ', ').replace(/_/g, ' '),
         tags: post.tag_string.split(' ').map((t) => t.replace(/_/g, ' ')),

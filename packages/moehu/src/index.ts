@@ -36,7 +36,9 @@ class MoehuImageSource extends ImageSource<MoehuImageSource.Config> {
 
     return data.pic.map((img) => {
       return {
-        url: img,
+        urls: {
+          original: img,
+        },
         nsfw: false,
       }
     })
