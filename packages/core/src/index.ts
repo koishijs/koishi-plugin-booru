@@ -84,16 +84,16 @@ class ImageService extends Service {
     return undefined
   }
 
-  async imgUrlToAssetUrl(image: ImageSource.Result): Promise<string> {
-    return await this.ctx.assets.upload(image.url, Date.now().toString()).catch(() => {
+  async imgUrlToAssetUrl(url: string): Promise<string> {
+    return await this.ctx.assets.upload(url, Date.now().toString()).catch(() => {
       logger.warn('Request failed when trying to store image with assets service.')
       return null
     })
   }
 
-  async imgUrlToBase64(image: ImageSource.Result): Promise<string> {
+  async imgUrlToBase64(url: string): Promise<string> {
     return this.ctx
-      .http(image.url, { method: 'GET', responseType: 'arraybuffer' })
+      .http(url, { method: 'GET', responseType: 'arraybuffer' })
       .then((resp) => {
         return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
       })
