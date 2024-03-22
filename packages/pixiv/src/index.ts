@@ -52,6 +52,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
           responseType: 'stream',
         })
         ctx.set(Object.fromEntries(file.headers.entries()))
+        ctx.remove('Content-Length')
         ctx.response.status = file.status
         ctx.response.message = file.statusText
         ctx.body = Readable.fromWeb(file.data)
