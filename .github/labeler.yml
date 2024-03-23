@@ -19,34 +19,34 @@ core:
       - any-glob-to-any-file: packages/danbooru/**
 'source: e621':
   - changed-files:
-      - any-glob-to-any-file: package/e621/**
+      - any-glob-to-any-file: packages/e621/**
 'source: gelbooru':
   - changed-files:
-      - any-glob-to-any-file: package/gelbooru/**
+      - any-glob-to-any-file: packages/gelbooru/**
 'source: konachan':
   - changed-files:
-      - any-glob-to-any-file: package/konachan/**
+      - any-glob-to-any-file: packages/konachan/**
 'source: local':
   - changed-files:
-      - any-glob-to-any-file: package/local/**
+      - any-glob-to-any-file: packages/local/**
 'source: lolibooru':
   - changed-files:
-      - any-glob-to-any-file: package/lolibooru/**
+      - any-glob-to-any-file: packages/lolibooru/**
 'source: lolicon':
   - changed-files:
-      - any-glob-to-any-file: package/lolicon/**
+      - any-glob-to-any-file: packages/lolicon/**
 'source: moehu':
   - changed-files:
-      - any-glob-to-any-file: package/moehu/**
+      - any-glob-to-any-file: packages/moehu/**
 'source: pixiv':
   - changed-files:
-      - any-glob-to-any-file: package/pixiv/**
+      - any-glob-to-any-file: packages/pixiv/**
 'source: safebooru':
   - changed-files:
-      - any-glob-to-any-file: package/safebooru/**
+      - any-glob-to-any-file: packages/safebooru/**
 'source: sankaku':
   - changed-files:
-      - any-glob-to-any-file: package/sankaku/**
+      - any-glob-to-any-file: packages/sankaku/**
 'source: yandere':
   - changed-files:
-      - any-glob-to-any-file: package/yande/**
+      - any-glob-to-any-file: packages/yande/**
