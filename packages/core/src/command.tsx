@@ -183,6 +183,8 @@ export function apply(ctx: Context, config: Config) {
           if (output.length === 1) return <message>{output[0]}</message>
           return (
             <message forward>
+              {/* Use <author> for mimicry Bot itself in forward messages (QQ) */}
+              <author id={session.userId} name={session.username}></author>
               {output.map((children) => (
                 <message>{children}</message>
               ))}
