@@ -1,6 +1,8 @@
 import { createHash } from 'node:crypto'
-import { Context, Schema, trimSlash } from 'koishi'
+
+import { Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import { Yande } from './types'
 
 /**
@@ -19,10 +21,6 @@ function hashPassword(password: string) {
 class YandeImageSource extends ImageSource<YandeImageSource.Config> {
   languages = ['en']
   source = 'yande'
-
-  constructor(ctx: Context, config: YandeImageSource.Config) {
-    super(ctx, config)
-  }
 
   get keyPair() {
     if (!this.config.keyPairs.length) return

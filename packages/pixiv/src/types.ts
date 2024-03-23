@@ -68,7 +68,7 @@ export namespace PixivAppApi {
      * - 2: R18G
      */
     x_restrict: number
-    series: any
+    series: unknown
     meta_single_page: MetaSinglePage
     meta_pages: { image_urls: { original: string } & ImageUrls }[]
     total_view: number

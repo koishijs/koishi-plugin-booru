@@ -1,4 +1,5 @@
 import { Context, Quester, Schema } from 'koishi'
+
 import type {} from '@koishijs/plugin-proxy-agent'
 import type { Inject } from 'cordis'
 

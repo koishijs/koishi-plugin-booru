@@ -1,14 +1,11 @@
-import { Context, Schema } from 'koishi'
+import { Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import { Lolicon } from './types'
 
 class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
   languages = ['en', 'zh-CN', 'ja']
   source = 'lolicon'
-
-  constructor(ctx: Context, config: LoliconImageSource.Config) {
-    super(ctx, config)
-  }
 
   override tokenize(query: string) {
     return query.split(/\s+/)

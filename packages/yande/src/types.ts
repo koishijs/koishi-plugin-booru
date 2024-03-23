@@ -38,9 +38,9 @@ export namespace Yande {
     height: number
     is_held: boolean
     frames_pending_string: string
-    frames_pending: any[]
+    frames_pending: unknown[]
     frames_string: string
-    frames: any[]
+    frames: unknown[]
     is_note_locked: boolean
     last_noted_at: number
     last_commented_at: number

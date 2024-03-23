@@ -1,14 +1,11 @@
-import { Context, Schema, trimSlash } from 'koishi'
+import { Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import { Danbooru } from './types'
 
 class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
   languages = ['en']
   source = 'danbooru'
-
-  constructor(ctx: Context, config: DanbooruImageSource.Config) {
-    super(ctx, config)
-  }
 
   get keyPair() {
     if (!this.config.keyPairs.length) return

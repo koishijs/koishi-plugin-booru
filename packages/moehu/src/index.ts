@@ -1,6 +1,7 @@
 import { closest } from 'fastest-levenshtein'
-import { Context, Schema, trimSlash } from 'koishi'
+import { Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import ids from './data/ids.json'
 import { Moehu } from './types'
 
@@ -10,10 +11,6 @@ const availableTags: string[] = Object.entries(ids)
 
 class MoehuImageSource extends ImageSource<MoehuImageSource.Config> {
   languages = ['en', 'zh']
-
-  constructor(ctx: Context, config: MoehuImageSource.Config) {
-    super(ctx, config)
-  }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://img.moehu.org/
