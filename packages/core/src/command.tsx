@@ -162,7 +162,7 @@ export function apply(ctx: Context, config: Config) {
         const tips = getTips(session)
         if (tips) {
           const tip = Random.pick(tips)
-          output.unshift(
+          output.push(
             <p>
               <i18n path='.tips'></i18n>
               <i18n path={tip}></i18n>
