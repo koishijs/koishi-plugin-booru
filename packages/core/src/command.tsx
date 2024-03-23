@@ -68,9 +68,10 @@ export function apply(ctx: Context, config: Config) {
 
       if (!filtered?.length) return session?.text('.no-result')
 
-      const output: Element[] = []
+      const output: Element[][] = []
 
       for (const image of filtered) {
+        const children: Element[] = []
         let url = ''
         for (const size of preferSizes.slice(preferSizes.indexOf(config.preferSize))) {
           url = image.urls?.[size]
@@ -83,7 +84,7 @@ export function apply(ctx: Context, config: Config) {
           const tips = getTips(session)
           if (tips) {
             const tip = Random.pick(tips)
-            output.unshift(
+            children.unshift(
               <p>
                 <i18n path='.tips'></i18n>
                 <i18n path={tip}></i18n>
@@ -95,34 +96,34 @@ export function apply(ctx: Context, config: Config) {
         if (config.asset && ctx.assets) {
           url = await ctx.booru.imgUrlToAssetUrl(url)
           if (!url) {
-            output.unshift(<i18n path='.no-image'></i18n>)
+            children.unshift(<i18n path='.no-image'></i18n>)
             continue
           }
         } else if (config.base64) {
           url = await ctx.booru.imgUrlToBase64(url)
           if (!url) {
-            output.unshift(<i18n path='.no-image'></i18n>)
+            children.unshift(<i18n path='.no-image'></i18n>)
             continue
           }
         }
         switch (config.output) {
           case OutputType.All:
             if (image.tags)
-              output.unshift(
-                <message>
+              children.unshift(
+                <>
                   <p>
                     <i18n path='.output.source'>{[source]}</i18n>
                   </p>
                   <p>
                     <i18n path='.output.tags'>{[image.tags.join(', ')]}</i18n>
                   </p>
-                </message>,
+                </>,
               )
           case OutputType.ImageAndLink:
           case OutputType.ImageAndInfo:
             if (image.title || image.author || image.desc)
-              output.unshift(
-                <message>
+              children.unshift(
+                <>
                   <p>
                     {config.output >= OutputType.ImageAndLink && image.pageUrl ? (
                       <a href={image.pageUrl}>{image.title}</a>
@@ -142,15 +143,15 @@ export function apply(ctx: Context, config: Config) {
                   <p>
                     <i18n path='.output.desc'>{[image.desc]}</i18n>
                   </p>
-                </message>,
+                </>,
               )
           case OutputType.ImageOnly:
-            output.unshift(
+            children.unshift(
               /**
                * @TODO waiting for upstream to support spoiler tag
                * but is only is attribute, so it's can work now.
                */
-              <message>
+              <>
                 <img
                   spoiler={(() => {
                     switch (config.spoiler) {
@@ -164,14 +165,34 @@ export function apply(ctx: Context, config: Config) {
                   })()}
                   src={url}
                 ></img>
-              </message>,
+              </>,
             )
         }
+        output.push(children)
       }
-      // the qq platform will can merge the all forward message with one element(forward message block).
-      // so can treat it as a spoiler message.
-      if (['qq', 'red', 'onebot'].includes(session.platform) && config.spoiler !== SpoilerType.Disabled)
-        return <message forward>{output}</message>
-      else return output.length === 1 ? output[0] : <message forward>{output}</message>
+
+      switch (session.resolve(config.outputMethod)) {
+        case 'one-by-one':
+          return output.map((children) => <message>{children}</message>)
+        case 'merge-multiple':
+          return <message>{output.map((children) => children)}</message>
+        case 'forward-all':
+          return (
+            <message forward>
+              {output.map((children) => (
+                <message>{children}</message>
+              ))}
+            </message>
+          )
+        case 'forward-multiple':
+          if (output.length === 1) return <message>{output[0]}</message>
+          return (
+            <message forward>
+              {output.map((children) => (
+                <message>{children}</message>
+              ))}
+            </message>
+          )
+      }
     })
 }
