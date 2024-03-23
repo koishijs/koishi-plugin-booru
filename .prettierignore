@@ -5,3 +5,4 @@ node_modules/
 /packages/lib
 /packages/*/src/locales/*
 !/packages/*/src/locales/zh-CN*
+**/.yarn/*
