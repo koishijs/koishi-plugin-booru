@@ -11,7 +11,7 @@ documentation:
 
 core:
   - changed-files:
-      - any-glob-to-any-files: packages/core/*
+      - any-glob-to-any-file: packages/core/*
 
 # Sources
 'source: danbooru':
