@@ -5,3 +5,8 @@
 *.ico -text
 *.gif -text
 *.webp -text
+
+.yarn/release/*   -text binary linguist-generated
+.yarn/cache/*     -text binary linguist-generated
+.yarn/plugins/*   -text binary linguist-generated
+.yarn/sdks/*      -text binary linguist-generated
