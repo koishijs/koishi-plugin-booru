@@ -110,40 +110,36 @@ export function apply(ctx: Context, config: Config) {
           case OutputType.All:
             if (image.tags)
               children.unshift(
-                <>
-                  <p>
-                    <i18n path='.output.source'>{[source]}</i18n>
-                  </p>
-                  <p>
-                    <i18n path='.output.tags'>{[image.tags.join(', ')]}</i18n>
-                  </p>
-                </>,
+                <p>
+                  <i18n path='.output.source'>{[source]}</i18n>
+                </p>,
+                <p>
+                  <i18n path='.output.tags'>{[image.tags.join(', ')]}</i18n>
+                </p>,
               )
           case OutputType.ImageAndLink:
           case OutputType.ImageAndInfo:
             if (image.title || image.author || image.desc)
               children.unshift(
-                <>
-                  <p>
-                    {config.output >= OutputType.ImageAndLink && image.pageUrl ? (
-                      <a href={image.pageUrl}>{image.title}</a>
-                    ) : (
-                      image.title
-                    )}
-                  </p>
-                  <p>
-                    {config.output >= OutputType.ImageAndLink && image.authorUrl ? (
-                      <a href={image.authorUrl}>
-                        <i18n path='.output.author'>{[image.author]}</i18n>
-                      </a>
-                    ) : (
+                <p>
+                  {config.output >= OutputType.ImageAndLink && image.pageUrl ? (
+                    <a href={image.pageUrl}>{image.title}</a>
+                  ) : (
+                    image.title
+                  )}
+                </p>,
+                <p>
+                  {config.output >= OutputType.ImageAndLink && image.authorUrl ? (
+                    <a href={image.authorUrl}>
                       <i18n path='.output.author'>{[image.author]}</i18n>
-                    )}
-                  </p>
-                  <p>
-                    <i18n path='.output.desc'>{[image.desc]}</i18n>
-                  </p>
-                </>,
+                    </a>
+                  ) : (
+                    <i18n path='.output.author'>{[image.author]}</i18n>
+                  )}
+                </p>,
+                <p>
+                  <i18n path='.output.desc'>{[image.desc]}</i18n>
+                </p>,
               )
           case OutputType.ImageOnly:
             children.unshift(
@@ -151,21 +147,20 @@ export function apply(ctx: Context, config: Config) {
                * @TODO waiting for upstream to support spoiler tag
                * but is only is attribute, so it's can work now.
                */
-              <>
-                <img
-                  spoiler={(() => {
-                    switch (config.spoiler) {
-                      case SpoilerType.Disabled:
-                        return false
-                      case SpoilerType.All:
-                        return true
-                      case SpoilerType.OnlyNSFW:
-                        return Boolean(image.nsfw)
-                    }
-                  })()}
-                  src={url}
-                ></img>
-              </>,
+
+              <img
+                spoiler={(() => {
+                  switch (config.spoiler) {
+                    case SpoilerType.Disabled:
+                      return false
+                    case SpoilerType.All:
+                      return true
+                    case SpoilerType.OnlyNSFW:
+                      return Boolean(image.nsfw)
+                  }
+                })()}
+                src={url}
+              ></img>,
             )
         }
         output.push(children)
