@@ -203,7 +203,9 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       return url.replace(/^https?:\/\/i\.pximg\.net/, trimSlash(proxy))
     } else if (this.config.bypassMethod === 'route' && this.config.route && this.ctx.get('server')) {
       const encrypted = Cipher.encrypt(url, this.config.aesKey)
-      return trimSlash(this.ctx.server.config.selfUrl) + trimSlash(this.config.route) + '/' + encodeURIComponent(encrypted)
+      return (
+        trimSlash(this.ctx.server.config.selfUrl) + trimSlash(this.config.route) + '/' + encodeURIComponent(encrypted)
+      )
     } else if (this.config.bypassMethod === 'asset' && this.ctx.get('assets')) {
       const filename = url.split('/').pop().split('?')[0]
       const file = await this.http<ArrayBuffer>(url, { headers: { Referer: 'https://www.pixiv.net/' } })
