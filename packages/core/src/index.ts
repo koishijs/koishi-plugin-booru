@@ -136,6 +136,7 @@ export interface Config {
   confidence: number
   maxCount: number
   output: OutputType
+  outputMethod: 'one-by-one' | 'merge-multiple' | 'forward-all' | 'forward-multiple'
   preferSize: ImageSource.PreferSize
   nsfw: boolean
   asset: boolean
@@ -173,6 +174,16 @@ export const Config = Schema.intersect([
     ])
       .description('输出方式。')
       .default(1),
+    outputMethod: Schema.union([
+      Schema.const('one-by-one').description('逐条发送每张图片'),
+      Schema.const('merge-multiple').description('合并多条发送 (部分平台可能不支持)'),
+      Schema.const('forward-all').description('合并为子话题发送所有图片 (部分平台需求较高权限)'),
+      Schema.const('forward-multiple').description('仅当多于一张图片使用合并为子话题发送 (部分平台需求较高权限)'),
+    ])
+      .experimental()
+      .role('radio')
+      .default('merge-multiple')
+      .description('发送方式。'),
     preferSize: Schema.union([
       Schema.const('original').description('原始尺寸'),
       Schema.const('large').description('较大尺寸 (通常为约 1200px)'),
