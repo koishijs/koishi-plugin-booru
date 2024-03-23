@@ -82,18 +82,6 @@ export function apply(ctx: Context, config: Config) {
           }
         }
         url ||= image.url
-        if (config.showTips) {
-          const tips = getTips(session)
-          if (tips) {
-            const tip = Random.pick(tips)
-            children.unshift(
-              <p>
-                <i18n path='.tips'></i18n>
-                <i18n path={tip}></i18n>
-              </p>,
-            )
-          }
-        }
 
         if (config.asset && ctx.assets) {
           url = await ctx.booru.imgUrlToAssetUrl(url)
@@ -168,6 +156,19 @@ export function apply(ctx: Context, config: Config) {
             )
         }
         output.push(children)
+      }
+
+      if (config.showTips) {
+        const tips = getTips(session)
+        if (tips) {
+          const tip = Random.pick(tips)
+          output.unshift(
+            <p>
+              <i18n path='.tips'></i18n>
+              <i18n path={tip}></i18n>
+            </p>,
+          )
+        }
       }
 
       switch (session.resolve(config.outputMethod)) {
