@@ -1,14 +1,11 @@
-import { Context, Schema, trimSlash } from 'koishi'
+import { Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import { Gelbooru } from './types'
 
 class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
   languages = ['en']
   source = 'gelbooru'
-
-  constructor(ctx: Context, config: GelbooruImageSource.Config) {
-    super(ctx, config)
-  }
 
   get keyPair() {
     if (!this.config.keyPairs.length) return

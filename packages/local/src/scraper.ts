@@ -1,4 +1,5 @@
 import { basename, extname } from 'path'
+
 import { LocalStorage, Scraper } from './types'
 
 const element = {
@@ -7,7 +8,7 @@ const element = {
 }
 
 const nsfw = [true, false, 'furry', 'guro', 'shota', 'bl']
-type Nsfw = boolean | 'furry' | 'guro' | 'shota' | 'bl'
+// type Nsfw = boolean | 'furry' | 'guro' | 'shota' | 'bl'
 
 const format = {
   filename: (name: string) => name,
@@ -54,10 +55,11 @@ function name(scraper: string, path: string, hash: string): LocalStorage.Respons
 
 // TODO: get from meta information in image file
 function meta(scraper: string, path: string, hash: string): LocalStorage.Response {
-  return
+  return { name: basename(path, extname(path)), hash, path }
 }
 
 export function scraper<T extends Scraper.String>(scraper: T) {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   const func: Record<Scraper.Type, Function> = { name, meta }
   const typer = /^\#(.+)#(.+)/.exec(scraper)
   if (typer === null) return (path: string, hash: string) => name(scraper, path, hash)

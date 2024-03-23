@@ -1,4 +1,6 @@
+/* eslint-disable no-fallthrough */
 import { Channel, Context, Random, Session, User } from 'koishi'
+
 import { Config, OutputType, SpoilerType, preferSizes } from '.'
 
 export const inject = {
@@ -108,7 +110,7 @@ export function apply(ctx: Context, config: Config) {
         }
         switch (config.output) {
           case OutputType.All:
-            if (image.tags)
+            if (image.tags) {
               children.unshift(
                 <p>
                   <i18n path='.output.source'>{[source]}</i18n>
@@ -117,9 +119,10 @@ export function apply(ctx: Context, config: Config) {
                   <i18n path='.output.tags'>{[image.tags.join(', ')]}</i18n>
                 </p>,
               )
+            }
           case OutputType.ImageAndLink:
           case OutputType.ImageAndInfo:
-            if (image.title || image.author || image.desc)
+            if (image.title || image.author || image.desc) {
               children.unshift(
                 <p>
                   {config.output >= OutputType.ImageAndLink && image.pageUrl ? (
@@ -141,6 +144,7 @@ export function apply(ctx: Context, config: Config) {
                   <i18n path='.output.desc'>{[image.desc]}</i18n>
                 </p>,
               )
+            }
           case OutputType.ImageOnly:
             children.unshift(
               /**

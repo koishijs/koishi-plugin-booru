@@ -1,7 +1,8 @@
 import { Context, Logger, Quester, Schema, Service, remove } from 'koishi'
 import LanguageDetect from 'languagedetect'
-import { ImageSource } from './source'
+
 import * as Command from './command'
+import { ImageSource } from './source'
 import {} from '@koishijs/assets'
 
 export * from './source'
@@ -19,6 +20,7 @@ class ImageService extends Service {
     required: [],
     optional: ['assets'],
   }
+
   private sources: ImageSource[] = []
   private languageDetect = new LanguageDetect()
 
@@ -66,7 +68,10 @@ class ImageService extends Service {
       const images = await source.get({ count: query.count, tags, raw: query.query }).catch((err) => {
         if (Quester.Error.is(err)) {
           logger.warn(
-            `source ${source.config.label} request failed ${err.response?.status ? `with code ${err.response?.status} ${JSON.stringify(err.response?.data)}` : ''}`,
+            [
+              `source ${source.config.label} request failed`,
+              err.response?.status ? `with code ${err.response?.status} ${JSON.stringify(err.response?.data)}` : '',
+            ].join(' '),
           )
         } else {
           logger.error(`source ${source.config.label} unknown error: ${err.message}`)
@@ -75,10 +80,11 @@ class ImageService extends Service {
         logger.debug(err)
         return []
       })
-      if (images?.length)
+      if (images?.length) {
         return Object.assign(images, {
           source: source.source,
         })
+      }
     }
 
     return undefined
@@ -211,5 +217,6 @@ export function apply(ctx: Context, config: Config) {
   ctx.plugin(ImageService, config)
   ctx.plugin(Command, config)
 
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   ctx.i18n.define('zh', require('./locales/zh-CN'))
 }

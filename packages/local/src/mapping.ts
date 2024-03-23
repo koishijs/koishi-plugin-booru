@@ -1,6 +1,7 @@
 import { PathLike, existsSync, statSync } from 'fs'
 import { readdir } from 'fs/promises'
 import { extname, isAbsolute, resolve, sep } from 'path'
+
 import { LocalStorage } from './types'
 import { hash } from './utils/hash'
 
@@ -34,11 +35,12 @@ export class Mapping {
       const files = await readdir(folderPath)
       await files.forEach((file) => {
         file = this.absPath(resolve(folderPath.toString(), file))
-        if (statSync(file).isFile() && options.extnames.includes(extname(file)) && !imagePaths.includes(file))
+        if (statSync(file).isFile() && options.extnames.includes(extname(file)) && !imagePaths.includes(file)) {
           imagePaths.push(file)
+        }
       })
     } catch (error) {
-      //ignore error task
+      // ignore error task
     }
 
     return {

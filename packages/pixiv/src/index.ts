@@ -1,20 +1,21 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
-import { ReadableStream } from 'node:stream/web'
+
 import {} from '@koishijs/assets'
 import {} from '@koishijs/plugin-server'
 import { Context, Quester, Random, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import { PixivAppApi } from './types'
 
 const CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
 const CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
-const HASH_SECRET = '28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c'
 
 class PixivImageSource extends ImageSource<PixivImageSource.Config> {
   static inject = {
     required: ['booru'],
     optional: ['assets', 'server'],
   }
+
   languages = ['en', 'zh', 'zh-CN', 'zh-TW', 'ja', 'ko']
   source = 'pixiv'
 
@@ -129,7 +130,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
   }
 
   async recommend(): Promise<PixivAppApi.Result> {
-    const url = /* this.config.token ?  */ '/v1/illust/recommended' //: '/v1/illust/recommended-nologin'
+    const url = /* this.config.token ?  */ '/v1/illust/recommended' // : '/v1/illust/recommended-nologin'
 
     if (/* this.config.token &&  */ !this.accessToken) {
       await this._login()

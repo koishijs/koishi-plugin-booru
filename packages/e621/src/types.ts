@@ -8,13 +8,13 @@ export namespace e621 {
     sample: Sample
     score: Score
     tags: Tags
-    locked_tags: any[]
+    locked_tags: string[]
     change_seq: number
     flags: Flags
     rating: string
     fav_count: number
     sources: string[]
-    pools: any[]
+    pools: number[]
     relationships: Relationships
     approver_id: null
     uploader_id: number
@@ -53,7 +53,7 @@ export namespace e621 {
     parent_id: null
     has_children: boolean
     has_active_children: boolean
-    children: any[]
+    children: unknown[]
   }
 
   export interface Sample {
@@ -76,10 +76,10 @@ export namespace e621 {
     general: string[]
     species: string[]
     character: string[]
-    copyright: any[]
+    copyright: string[]
     artist: string[]
-    invalid: any[]
-    lore: any[]
+    invalid: unknown[]
+    lore: unknown[]
     meta: string[]
   }
 }

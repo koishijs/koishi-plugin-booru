@@ -20,16 +20,16 @@ export declare namespace SankakuComplex {
     has_comments: boolean
     has_notes: boolean
     is_favorited: boolean
-    user_vote?: any
+    user_vote?: number
     md5: string
-    parent_id?: any
+    parent_id?: number
     change: number
     fav_count: number
     recommended_posts: number
     recommended_score: number
     vote_count: number
     total_score: number
-    comment_count?: any
+    comment_count?: number
     source: string
     in_visible_pool: boolean
     is_premium: boolean
@@ -37,10 +37,10 @@ export declare namespace SankakuComplex {
     is_note_locked: boolean
     is_status_locked: boolean
     redirect_to_signup: boolean
-    sequence?: any
-    generation_directives?: any
+    sequence?: number
+    generation_directives?: unknown
     tags: Tag[]
-    video_duration?: any
+    video_duration?: number
   }
   interface Tag {
     id: number
@@ -95,7 +95,7 @@ export declare namespace SankakuComplex {
     post_vote_count?: number
     pool_vote_count?: number
     recommended_posts_for_user?: number
-    subscriptions?: Array<string>
+    subscriptions?: string[]
   }
   export interface LoginResponse {
     access_token: string

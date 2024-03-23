@@ -1,13 +1,15 @@
+import { existsSync } from 'fs'
+import { readFile, writeFile } from 'fs/promises'
+import { resolve } from 'path'
+import { pathToFileURL } from 'url'
+
 import { Context, Logger, Random, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
-import { pathToFileURL } from 'url'
-import { readFile, writeFile } from 'fs/promises'
-import { existsSync } from 'fs'
-import { resolve } from 'path'
-import { scraper } from './scraper'
+
 import { Mapping } from './mapping'
-import { hash, mkdirs } from './utils'
+import { scraper } from './scraper'
 import { LocalStorage } from './types'
+import { hash, mkdirs } from './utils'
 
 declare module 'koishi' {
   interface Tables {
@@ -20,6 +22,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     required: ['booru'],
     optional: ['database', 'cache'],
   }
+
   languages = []
   source = 'local'
   private imageMap: LocalStorage.Type[] = []
@@ -30,7 +33,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     this.languages = config.languages
     this.logger = ctx.logger('booru-local')
 
-    if (config.storage === 'database')
+    if (config.storage === 'database') {
       ctx.using(['database'], async (ctx) => {
         ctx.model.extend(
           'booru_local',
@@ -50,14 +53,17 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
         this.imageMap = await ctx.database.get('booru_local', {})
       })
+    }
 
     if (config.storage === 'file') {
       const absMap = resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap)
-      if (!existsSync(resolve(ctx.root.baseDir, LocalImageSource.DataDir)))
+      if (!existsSync(resolve(ctx.root.baseDir, LocalImageSource.DataDir))) {
         mkdirs(resolve(ctx.root.baseDir, LocalImageSource.DataDir))
+      }
 
       if (existsSync(absMap)) {
         try {
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
           this.imageMap = require(absMap) as LocalStorage.Type[]
         } catch (err) {
           readFile(absMap, 'utf-8')
@@ -89,7 +95,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         this.config.endpoint = [...new Set(this.config.endpoint)]
         if (this.imageMap.length > 0) mapping = mapping.update(this.imageMap)
         // mapping the folders to memory by loop
-        for await (let path of config.endpoint) {
+        for await (const path of config.endpoint) {
           const store = await mapping.create(path, { extnames: config.extension })
           const images = store.imagePaths.filter((path) => !store.images.map((img) => img.path).includes(path))
           // create image informations
@@ -108,6 +114,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         // save mapping
         if (config.storage === 'database') ctx.database.upsert('booru_local', this.imageMap, ['storeId', 'storeName'])
         else if (config.storage === 'file') {
+          // TODO: fill this part
         }
         writeFile(
           resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap),

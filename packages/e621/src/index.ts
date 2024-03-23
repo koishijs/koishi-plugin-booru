@@ -1,5 +1,6 @@
 import { Context, Quester, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import { e621 } from './types'
 
 class e621ImageSource extends ImageSource<e621ImageSource.Config> {
@@ -77,11 +78,10 @@ namespace e621ImageSource {
       )
         .default([])
         .description('e621/e926 的登录凭据。'),
-      userAgent: Schema.string()
-        .description('设置请求的 User Agent。')
-        .default(
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37',
-        ),
+      userAgent: Schema.string().description('设置请求的 User Agent。').default(
+        // eslint-disable-next-line max-len
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37',
+      ),
     }).description('搜索设置'),
   ])
 }

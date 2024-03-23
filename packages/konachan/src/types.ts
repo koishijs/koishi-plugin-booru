@@ -33,8 +33,8 @@ export namespace Konachan {
     height: number
     is_held: boolean
     frames_pending_string: string
-    frames_pending: any[]
+    frames_pending: unknown[]
     frames_string: string
-    frames: any[]
+    frames: unknown[]
   }
 }

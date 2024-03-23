@@ -1,6 +1,8 @@
 import { createHash } from 'node:crypto'
-import { Context, Dict, Schema, trimSlash } from 'koishi'
+
+import { Dict, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import { Lolibooru } from './types'
 /**
  * Lolibooru requires a password hash for authentication.
@@ -18,10 +20,6 @@ function hashPassword(password: string) {
 class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
   languages = ['en']
   source = 'lolibooru'
-
-  constructor(ctx: Context, config: LolibooruImageSource.Config) {
-    super(ctx, config)
-  }
 
   get keyPair() {
     if (!this.config.keyPairs.length) return

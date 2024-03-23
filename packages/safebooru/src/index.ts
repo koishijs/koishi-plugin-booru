@@ -1,14 +1,11 @@
-import { Context, Schema, trimSlash } from 'koishi'
+import { Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import { Safebooru } from './types'
 
 class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
   languages = ['en']
   source = 'safebooru'
-
-  constructor(ctx: Context, config: SafebooruImageSource.Config) {
-    super(ctx, config)
-  }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://safebooru.org/index.php?page=help&topic=dapi
