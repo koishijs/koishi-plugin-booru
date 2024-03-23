@@ -7,7 +7,7 @@ const element = {
   tag: '(\\[.+\\])',
 }
 
-// const nsfw = [true, false, 'furry', 'guro', 'shota', 'bl']
+const nsfw = [true, false, 'furry', 'guro', 'shota', 'bl']
 // type Nsfw = boolean | 'furry' | 'guro' | 'shota' | 'bl'
 
 const format = {
