@@ -174,6 +174,8 @@ export function apply(ctx: Context, config: Config) {
         case 'forward-all':
           return (
             <message forward>
+              {/* Use <author> for mimicry Bot itself in forward messages (QQ) */}
+              <author id={session.userId} name={session.username}></author>
               {output.map((children) => (
                 <message>{children}</message>
               ))}
