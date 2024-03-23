@@ -9,6 +9,11 @@
     "dist"
   ],
   "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json",
     "./danbooru": {
       "types": "./lib/sources/danbooru/index.d.ts",
       "default": "./lib/sources/danbooru/index.js"
