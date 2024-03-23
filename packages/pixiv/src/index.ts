@@ -1,5 +1,4 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
-import { Readable } from 'node:stream'
 import { ReadableStream } from 'node:stream/web'
 import {} from '@koishijs/assets'
 import {} from '@koishijs/plugin-server'
@@ -47,15 +46,15 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
         const url = ctx.request.url.replace(/^\/booru\/pixiv\/proxy\//, '')
         const decrypted = Cipher.decrypt(decodeURIComponent(url), config.aesKey)
         if (typeof decrypted !== 'string' || !decrypted.startsWith('https://i.pximg.net/')) return next()
-        const file = await this.http<ReadableStream>(decrypted, {
+        const file = await this.http<ArrayBuffer>(decrypted, {
           headers: { Referer: 'https://www.pixiv.net/' },
-          responseType: 'stream',
+          responseType: 'arraybuffer',
         })
-        ctx.set('Content-Type', file.headers['content-type'])
-        ctx.set('Cache-Control', 'public, max-age=31536000')
+        ctx.set(Object.fromEntries(file.headers.entries()))
+        ctx.remove('Content-Length')
         ctx.response.status = file.status
         ctx.response.message = file.statusText
-        ctx.body = Readable.fromWeb(file.data)
+        ctx.body = Buffer.from(file.data)
         return next()
       })
     }
@@ -204,7 +203,9 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       return url.replace(/^https?:\/\/i\.pximg\.net/, trimSlash(proxy))
     } else if (this.config.bypassMethod === 'route' && this.config.route && this.ctx.get('server')) {
       const encrypted = Cipher.encrypt(url, this.config.aesKey)
-      return trimSlash(this.ctx.server.selfUrl) + trimSlash(this.config.route) + '/' + encodeURIComponent(encrypted)
+      return (
+        trimSlash(this.ctx.server.config.selfUrl) + trimSlash(this.config.route) + '/' + encodeURIComponent(encrypted)
+      )
     } else if (this.config.bypassMethod === 'asset' && this.ctx.get('assets')) {
       const filename = url.split('/').pop().split('?')[0]
       const file = await this.http<ArrayBuffer>(url, { headers: { Referer: 'https://www.pixiv.net/' } })
