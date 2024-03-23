@@ -1,52 +1,52 @@
 ci:
   - changed-files:
       - any-glob-to-any-file:
-          - .github/workflows/*
+          - .github/workflows/**
 
 documentation:
   - changed-files:
       - any-glob-to-any-file:
           - docs/config/zh-CN.json
-          - docs/zh-CN/*
+          - docs/zh-CN/**
 
 core:
   - changed-files:
-      - any-glob-to-any-file: packages/core/*
+      - any-glob-to-any-file: packages/core/**
 
 # Sources
 'source: danbooru':
   - changed-files:
-      - any-glob-to-any-file: packages/danbooru/*
+      - any-glob-to-any-file: packages/danbooru/**
 'source: e621':
   - changed-files:
-      - any-glob-to-any-file: package/e621/*
+      - any-glob-to-any-file: package/e621/**
 'source: gelbooru':
   - changed-files:
-      - any-glob-to-any-file: package/gelbooru/*
+      - any-glob-to-any-file: package/gelbooru/**
 'source: konachan':
   - changed-files:
-      - any-glob-to-any-file: package/konachan/*
+      - any-glob-to-any-file: package/konachan/**
 'source: local':
   - changed-files:
-      - any-glob-to-any-file: package/local/*
+      - any-glob-to-any-file: package/local/**
 'source: lolibooru':
   - changed-files:
-      - any-glob-to-any-file: package/lolibooru/*
+      - any-glob-to-any-file: package/lolibooru/**
 'source: lolicon':
   - changed-files:
-      - any-glob-to-any-file: package/lolicon/*
+      - any-glob-to-any-file: package/lolicon/**
 'source: moehu':
   - changed-files:
-      - any-glob-to-any-file: package/moehu/*
+      - any-glob-to-any-file: package/moehu/**
 'source: pixiv':
   - changed-files:
-      - any-glob-to-any-file: package/pixiv/*
+      - any-glob-to-any-file: package/pixiv/**
 'source: safebooru':
   - changed-files:
-      - any-glob-to-any-file: package/safebooru/*
+      - any-glob-to-any-file: package/safebooru/**
 'source: sankaku':
   - changed-files:
-      - any-glob-to-any-file: package/sankaku/*
+      - any-glob-to-any-file: package/sankaku/**
 'source: yandere':
   - changed-files:
-      - any-glob-to-any-file: package/yande/*
+      - any-glob-to-any-file: package/yande/**
