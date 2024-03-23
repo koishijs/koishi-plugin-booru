@@ -1,0 +1,21 @@
+extends:
+  - '@hamster-bot/eslint-config/typescript'
+
+ignorePatterns:
+  - packages/*/lib/**/*
+
+overrides:
+  - files:
+      - '**/src/*.ts'
+      - '**/src/*.tsx'
+    rules:
+      '@typescript-eslint/no-namespace': off
+
+  - files:
+      - '**/tests/*.ts'
+      - '**/tests/*.tsx'
+    extends:
+      - '@hamster-bot/eslint-config/node'
+      - '@hamster-bot/eslint-config/typescript'
+    rules:
+      '@typescript-eslint/no-namespace': off
