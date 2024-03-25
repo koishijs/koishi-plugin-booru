@@ -17,6 +17,23 @@
 
 <!-- Please describe the tests that you ran to verify your changes. Provide instructions so we can reproduce. -->
 
+<!-- Example:
+
+**Test Environment**:
+
+- OS: Windows 10
+- Browser: Chrome
+- Node Version: 20.10.0
+- Koishi Version: 4.17.0
+
+**Test Steps**:
+
+1. Go to '...'
+2. Click on '....'
+3. Scroll down to '....'
+4. See if '....' is displayed
+-->
+
 ## Checklist
 
 <!-- Please delete options that are not relevant. -->
