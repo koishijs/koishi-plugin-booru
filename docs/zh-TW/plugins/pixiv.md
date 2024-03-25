@@ -62,7 +62,7 @@ Pixiv APP API 的 `Refresh Token`。
 
 使用 route 突破检测时的 AES 加密密钥。
 
-## 突破 Pixiv 检测
+## 突破 Pixiv 检测 {#bypass-pixiv-detection}
 
 Pixiv 站点全站引入了图片防外部引用检测，主要是检测 HTTP 请求的 Referer 头。这个检测会阻止插件直接引用图片链接，导致部分适配器无法直接发送图片链接。为了解决这个问题，本插件提供了三种突破检测的方式。
 
