@@ -261,7 +261,9 @@ namespace PixivImageSource {
           Schema.const('route').description('使用插件本地反代'),
           Schema.const('asset').description('下载到 assets 缓存'),
         ])
-          .description('突破 Pixiv 站点图片防外部引用检测的方式')
+          .description(
+            '突破 Pixiv 站点图片防外部引用检测的方式。[参考](https://booru.koishi.chat/zh-CN/plugins/pixiv.html#bypass-pixiv-detection)',
+          )
           .default('proxy'),
       }),
       Schema.union([
