@@ -15,7 +15,7 @@
 ```json
 {
   "peerDependencies": {
-    "booru": "^1.0.3"
+    "booru": "^1.2.0"
   }
 }
 ```
@@ -24,7 +24,7 @@
 
 ## 开发图源插件
 
-此处以简化版的 `lolicon` 插件为例，可以从 `https://api.lolicon.net/` 的 API 获取图片及元信息。
+此处以简化版的 `lolicon` 插件为例，可以从 `https://api.lolicon.net/` 的 API 获取图片及元信息。它的官方实现可以在 [这里](https://github.com/koishijs/koishi-plugin-booru/tree/main/packages/lolicon)。
 
 ```ts
 import { Context, Schema } from 'koishi'
@@ -63,10 +63,19 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
     }
 
     // 返回类型为 `Result` 的数组，可用字段可参考类型提示。
-    // 其中 `url` 字段是图片的地址，也可以是 `base64` 编码。
+    // 其中 `urls.*` 字段是图片的地址，也可以是 `base64` 编码。
+    // 其中 `original` 是必须字段，应当是原图尺寸的 URL。
+    // 另外还有 `large` (1200px) `medium` (600px) `small` (300px) `thumbnail` 等字段。
+    // 括号中为该尺寸的参考大小，如果图源不提供对应尺寸，可以忽略此字段。
     return resp.data.map((setu) => {
       return {
-        url: setu.urls.original,
+        urls: {
+          original: setu.urls.original,
+          large: setu.urls.regular,
+          medium: setu.urls.small,
+          small: setu.urls.thumb,
+          thumbnail: setu.urls.mini,
+        },
         title: setu.title,
         author: setu.author,
         nsfw: setu.r18,
