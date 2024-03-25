@@ -50,7 +50,6 @@ export abstract class ImageSource<Config extends ImageSource.Config = ImageSourc
 }
 ```
 
-
 ### `ImageSource.Query`
 
 ```ts
@@ -67,8 +66,16 @@ export interface Query {
 ```ts
 export type NsfwType = 'furry' | 'guro' | 'shota' | 'bl'
 
+export enum PreferSize {
+  Original = 'original',
+  Large = 'large',
+  Medium = 'medium',
+  Small = 'small',
+  Thumbnail = 'thumbnail',
+}
+
 export interface Result {
-  url: string
+  urls: Partial<Record<Exclude<PreferSize, 'original'>, string>> & { original: string }
   pageUrl?: string
   author?: string
   authorUrl?: string

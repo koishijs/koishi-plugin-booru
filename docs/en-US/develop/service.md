@@ -36,9 +36,14 @@ export function apply(ctx: Context) {
 <picture>
   <source srcset="https://pixiv.nl/101250949.jpg" />
   <source srcset="https://pixiv.re/101250949.jpg" />
-  <img src="">
+  <img src="https://pixiv.cat/101250949.jpg">
 </picture>
- <br>
+I miss You <br>
+作者: 京田スズカ <br>
+页面地址: https://www.pixiv.net/artworks/101250949 <br>
+作者主页: https://www.pixiv.net/users/3718340 <br>
+图源: pixiv <br>
+标签: 東方 東方Project 古明地こいし こいしちゃんうふふ こいしちゃんマジ天使 目がハート 東方Project1000users入り 白抜きまつ毛 <br>
 </chat-message>
 </chat-panel>
 
@@ -46,12 +51,19 @@ export function apply(ctx: Context) {
 
 `booru` 服务提供了 `register()` 方法，可以用于注册图源。
 
+:::warn
+如果你在开发图源插件，只需要继承 `ImageSource` 类，它会自动将自己注册到 `booru` 服务中。
+:::
+
+你也可以手动注册和注销图源，这在你需要动态注册图源时非常有用。
+
 ```ts
 import { Context } from 'koishi'
 
-class PixivSource extends ImageSource<Config> {
+class PixivSource {
   name = 'pixiv'
-  async get(query) {
+  languages = ['zh-CN', 'ja']
+  async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // ...
   }
 }
