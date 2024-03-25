@@ -77,7 +77,9 @@ namespace e621ImageSource {
         }),
       )
         .default([])
-        .description('e621/e926 的登录凭据。'),
+        .description(
+          'e621/e926 的登录凭据。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/e621.html#configure-credentials)',
+        ),
       userAgent: Schema.string().description('设置请求的 User Agent。').default(
         // eslint-disable-next-line max-len
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37',

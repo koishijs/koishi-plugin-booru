@@ -85,7 +85,9 @@ namespace YandeImageSource {
           login: Schema.string().required().description('Yande.re 的用户名。'),
           password: Schema.string().required().role('secret').description('Yande.re 的密码。'),
         }),
-      ).description('Yande.re 的登录凭据。'),
+      )
+        .default([])
+        .description('Yande.re 的登录凭据。'),
     }).description('搜索设置'),
   ])
 }

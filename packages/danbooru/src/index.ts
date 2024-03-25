@@ -62,9 +62,11 @@ namespace DanbooruImageSource {
           login: Schema.string().required().description('用户名。'),
           apiKey: Schema.string().required().role('secret').description('API 密钥。'),
         }),
-      ).description(
-        'API 密钥对。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/danbooru.html#获取与设置登录凭据)',
-      ),
+      )
+        .default([])
+        .description(
+          'Danbooru 的登录凭据。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/danbooru.html#configure-credentials)',
+        ),
     }).description('搜索设置'),
   ])
 }

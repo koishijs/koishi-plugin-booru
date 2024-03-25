@@ -69,7 +69,9 @@ namespace GelbooruImageSource {
     Schema.object({
       endpoint: Schema.string().description('Gelbooru 的 URL。').default('https://gelbooru.com/index.php'),
       keyPairs: Schema.array(Schema.string().required().role('secret'))
-        .description('Gelbooru 的登录凭据。')
+        .description(
+          'Gelbooru 的登录凭据。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/gelbooru.html#configure-credentials)',
+        )
         .default([]),
     }).description('搜索设置'),
   ])

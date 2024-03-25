@@ -100,8 +100,10 @@ namespace SankakuComplexImageSource {
           password: Schema.string().required().role('secret').description('SankakuComplex 密码'),
           tokenType: Schema.string().hidden().default('Bearer').description('SankakuComplex 访问令牌类型'),
           accessToken: Schema.string().hidden().description('SankakuComplex 访问令牌'),
-        }).description('SankakuComplex 的登录凭证'),
-      ),
+        }),
+      )
+        .default([])
+        .description('SankakuComplex 的登录凭证'),
       userAgent: Schema.string().description('设置请求的 User Agent。').default(
         // eslint-disable-next-line max-len
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
