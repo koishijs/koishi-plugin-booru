@@ -80,7 +80,7 @@ export namespace ImageSource {
   export interface Result {
     /** @deprecated Use `.urls.*` instead */
     url?: string
-    urls: Partial<Record<Exclude<PreferSize, 'origin'>, string>> & { original: string }
+    urls: Partial<Record<Exclude<PreferSize, 'original'>, string>> & { original: string }
     pageUrl?: string
     author?: string
     authorUrl?: string
