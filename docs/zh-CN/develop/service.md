@@ -51,12 +51,19 @@ I miss You <br>
 
 `booru` 服务提供了 `register()` 方法，可以用于注册图源。
 
+:::warn
+如果你在开发图源插件，只需要继承 `ImageSource` 类，它会自动将自己注册到 `booru` 服务中。
+:::
+
+你也可以手动注册和注销图源，这在你需要动态注册图源时非常有用。
+
 ```ts
 import { Context } from 'koishi'
 
-class PixivSource extends ImageSource<Config> {
+class PixivSource {
   name = 'pixiv'
-  async get(query) {
+  languages = ['zh-CN', 'ja']
+  async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // ...
   }
 }
