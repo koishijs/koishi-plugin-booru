@@ -32,7 +32,7 @@ Danbooru 的登录凭据。如该项为空，则使用匿名登录。
 
 由于 Danbooru 的 [API 限制](https://danbooru.donmai.us/wiki_pages/help%3Ausers)，匿名用户一次只能搜索 2 个标签，且极易触发 CloudFlare 防火墙限制（这表现为请求时无法获取图片，并返回 403 错误码）。因此推荐设置至少一个登录凭据用于检索图片，当登录凭据设置为多个时，将会针对每个凭据的搜索次数进行平均分配。
 
-## 获取与设置登录凭据
+## 获取与设置登录凭据 {#configure-credentials}
 
 1. 访问 [Danbooru](https://danbooru.donmai.us) 并登录。如果你还没有账号，你需要先注册一个账号。
 1. 访问 [个人页面](https://danbooru.donmai.us/profile)，找到 `API Key` 字样并点击其右方的 `View` 按钮。
