@@ -34,7 +34,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     this.logger = ctx.logger('booru-local')
 
     if (config.storage === 'database') {
-      ctx.using(['database'], async (ctx) => {
+      ctx.inject(['database'], async (ctx) => {
         ctx.model.extend(
           'booru_local',
           {
@@ -78,7 +78,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     }
 
     // TODO: cache storage
-    if (config.storage === 'cache') ctx.using(['cache'], () => {})
+    if (config.storage === 'cache') ctx.inject(['cache'], () => {})
 
     ctx.on(
       'ready',
