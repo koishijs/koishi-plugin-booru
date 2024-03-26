@@ -1,7 +1,10 @@
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
+import { Readable } from 'node:stream'
+import { ReadableStream } from 'node:stream/web'
 
 import {} from '@koishijs/assets'
 import {} from '@koishijs/plugin-server'
+
 import { Context, Quester, Random, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
@@ -47,15 +50,15 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
         const url = ctx.request.url.replace(/^\/booru\/pixiv\/proxy\//, '')
         const decrypted = Cipher.decrypt(decodeURIComponent(url), config.aesKey)
         if (typeof decrypted !== 'string' || !decrypted.startsWith('https://i.pximg.net/')) return next()
-        const file = await this.http<ArrayBuffer>(decrypted, {
+        const file = await this.http<ReadableStream>(decrypted, {
           headers: { Referer: 'https://www.pixiv.net/' },
-          responseType: 'arraybuffer',
+          responseType: 'stream',
         })
         ctx.set(Object.fromEntries(file.headers.entries()))
         ctx.remove('Content-Length')
         ctx.response.status = file.status
         ctx.response.message = file.statusText
-        ctx.body = Buffer.from(file.data)
+        ctx.body = Readable.fromWeb(file.data)
         return next()
       })
     }
