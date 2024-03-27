@@ -9,6 +9,7 @@ import { Context, Quester, Random, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
 import { PixivAppApi } from './types'
+import { normaliseCaption } from './utils'
 
 const CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
 const CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
@@ -97,7 +98,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
               pageUrl: `https://pixiv.net/i/${illust.id}`,
               author: illust.user.name,
               authorUrl: `https://pixiv.net/u/${illust.user.id}`,
-              desc: illust.caption,
+              desc: normaliseCaption(illust.caption),
               tags: illust.tags.map((tag) => tag.name),
               nsfw: illust.x_restrict >= 1,
             }

@@ -1,4 +1,4 @@
-import { Context, Quester, Schema } from 'koishi'
+import { Context, Element, Quester, Schema } from 'koishi'
 
 import type {} from '@koishijs/plugin-proxy-agent'
 import type { Inject } from 'cordis'
@@ -85,7 +85,7 @@ export namespace ImageSource {
     author?: string
     authorUrl?: string
     title?: string
-    desc?: string
+    desc?: string | Element
     tags?: string[]
     nsfw?: boolean | NsfwType
   }
