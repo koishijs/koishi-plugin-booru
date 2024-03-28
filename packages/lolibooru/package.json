@@ -51,5 +51,8 @@
   },
   "devDependencies": {
     "koishi": "^4.17.0"
+  },
+  "publishConfig": {
+    "provenance": true
   }
 }
