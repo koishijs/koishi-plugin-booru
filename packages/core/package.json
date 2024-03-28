@@ -54,5 +54,8 @@
   },
   "dependencies": {
     "languagedetect": "^2.0.0"
+  },
+  "publishConfig": {
+    "provenance": true
   }
 }

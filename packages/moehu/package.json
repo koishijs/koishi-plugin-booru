@@ -62,5 +62,8 @@
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "fastest-levenshtein": "^1.0.16"
+  },
+  "publishConfig": {
+    "provenance": true
   }
 }
