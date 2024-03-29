@@ -2,7 +2,7 @@ name: Bug Report
 description: 提交错误报告
 title: 'Bug: '
 labels:
-  - bug
+  - ':bug: bug'
 body:
   - type: textarea
     attributes:
