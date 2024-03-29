@@ -2,7 +2,7 @@ name: New Source Request
 description: 添加新图源支持请求
 title: 'Feature: New Source'
 labels:
-  - feature
+  - ':watermelon: new source'
 body:
   - type: markdown
     attributes:
