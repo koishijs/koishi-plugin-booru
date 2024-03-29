@@ -50,5 +50,8 @@
   "peerDependencies": {
     "koishi": "^4.17.0",
     "koishi-plugin-booru": "^1.2.0"
+  },
+  "publishConfig": {
+    "provenance": true
   }
 }
