@@ -1,15 +1,15 @@
-ci:
+':green_heart: ci':
   - changed-files:
       - any-glob-to-any-file:
           - .github/workflows/**
 
-documentation:
+':memo: documentation':
   - changed-files:
       - any-glob-to-any-file:
           - docs/config/zh-CN.json
           - docs/zh-CN/**
 
-core:
+':gear: core':
   - changed-files:
       - any-glob-to-any-file: packages/core/**
 
