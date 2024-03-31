@@ -30,7 +30,7 @@ export function apply(ctx: Context, config: Config) {
     return count
   }
 
-  ctx
+  const command = ctx
     .command('booru <query:text>')
     .option('count', '-c <count:number>', { type: count, fallback: 1 })
     .option('label', '-l <label:string>')
@@ -165,7 +165,7 @@ export function apply(ctx: Context, config: Config) {
           output.push(
             <p>
               <i18n path='.tips'></i18n>
-              <i18n path={tip}></i18n>
+              <i18n path={tip}>{{ command }}</i18n>
             </p>,
           )
         }
