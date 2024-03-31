@@ -165,7 +165,7 @@ export function apply(ctx: Context, config: Config) {
           output.push(
             <p>
               <i18n path='.tips'></i18n>
-              <i18n path={tip}>{[command.name]}</i18n>
+              <i18n path={tip}>{[command.displayName]}</i18n>
             </p>,
           )
         }
