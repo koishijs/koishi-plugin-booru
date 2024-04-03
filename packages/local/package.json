@@ -48,6 +48,7 @@
     }
   },
   "peerDependencies": {
+    "@koishijs/console": "^5.28.0",
     "koishi": "^4.17.0",
     "koishi-plugin-booru": "^1.2.0"
   },
