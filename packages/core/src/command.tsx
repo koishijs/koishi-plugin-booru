@@ -68,7 +68,7 @@ export function apply(ctx: Context, config: Config) {
 
       const filtered = images?.filter((image) => config.nsfw || !image.nsfw)
 
-      if (!filtered?.length) return session?.text('.no-result')
+      if (!filtered?.length) return session?.text('commands.booru.messages.no-result')
 
       const output: Element[][] = []
 
@@ -86,13 +86,13 @@ export function apply(ctx: Context, config: Config) {
         if (config.asset && ctx.assets) {
           url = await ctx.booru.imgUrlToAssetUrl(url)
           if (!url) {
-            children.unshift(<i18n path='.no-image'></i18n>)
+            children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
             continue
           }
         } else if (config.base64) {
           url = await ctx.booru.imgUrlToBase64(url)
           if (!url) {
-            children.unshift(<i18n path='.no-image'></i18n>)
+            children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
             continue
           }
         }
@@ -101,10 +101,10 @@ export function apply(ctx: Context, config: Config) {
             if (image.tags) {
               children.unshift(
                 <p>
-                  <i18n path='.output.source'>{[source]}</i18n>
+                  <i18n path='commands.booru.messages.output.source'>{[source]}</i18n>
                 </p>,
                 <p>
-                  <i18n path='.output.tags'>{[image.tags.join(', ')]}</i18n>
+                  <i18n path='commands.booru.messages.output.tags'>{[image.tags.join(', ')]}</i18n>
                 </p>,
               )
             }
@@ -122,14 +122,14 @@ export function apply(ctx: Context, config: Config) {
                 <p>
                   {config.output >= OutputType.ImageAndLink && image.authorUrl ? (
                     <a href={image.authorUrl}>
-                      <i18n path='.output.author'>{[image.author]}</i18n>
+                      <i18n path='commands.booru.messages.output.author'>{[image.author]}</i18n>
                     </a>
                   ) : (
-                    <i18n path='.output.author'>{[image.author]}</i18n>
+                    <i18n path='commands.booru.messages.output.author'>{[image.author]}</i18n>
                   )}
                 </p>,
                 <p>
-                  <i18n path='.output.desc'>{[image.desc]}</i18n>
+                  <i18n path='commands.booru.messages.output.desc'>{[image.desc]}</i18n>
                 </p>,
               )
             }
@@ -164,7 +164,7 @@ export function apply(ctx: Context, config: Config) {
           const tip = Random.pick(tips)
           output.push(
             <p>
-              <i18n path='.tips'></i18n>
+              <i18n path='commands.booru.messages.tips'></i18n>
               <i18n path={tip}>{[command.displayName]}</i18n>
             </p>,
           )
