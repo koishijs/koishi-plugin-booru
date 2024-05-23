@@ -1,5 +1,7 @@
 import { Context, Quester, Schema, trimSlash } from 'koishi'
+
 import { ImageSource } from '../../source'
+
 import { e621 } from './types'
 
 class e621ImageSource extends ImageSource<e621ImageSource.Config> {

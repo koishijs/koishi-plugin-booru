@@ -1,5 +1,7 @@
 import { Context, Schema } from 'koishi'
+
 import { ImageSource } from '../../source'
+
 import * as consts from './constants'
 import { SankakuComplex } from './types'
 

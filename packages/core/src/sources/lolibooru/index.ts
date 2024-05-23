@@ -1,6 +1,9 @@
 import { createHash } from 'node:crypto'
+
 import { Context, Dict, Schema, trimSlash } from 'koishi'
+
 import { ImageSource } from '../../source'
+
 import { Lolibooru } from './types'
 /**
  * Lolibooru requires a password hash for authentication.

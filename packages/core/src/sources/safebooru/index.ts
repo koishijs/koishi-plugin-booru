@@ -1,5 +1,7 @@
 import { Context, Schema, trimSlash } from 'koishi'
+
 import { ImageSource } from '../../source'
+
 import { Safebooru } from './types'
 
 class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {

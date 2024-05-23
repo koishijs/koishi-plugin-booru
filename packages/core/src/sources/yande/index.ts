@@ -1,6 +1,9 @@
 import { createHash } from 'node:crypto'
+
 import { Context, Schema, trimSlash } from 'koishi'
+
 import { ImageSource } from '../../source'
+
 import { Yande } from './types'
 
 /**

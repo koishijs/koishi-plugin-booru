@@ -1,5 +1,7 @@
 import { Context, Schema, trimSlash } from 'koishi'
+
 import { ImageSource } from '../../source'
+
 import { Gelbooru } from './types'
 
 class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
