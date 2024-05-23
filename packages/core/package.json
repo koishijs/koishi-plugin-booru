@@ -8,6 +8,45 @@
     "lib",
     "dist"
   ],
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json",
+    "./danbooru": {
+      "types": "./lib/sources/danbooru/index.d.ts",
+      "default": "./lib/sources/danbooru/index.js"
+    },
+    "./e621": {
+      "types": "./lib/sources/danbooru/index.d.ts",
+      "default": "./lib/sources/e621/index.js"
+    },
+    "./gelbooru": {
+      "types": "./lib/sources/danbooru/index.d.ts",
+      "default": "./lib/sources/gelbooru/index.js"
+    },
+    "./konachan": {
+      "types": "./lib/sources/danbooru/index.d.ts",
+      "default": "./lib/sources/konachan/index.js"
+    },
+    "./lolibooru": {
+      "types": "./lib/sources/danbooru/index.d.ts",
+      "default": "./lib/sources/lolibooru/index.js"
+    },
+    "./safebooru": {
+      "types": "./lib/sources/danbooru/index.d.ts",
+      "default": "./lib/sources/safebooru/index.js"
+    },
+    "./sankaku": {
+      "types": "./lib/sources/danbooru/index.d.ts",
+      "default": "./lib/sources/sankaku/index.js"
+    },
+    "./yande": {
+      "types": "./lib/sources/danbooru/index.d.ts",
+      "default": "./lib/sources/yande/index.js"
+    }
+  },
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
   "repository": {

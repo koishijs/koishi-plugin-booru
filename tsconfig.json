@@ -4,6 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "koishi-plugin-booru": ["packages/core/src"],
+      "koishi-plugin-booru/*": ["packages/core/src/sources/*"],
       "koishi-plugin-booru-*": ["packages/*/src"]
     }
   }
