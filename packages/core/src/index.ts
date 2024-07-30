@@ -99,7 +99,7 @@ class ImageService extends Service {
 
   async imgUrlToBase64(url: string): Promise<string> {
     return this.ctx
-      .http(url, { method: 'GET', responseType: 'arraybuffer' })
+      .http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
       .then((resp) => {
         return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
       })
@@ -214,7 +214,9 @@ export const Config = Schema.intersect([
 ])
 
 export function apply(ctx: Context, config: Config) {
+  // @ts-expect-error inject structure not compatiable
   ctx.plugin(ImageService, config)
+  // @ts-expect-error inject structure not compatiable
   ctx.plugin(Command, config)
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires

@@ -1,10 +1,9 @@
 import { Context, Element, Quester, Schema } from 'koishi'
 
-import type {} from '@koishijs/plugin-proxy-agent'
-import type { Inject } from 'cordis'
+import type {} from '@cordisjs/plugin-proxy-agent'
 
 export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
-  static inject: string[] | Partial<Inject> = ['booru']
+  static inject: string[] | Partial<Record<'required' | 'optional', string[]>> = ['booru']
 
   languages: string[] = []
   source: string
