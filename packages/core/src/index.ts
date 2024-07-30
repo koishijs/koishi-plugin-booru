@@ -107,7 +107,7 @@ class ImageService extends Service {
         let img = sharp(buffer)
         const metadata = await img.metadata()
         const ratio = size / Math.max(metadata.width, metadata.height)
-        if(ratio < 1){
+        if (ratio < 1) {
           img = img.resize({
             width: Math.floor(metadata.width * ratio),
             height: Math.floor(metadata.height * ratio),
