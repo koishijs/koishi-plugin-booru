@@ -1,7 +1,7 @@
 /* eslint-disable no-fallthrough */
 import { Channel, Context, Random, Session, User } from 'koishi'
 
-import { Config, OutputType, SpoilerType, preferSizes } from '.'
+import { Config, OutputType, SpoilerType, preferSizes, preferSizesToSize } from '.'
 
 export const inject = {
   required: ['booru'],
@@ -83,14 +83,15 @@ export function apply(ctx: Context, config: Config) {
         }
         url ||= image.url
 
-        if (config.asset && ctx.assets) {
-          url = await ctx.booru.imgUrlToAssetUrl(url)
+        if (config.base64 || config.autoResize) {
+          url = await ctx.booru.imgUrlToBase64(url, config.autoResize, preferSizesToSize[config.preferSize])
           if (!url) {
             children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
             continue
           }
-        } else if (config.base64) {
-          url = await ctx.booru.imgUrlToBase64(url)
+        }
+        if (config.asset && ctx.assets) {
+          url = await ctx.booru.imgUrlToAssetUrl(url)
           if (!url) {
             children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
             continue
