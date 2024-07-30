@@ -1,4 +1,4 @@
-import { Context, Quester, Schema, trimSlash } from 'koishi'
+import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
 import { e621 } from './types'
