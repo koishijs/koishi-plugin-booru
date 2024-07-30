@@ -1,6 +1,6 @@
+import Jimp from 'jimp'
 import { Context, Logger, Quester, Schema, Service, remove } from 'koishi'
 import LanguageDetect from 'languagedetect'
-import sharp from 'sharp'
 
 import * as Command from './command'
 import { ImageSource } from './source'
@@ -91,6 +91,34 @@ class ImageService extends Service {
     return undefined
   }
 
+  async imgResize(url: string, size: number): Promise<string> {
+    if (size < 0) {
+      return url
+    }
+    try {
+      const resp = await this.ctx.http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
+      let img = await Jimp.read(Buffer.from(resp.data))
+      const width = img.bitmap.width
+      const height = img.bitmap.height
+      const ratio = size / Math.max(width, height)
+      if (ratio < 1) {
+        img = img.resize(Math.floor(width * ratio), Math.floor(height * ratio)).quality(80)
+        const buffer = await img.getBufferAsync('image/jpeg')
+        return `data:image/jpeg;base64,${buffer.toString('base64')}`
+      }
+      return url
+    } catch (err) {
+      if (Quester.Error.is(err)) {
+        logger.warn(
+          `Resize images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
+        )
+      } else {
+        logger.error(`Resize images failed with error: ${err.message}.`)
+      }
+      return url
+    }
+  }
+
   async imgUrlToAssetUrl(url: string): Promise<string> {
     return await this.ctx.assets.upload(url, Date.now().toString()).catch(() => {
       logger.warn('Request failed when trying to store image with assets service.')
@@ -98,35 +126,22 @@ class ImageService extends Service {
     })
   }
 
-  async imgUrlToBase64(url: string, resize: boolean = false, size: number = 1280): Promise<string> {
-    try {
-      const resp = await this.ctx.http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
-      let buffer = Buffer.from(resp.data)
-      let contentType = resp.headers.get('content-type')
-      if (resize) {
-        let img = sharp(buffer)
-        const metadata = await img.metadata()
-        const ratio = size / Math.max(metadata.width, metadata.height)
-        if (ratio < 1) {
-          img = img.resize({
-            width: Math.floor(metadata.width * ratio),
-            height: Math.floor(metadata.height * ratio),
-          })
-          buffer = await img.jpeg({ quality: 80 }).toBuffer()
-          contentType = 'image/jpeg'
+  async imgUrlToBase64(url: string): Promise<string> {
+    return this.ctx
+      .http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
+      .then((resp) => {
+        return `data:${resp.headers.get('content-type')};base64,${Buffer.from(resp.data).toString('base64')}`
+      })
+      .catch((err) => {
+        if (Quester.Error.is(err)) {
+          logger.warn(
+            `Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
+          )
+        } else {
+          logger.error(`Request images failed with unknown error: ${err.message}.`)
         }
-      }
-      return `data:${contentType};base64,${buffer.toString('base64')}`
-    } catch (err) {
-      if (Quester.Error.is(err)) {
-        logger.warn(
-          `Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
-        )
-      } else {
-        logger.error(`Request images failed with unknown error: ${err.message}.`)
-      }
-      return null
-    }
+        return null
+      })
   }
 }
 
@@ -214,7 +229,7 @@ export const Config = Schema.intersect([
     ])
       .description('优先使用图片的最大尺寸。')
       .default('large'),
-    autoResize: Schema.boolean().default(false).description('自动缩小过大的图片。'),
+    autoResize: Schema.boolean().default(false).description('自动缩小过大的图片(需开启assets或者base64)。'),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
     base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
     spoiler: Schema.union([

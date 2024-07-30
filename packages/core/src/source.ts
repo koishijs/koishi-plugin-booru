@@ -91,4 +91,4 @@ export namespace ImageSource {
 }
 
 export const preferSizes = ['thumbnail', 'large', 'medium', 'small', 'original'] as const
-export const preferSizesToSize = { thumbnail: 128, large: 1280, medium: 640, small: 320, original: 2048 } as const
+export const preferSizesToSize = { thumbnail: 128, large: 1280, medium: 640, small: 320, original: -1 } as const
