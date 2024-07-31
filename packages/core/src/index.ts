@@ -3,8 +3,8 @@ import LanguageDetect from 'languagedetect'
 
 import * as Command from './command'
 import { ImageSource } from './source'
-import { } from '@koishijs/assets'
-import { } from '@koishijs/canvas'
+import {} from '@koishijs/assets'
+import {} from '@koishijs/canvas'
 
 export * from './source'
 
@@ -97,8 +97,8 @@ class ImageService extends Service {
     }
     try {
       const resp = await this.ctx.http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
-      let contentType = resp.headers.get('content-type')
-      let buffer = Buffer.from(resp.data)
+      const buffer = Buffer.from(resp.data)
+      url = `data:${resp.headers.get('content-type')};base64,${buffer.toString('base64')}`
       const img = await this.ctx.canvas.loadImage(buffer)
       let width = img.naturalWidth
       let height = img.naturalHeight
@@ -109,8 +109,7 @@ class ImageService extends Service {
         const canvas = await this.ctx.canvas.createCanvas(width, height)
         const ctx2d = canvas.getContext('2d')
         ctx2d.drawImage(img, 0, 0, width, height)
-        buffer = await canvas.toBuffer('image/png')
-        contentType = 'image/png'
+        url = await canvas.toDataURL('image/png')
         if (canvas.dispose) {
           // skia-canvas does not have this method
           await canvas.dispose()
@@ -119,7 +118,7 @@ class ImageService extends Service {
       if (img.dispose) {
         await img.dispose()
       }
-      return `data:${contentType};base64,${buffer.toString('base64')}`
+      return url
     } catch (err) {
       if (Quester.Error.is(err)) {
         logger.warn(
