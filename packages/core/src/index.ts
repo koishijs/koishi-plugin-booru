@@ -1,10 +1,10 @@
-import Jimp from 'jimp'
 import { Context, Logger, Quester, Schema, Service, remove } from 'koishi'
 import LanguageDetect from 'languagedetect'
 
 import * as Command from './command'
 import { ImageSource } from './source'
 import {} from '@koishijs/assets'
+import {} from '@koishijs/canvas'
 
 export * from './source'
 
@@ -19,7 +19,7 @@ declare module 'koishi' {
 class ImageService extends Service {
   static inject = {
     required: [],
-    optional: ['assets'],
+    optional: ['assets', 'canvas'],
   }
 
   private sources: ImageSource[] = []
@@ -92,19 +92,30 @@ class ImageService extends Service {
   }
 
   async imgResize(url: string, size: number): Promise<string> {
-    if (size < 0) {
+    if (!this.ctx.canvas || size < 0) {
       return url
     }
     try {
       const resp = await this.ctx.http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
-      let img = await Jimp.read(Buffer.from(resp.data))
-      const width = img.bitmap.width
-      const height = img.bitmap.height
+      const img = await this.ctx.canvas.loadImage(Buffer.from(resp.data))
+      let width = img.naturalWidth
+      let height = img.naturalHeight
       const ratio = size / Math.max(width, height)
       if (ratio < 1) {
-        img = img.resize(Math.floor(width * ratio), Math.floor(height * ratio)).quality(80)
-        const buffer = await img.getBufferAsync('image/jpeg')
-        return `data:image/jpeg;base64,${buffer.toString('base64')}`
+        width = Math.floor(width * ratio)
+        height = Math.floor(height * ratio)
+        const canvas = await this.ctx.canvas.createCanvas(width, height)
+        const ctx2d = canvas.getContext('2d')
+        ctx2d.drawImage(img, 0, 0, width, height)
+        const buffer = await canvas.toBuffer('image/png')
+        if (canvas.dispose) {
+          // skia-canvas does not have this method
+          await canvas.dispose()
+        }
+        url = `data:image/jpeg;base64,${buffer.toString('base64')}`
+      }
+      if (img.dispose) {
+        await img.dispose()
       }
       return url
     } catch (err) {
@@ -112,6 +123,7 @@ class ImageService extends Service {
         logger.warn(
           `Resize images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
         )
+        return null
       } else {
         logger.error(`Resize images failed with error: ${err.message}.`)
       }
@@ -229,7 +241,9 @@ export const Config = Schema.intersect([
     ])
       .description('优先使用图片的最大尺寸。')
       .default('large'),
-    autoResize: Schema.boolean().default(false).description('自动缩小过大的图片(需开启assets或者base64)。'),
+    autoResize: Schema.boolean()
+      .default(false)
+      .description('自动缩小过大的图片(需要canvas服务且需开启assets或者base64)。'),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
     base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
     spoiler: Schema.union([
