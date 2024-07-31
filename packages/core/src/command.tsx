@@ -87,7 +87,9 @@ export function apply(ctx: Context, config: Config) {
           if (config.autoResize && config.preferSize !== 'original') {
             url = await ctx.booru.imgResize(url, preferSizesToSize[config.preferSize])
           }
-          url = await ctx.booru.imgUrlToAssetUrl(url)
+          if (url) {
+            url = await ctx.booru.imgUrlToAssetUrl(url)
+          }
           if (!url) {
             children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
             continue
@@ -95,7 +97,7 @@ export function apply(ctx: Context, config: Config) {
         } else if (config.base64) {
           if (config.autoResize && config.preferSize !== 'original') {
             url = await ctx.booru.imgResize(url, preferSizesToSize[config.preferSize])
-          } else if (!url.startsWith('data:')) {
+          } else if (url && !url.startsWith('data:')) {
             url = await ctx.booru.imgUrlToBase64(url)
           }
           if (!url) {
