@@ -142,7 +142,7 @@ class ImageService extends Service {
     return this.ctx
       .http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
       .then((resp) => {
-        return `data:${resp.headers.get('content-type')};base64,${Buffer.from(resp.data).toString('base64')}`
+        return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
       })
       .catch((err) => {
         if (Quester.Error.is(err)) {
@@ -243,7 +243,10 @@ export const Config = Schema.intersect([
       .default('large'),
     autoResize: Schema.boolean()
       .default(false)
-      .description('自动缩小过大的图片(需要canvas服务且需开启assets或者base64)。'),
+      .description(
+        '根据preferSize自动缩小过大的图片(需要canvas服务(比如[puppeteer](https://puppeteer.koishi.chat/)、' +
+          '[skia-canvas](https://github.com/Kokoro-js/koishi-plugin-skia-canvas))，且需开启assets或者base64)。',
+      ),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
     base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
     spoiler: Schema.union([
