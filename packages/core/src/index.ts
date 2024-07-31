@@ -3,8 +3,8 @@ import LanguageDetect from 'languagedetect'
 
 import * as Command from './command'
 import { ImageSource } from './source'
-import {} from '@koishijs/assets'
-import {} from '@koishijs/canvas'
+import { } from '@koishijs/assets'
+import { } from '@koishijs/canvas'
 
 export * from './source'
 
@@ -246,8 +246,8 @@ export const Config = Schema.intersect([
     autoResize: Schema.boolean()
       .default(false)
       .description(
-        '根据preferSize自动缩小过大的图片(需要canvas服务(比如[puppeteer](https://puppeteer.koishi.chat/)、' +
-          '[skia-canvas](https://github.com/Kokoro-js/koishi-plugin-skia-canvas))，且需开启assets或者base64)。',
+        '根据 preferSize 自动缩小过大的图片<br/> - 需要 canvas 服务（比如[ puppeteer ](https://puppeteer.koishi.chat/)或' +
+          '[ skia-canvas ](https://github.com/Kokoro-js/koishi-plugin-skia-canvas)）<br/> - 需开启 assets 或者 base64。',
       ),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
     base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
