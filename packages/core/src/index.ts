@@ -97,7 +97,9 @@ class ImageService extends Service {
     }
     try {
       const resp = await this.ctx.http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
-      const img = await this.ctx.canvas.loadImage(Buffer.from(resp.data))
+      let contentType = resp.headers.get('content-type')
+      let buffer = Buffer.from(resp.data)
+      const img = await this.ctx.canvas.loadImage(buffer)
       let width = img.naturalWidth
       let height = img.naturalHeight
       const ratio = size / Math.max(width, height)
@@ -107,17 +109,17 @@ class ImageService extends Service {
         const canvas = await this.ctx.canvas.createCanvas(width, height)
         const ctx2d = canvas.getContext('2d')
         ctx2d.drawImage(img, 0, 0, width, height)
-        const buffer = await canvas.toBuffer('image/png')
+        buffer = await canvas.toBuffer('image/png')
+        contentType = 'image/png'
         if (canvas.dispose) {
           // skia-canvas does not have this method
           await canvas.dispose()
         }
-        url = `data:image/jpeg;base64,${buffer.toString('base64')}`
       }
       if (img.dispose) {
         await img.dispose()
       }
-      return url
+      return `data:${contentType};base64,${buffer.toString('base64')}`
     } catch (err) {
       if (Quester.Error.is(err)) {
         logger.warn(
