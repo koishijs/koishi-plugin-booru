@@ -43,13 +43,6 @@
 
 设置输出的图片尺寸。
 
-### autoResize
-
-- 类型: `boolean`
-- 默认值: `false`
-
-根据preferSize自动缩小过大的图片(需要canvas服务(比如[puppeteer](https://puppeteer.koishi.chat/)、[skia-canvas](https://github.com/Kokoro-js/koishi-plugin-skia-canvas))，且需开启assets或者base64)。
-
 ### asset
 
 - 类型: `boolean`

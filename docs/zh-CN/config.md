@@ -48,7 +48,9 @@
 - 类型: `boolean`
 - 默认值: `false`
 
-根据preferSize自动缩小过大的图片(需要canvas服务(比如[puppeteer](https://puppeteer.koishi.chat/)、[skia-canvas](https://github.com/Kokoro-js/koishi-plugin-skia-canvas))，且需开启assets或者base64)。
+根据 preferSize 自动缩小过大的图片。
+- 需要 canvas 服务（比如[ puppeteer ](https://puppeteer.koishi.chat/)或[ skia-canvas ](https://github.com/Kokoro-js/koishi-plugin-skia-canvas)）
+- 需开启 assets 或者 base64
 
 ### asset
 
