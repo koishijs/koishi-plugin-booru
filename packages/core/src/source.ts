@@ -91,7 +91,7 @@ export namespace ImageSource {
 }
 
 export const preferSizes = ['thumbnail', 'large', 'medium', 'small', 'original'] as const
-export const sizeNameToFixedWidth: Partial<Record<typeof preferSizes[number], number>> = {
+export const sizeNameToFixedWidth: Partial<Record<(typeof preferSizes)[number], number>> = {
   thumbnail: 128,
   small: 320,
   medium: 640,
