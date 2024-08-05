@@ -1,7 +1,7 @@
 /* eslint-disable no-fallthrough */
 import { Channel, Context, Random, Session, User } from 'koishi'
 
-import { Config, OutputType, SpoilerType, preferSizes, preferSizesToSize } from '.'
+import { Config, OutputType, SpoilerType, preferSizes, sizeNameToFixedWidth } from '.'
 
 export const inject = {
   required: ['booru'],
@@ -82,24 +82,18 @@ export function apply(ctx: Context, config: Config) {
           }
         }
         url ||= image.url
+        if (session.resolve(config.autoResize) && sizeNameToFixedWidth[config.preferSize]) {
+          url = await ctx.booru.resizeImageToFixedWidth(url, sizeNameToFixedWidth[config.preferSize])
+        }
 
         if (config.asset && ctx.assets) {
-          if (config.autoResize && config.preferSize !== 'original') {
-            url = await ctx.booru.imgResize(url, preferSizesToSize[config.preferSize])
-          }
-          if (url) {
-            url = await ctx.booru.imgUrlToAssetUrl(url)
-          }
+          url = await ctx.booru.imgUrlToAssetUrl(url)
           if (!url) {
             children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
             continue
           }
         } else if (config.base64) {
-          if (config.autoResize && config.preferSize !== 'original') {
-            url = await ctx.booru.imgResize(url, preferSizesToSize[config.preferSize])
-          } else if (url && !url.startsWith('data:')) {
-            url = await ctx.booru.imgUrlToBase64(url)
-          }
+          url = await ctx.booru.imgUrlToBase64(url)
           if (!url) {
             children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
             continue
