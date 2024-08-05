@@ -1,9 +1,10 @@
-import { Context, Logger, Quester, Schema, Service, remove } from 'koishi'
+import { Computed, Context, Logger, Quester, Schema, Service, remove } from 'koishi'
 import LanguageDetect from 'languagedetect'
 
 import * as Command from './command'
 import { ImageSource } from './source'
 import {} from '@koishijs/assets'
+import {} from '@koishijs/canvas'
 
 export * from './source'
 
@@ -18,7 +19,7 @@ declare module 'koishi' {
 class ImageService extends Service {
   static inject = {
     required: [],
-    optional: ['assets'],
+    optional: ['assets', 'canvas'],
   }
 
   private sources: ImageSource[] = []
@@ -90,6 +91,59 @@ class ImageService extends Service {
     return undefined
   }
 
+  async resizeImageToFixedWidth(url: string, size: number): Promise<string> {
+    if (!size || size < 0) {
+      return url
+    }
+    if (!this.ctx.canvas) {
+      logger.warn('Canvas service is not available, thus cannot resize image now.')
+      return url
+    }
+    const resp = await this.ctx
+      .http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
+      .catch((err) => {
+        if (Quester.Error.is(err)) {
+          logger.warn(
+            `Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
+          )
+        } else {
+          logger.error(`Request images failed with unknown error: ${err.message}.`)
+        }
+        return null
+      })
+    if (!resp?.data) {
+      return url
+    }
+
+    const buffer = Buffer.from(resp.data)
+    url = `data:${resp.headers.get('content-type')};base64,${buffer.toString('base64')}`
+    try {
+      const img = await this.ctx.canvas.loadImage(buffer)
+      let width = img.naturalWidth
+      let height = img.naturalHeight
+      const ratio = size / Math.max(width, height)
+      if (ratio < 1) {
+        width = Math.floor(width * ratio)
+        height = Math.floor(height * ratio)
+        const canvas = await this.ctx.canvas.createCanvas(width, height)
+        const ctx2d = canvas.getContext('2d')
+        ctx2d.drawImage(img, 0, 0, width, height)
+        url = await canvas.toDataURL('image/png')
+        if (typeof canvas.dispose === 'function') {
+          // skia-canvas does not have this method
+          await canvas.dispose()
+        }
+      }
+      if (typeof img.dispose === 'function') {
+        await img.dispose()
+      }
+      return url
+    } catch (err) {
+      logger.error(`Resize image failed with error: ${err.message}.`)
+      return url
+    }
+  }
+
   async imgUrlToAssetUrl(url: string): Promise<string> {
     return await this.ctx.assets.upload(url, Date.now().toString()).catch(() => {
       logger.warn('Request failed when trying to store image with assets service.')
@@ -144,6 +198,7 @@ export interface Config {
   output: OutputType
   outputMethod: 'one-by-one' | 'merge-multiple' | 'forward-all' | 'forward-multiple'
   preferSize: ImageSource.PreferSize
+  autoResize: Computed<boolean>
   nsfw: boolean
   asset: boolean
   base64: boolean
@@ -199,6 +254,9 @@ export const Config = Schema.intersect([
     ])
       .description('优先使用图片的最大尺寸。')
       .default('large'),
+    autoResize: Schema.computed(Schema.boolean())
+      .default(false)
+      .description('根据 preferSize 自动缩小过大的图片。<br/> - 需要安装提供 canvas 服务的插件'),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
     base64: Schema.boolean().default(false).description('使用 base64 发送图片。'),
     spoiler: Schema.union([

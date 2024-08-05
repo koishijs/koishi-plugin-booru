@@ -1,7 +1,7 @@
 /* eslint-disable no-fallthrough */
 import { Channel, Context, Random, Session, User } from 'koishi'
 
-import { Config, OutputType, SpoilerType, preferSizes } from '.'
+import { Config, OutputType, SpoilerType, preferSizes, sizeNameToFixedWidth } from '.'
 
 export const inject = {
   required: ['booru'],
@@ -82,6 +82,9 @@ export function apply(ctx: Context, config: Config) {
           }
         }
         url ||= image.url
+        if (session.resolve(config.autoResize) && sizeNameToFixedWidth[config.preferSize]) {
+          url = await ctx.booru.resizeImageToFixedWidth(url, sizeNameToFixedWidth[config.preferSize])
+        }
 
         if (config.asset && ctx.assets) {
           url = await ctx.booru.imgUrlToAssetUrl(url)
