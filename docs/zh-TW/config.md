@@ -43,6 +43,15 @@
 
 设置输出的图片尺寸。
 
+### autoResize
+
+- 类型: `boolean`
+- 默认值: `false`
+
+根据 preferSize 自动缩小过大的图片。
+
+- 需要安装提供 canvas 服务的插件
+
 ### asset
 
 - 类型: `boolean`
