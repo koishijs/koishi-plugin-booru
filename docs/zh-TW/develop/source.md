@@ -56,14 +56,6 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
     // 注：根据图源设计规范，当 `query.tags` 为空数组或空时，应当返回随机图片。
     // 由于 Lolicon API 默认对空标签会返回随机图，因此不需要做特别处理，
     // 但对于其他图源可能需要传入特别的参数才能使用随机图片功能。
-    const resp = await this.http.post('https://api.lolicon.app/setu/v2', param)
-
-    if (!Array.isArray(resp.data)) {
-      return
-    }
-
-    // 返回类型为 `Result` 的数组，可用字段可参考类型提示。
-    // 其中 `urls.*` 字段是图片的地址，也可以是 `base64` 编码。
     // 其中 `original` 是必须字段，应当是原图尺寸的 URL。
     // 另外还有 `large` (1200px) `medium` (600px) `small` (300px) `thumbnail` 等字段。
     // 括号中为该尺寸的参考大小，如果图源不提供对应尺寸，可以忽略此字段。
@@ -88,7 +80,7 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
 
 // 图源插件还需要导出配置项，因此我们采用 TypeScript 的 namespace
 // 将配置项 Config 与上面的 class 定义合并。
-namespace LoliconImageSource {
+    namespace LoliconImageSource {
   export interface Config extends ImageSource.Config {}
 
   export const Config: Schema<Config> = Schema.intersect([
@@ -100,6 +92,14 @@ namespace LoliconImageSource {
 
 // 以默认导出方式导出整个命名空间
 export default LoliconImageSource
+const resp = await this.http.post('https://api.lolicon.app/setu/v2', param)
+
+    if (!Array.isArray(resp.data)) {
+      return
+    }
+
+    // 返回类型为 `Result` 的数组，可用字段可参考类型提示。
+    // 其中 `urls.*` 字段是图片的地址，也可以是 `base64` 编码。
 ```
 
 :::tip
