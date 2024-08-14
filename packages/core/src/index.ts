@@ -255,6 +255,7 @@ export const Config = Schema.intersect([
       .description('优先使用图片的最大尺寸。')
       .default('large'),
     autoResize: Schema.computed(Schema.boolean())
+      .experimental()
       .default(false)
       .description('根据 preferSize 自动缩小过大的图片。<br/> - 需要安装提供 canvas 服务的插件'),
     asset: Schema.boolean().default(false).description('优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。'),
