@@ -240,62 +240,46 @@ namespace PixivImageSource {
 
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'pixiv' }),
-    Schema.object({
-      endpoint: Schema.string().description('Pixiv 的 API Root').default('https://app-api.pixiv.net/'),
-      // TODO: set token as non-required for illust recommend
-      token: Schema.string().required().role('secret').description('Pixiv 的 Refresh Token'),
-      minBookmarks: Schema.number()
-        .default(0)
-        .description('最少收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用'),
-      rank: Schema.union([
-        Schema.const(0).description('全年龄'),
-        Schema.const(1).description('R18'),
-        Schema.const(2).description('R18G'),
-      ])
-        .description('年龄分级')
-        .default(0),
-      ai: Schema.union([Schema.const(1).description('不允许AI作品'), Schema.const(2).description('允许AI作品')])
-        .description('是否允许搜索AI作品')
-        .default(1),
-    }).description('搜索设置'),
     Schema.intersect([
       Schema.object({
-        bypassMethod: Schema.union([
-          Schema.const('proxy').description('使用现有反代服务'),
-          Schema.const('route').description('使用插件本地反代'),
-          Schema.const('asset').description('下载到 assets 缓存'),
-        ])
-          .description(
-            '突破 Pixiv 站点图片防外部引用检测的方式。[参考](https://booru.koishi.chat/zh-CN/plugins/pixiv.html#bypass-pixiv-detection)',
-          )
-          .default('proxy'),
+        endpoint: Schema.string().default('https://app-api.pixiv.net/'),
+        // TODO: set token as non-required for illust recommend
+        token: Schema.string().required().role('secret'),
+        minBookmarks: Schema.number().default(0),
+        rank: Schema.union([Schema.const(0), Schema.const(1), Schema.const(2)]).default(0),
+        ai: Schema.union([Schema.const(1), Schema.const(2)]).default(1),
       }),
-      Schema.union([
+      Schema.intersect([
         Schema.object({
-          bypassMethod: Schema.const('proxy'),
-          proxy: Schema.union([
-            Schema.const('https://i.pixiv.re').description('i.pixiv.re'),
-            Schema.const('https://i.pixiv.cat').description('i.pixiv.cat'),
-            Schema.const('https://i.pixiv.nl').description('i.pixiv.nl'),
-            Schema.object({
-              endpoint: Schema.string().required().description('反代服务的地址。'),
-            }).description('自定义'),
-          ])
-            .description('Pixiv 反代服务。')
-            .default('https://i.pixiv.re'),
+          bypassMethod: Schema.union([Schema.const('proxy'), Schema.const('route'), Schema.const('asset')]).default(
+            'proxy',
+          ),
         }),
-        Schema.object({
-          bypassMethod: Schema.const('route'),
-          route: Schema.string()
-            .description('反代服务的路径（需在 server 插件配置中填写 `selfUrl`）。')
-            .default('/booru/pixiv/proxy'),
-          aesKey: Schema.string().hidden().description('AES 加密密钥').default(''),
-        }),
-        Schema.object({
-          bypassMethod: Schema.const('asset'),
-        }),
+        Schema.union([
+          Schema.object({
+            bypassMethod: Schema.const('proxy'),
+            proxy: Schema.union([
+              Schema.const('https://i.pixiv.re'),
+              Schema.const('https://i.pixiv.cat'),
+              Schema.const('https://i.pixiv.nl'),
+              Schema.object({
+                endpoint: Schema.string().required(),
+              }),
+            ]).default('https://i.pixiv.re'),
+          }),
+          Schema.object({
+            bypassMethod: Schema.const('route'),
+            route: Schema.string().default('/booru/pixiv/proxy'),
+            aesKey: Schema.string().hidden().default(''),
+          }),
+          Schema.object({
+            bypassMethod: Schema.const('asset'),
+          }),
+        ]),
       ]),
-    ]),
+    ]).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 
