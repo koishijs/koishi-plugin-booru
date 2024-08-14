@@ -78,16 +78,16 @@ namespace LolibooruImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'lolibooru' }),
     Schema.object({
-      endpoint: Schema.string().description('Lolibooru 的 URL。').default('https://lolibooru.moe'),
+      endpoint: Schema.string().default('https://lolibooru.moe'),
       keyPairs: Schema.array(
         Schema.object({
-          login: Schema.string().required().description('用户名'),
-          password: Schema.string().required().role('secret').description('密码'),
+          login: Schema.string().required(),
+          password: Schema.string().required().role('secret'),
         }),
-      )
-        .default([])
-        .description('Lolibooru 的登录凭据。'),
-    }).description('搜索设置'),
+      ).default([]),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 
