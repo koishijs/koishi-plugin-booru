@@ -75,21 +75,18 @@ namespace KonachanImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'konachan' }),
     Schema.object({
-      endpoint: Schema.union([
-        Schema.const('https://konachan.com/').description('Konachan.com (NSFW)'),
-        Schema.const('https://konachan.net/').description('Konachan.net (SFW)'),
-      ])
-        .description('Konachan 的 URL。')
-        .default('https://konachan.com/'),
+      endpoint: Schema.union([Schema.const('https://konachan.com/'), Schema.const('https://konachan.net/')]).default(
+        'https://konachan.com/',
+      ),
       keyPairs: Schema.array(
         Schema.object({
-          login: Schema.string().required().description('用户名'),
-          password: Schema.string().required().role('secret').description('密码'),
+          login: Schema.string().required(),
+          password: Schema.string().required().role('secret'),
         }),
-      )
-        .default([])
-        .description('Konachan 的登录凭据。'),
-    }).description('搜索设置'),
+      ).default([]),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 

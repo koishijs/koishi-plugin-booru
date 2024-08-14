@@ -68,22 +68,20 @@ namespace e621ImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'e621' }),
     Schema.object({
-      endpoint: Schema.string().description('e621/e926 的 URL。').default('https://e621.net/'),
+      endpoint: Schema.string().default('https://e621.net/'),
       keyPairs: Schema.array(
         Schema.object({
-          login: Schema.string().required().description('e621/e926 的用户名。'),
-          apiKey: Schema.string().required().role('secret').description('e621/e926 的 API Key。'),
+          login: Schema.string().required(),
+          apiKey: Schema.string().required().role('secret'),
         }),
-      )
-        .default([])
-        .description(
-          'e621/e926 的登录凭据。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/e621.html#configure-credentials)',
-        ),
-      userAgent: Schema.string().description('设置请求的 User Agent。').default(
+      ).default([]),
+      userAgent: Schema.string().default(
         // eslint-disable-next-line max-len
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37',
       ),
-    }).description('搜索设置'),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 

@@ -1,0 +1,22 @@
+$description: 搜索设置
+endpoint: Lolicon API 的 URL。
+r18:
+  $description: 是否检索 R18 图片。
+  $inner:
+    - 非 R18
+    - 仅 R18
+    - 混合
+proxy:
+  $description: Pixiv 反代服务。
+  $inner:
+    - i.pixiv.re
+    - i.pixiv.cat
+    - i.pixiv.nl
+    - $description: 自定义
+      $inner:
+        endpoint: 反代服务的地址。
+excludeAI:
+  $description: 是否排除 AI 作品。
+  $inner:
+    - 排除AI作品
+    - 不排除AI作品

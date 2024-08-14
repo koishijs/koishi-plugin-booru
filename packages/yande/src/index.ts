@@ -79,16 +79,16 @@ namespace YandeImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'yande' }),
     Schema.object({
-      endpoint: Schema.string().description('Yande.re 的 URL。').default('https://yande.re'),
+      endpoint: Schema.string().default('https://yande.re'),
       keyPairs: Schema.array(
         Schema.object({
-          login: Schema.string().required().description('Yande.re 的用户名。'),
-          password: Schema.string().required().role('secret').description('Yande.re 的密码。'),
+          login: Schema.string().required(),
+          password: Schema.string().required().role('secret'),
         }),
-      )
-        .default([])
-        .description('Yande.re 的登录凭据。'),
-    }).description('搜索设置'),
+      ).default([]),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 
