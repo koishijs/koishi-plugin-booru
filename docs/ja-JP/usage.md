@@ -9,6 +9,7 @@
 
 如 [`danbooru`](./plugins/danbooru.md), [`gelbooru`](./plugins/gelbooru.md) 等图源插件仅支持英语 (en)，而 [`pixiv`](./plugins/pixiv.md) 则支持日语 (ja)、英语 (en)、简体与繁体中文 (zh) 和韩语 (ko)，但大部分情况下日语 (ja) 会有更好的效果。
 :::
+:::
 
 <chat-panel>
 <chat-message nickname="Alice">booru komeiji koishi</chat-message>
