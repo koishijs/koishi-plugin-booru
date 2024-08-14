@@ -6,9 +6,9 @@ $inner:
     rank:
       $description: 年龄分级
       $inner:
-      - 全年龄
-      - R18
-      - R18G
+        - 全年龄
+        - R18
+        - R18G
     ai:
       $description: 是否允许搜索AI作品
       $inner:

@@ -75,10 +75,9 @@ namespace KonachanImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'konachan' }),
     Schema.object({
-      endpoint: Schema.union([
-        Schema.const('https://konachan.com/'),
-        Schema.const('https://konachan.net/'),
-      ]).default('https://konachan.com/'),
+      endpoint: Schema.union([Schema.const('https://konachan.com/'), Schema.const('https://konachan.net/')]).default(
+        'https://konachan.com/',
+      ),
       keyPairs: Schema.array(
         Schema.object({
           login: Schema.string().required(),
