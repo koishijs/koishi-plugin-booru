@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-booru",
   "description": "Image service for Koishi",
-  "version": "1.2.3",
+  "version": "1.3.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -39,17 +39,19 @@
         "booru"
       ],
       "optional": [
-        "assets"
+        "assets",
+        "canvas"
       ]
     }
   },
   "peerDependencies": {
-    "@koishijs/plugin-proxy-agent": "^0.1.4 || ^0.2.0",
+    "@cordisjs/plugin-proxy-agent": ">=0.3.0",
     "koishi": "^4.17.0"
   },
   "devDependencies": {
+    "@cordisjs/plugin-proxy-agent": ">=0.3.3",
     "@koishijs/assets": "^1.0.2",
-    "@koishijs/plugin-proxy-agent": "^0.2.0",
+    "@koishijs/canvas": "^0.2.0",
     "koishi": "^4.17.0"
   },
   "dependencies": {

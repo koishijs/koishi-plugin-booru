@@ -1,10 +1,9 @@
 import { Context, Element, Quester, Schema } from 'koishi'
 
-import type {} from '@koishijs/plugin-proxy-agent'
-import type { Inject } from 'cordis'
+import type {} from '@cordisjs/plugin-proxy-agent'
 
 export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
-  static inject: string[] | Partial<Inject> = ['booru']
+  static inject: string[] | Partial<Record<'required' | 'optional', string[]>> = ['booru']
 
   languages: string[] = []
   source: string
@@ -92,3 +91,9 @@ export namespace ImageSource {
 }
 
 export const preferSizes = ['thumbnail', 'large', 'medium', 'small', 'original'] as const
+export const sizeNameToFixedWidth: Partial<Record<(typeof preferSizes)[number], number>> = {
+  thumbnail: 128,
+  small: 320,
+  medium: 640,
+  large: 1280,
+} as const

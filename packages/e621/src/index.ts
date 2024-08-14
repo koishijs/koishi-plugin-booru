@@ -1,4 +1,4 @@
-import { Context, Quester, Schema, trimSlash } from 'koishi'
+import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
 import { e621 } from './types'
@@ -6,7 +6,6 @@ import { e621 } from './types'
 class e621ImageSource extends ImageSource<e621ImageSource.Config> {
   languages = ['en']
   source = 'e621'
-  http: Quester
 
   constructor(ctx: Context, config: e621ImageSource.Config) {
     super(ctx, config)
