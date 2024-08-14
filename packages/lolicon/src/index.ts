@@ -83,7 +83,9 @@ namespace LoliconImageSource {
       ])
         .description('是否排除 AI 作品。')
         .default(true),
-    }).description('搜索设置'),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 
