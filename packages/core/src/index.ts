@@ -272,9 +272,9 @@ export const Config = Schema.intersect([
 ])
 
 export function apply(ctx: Context, config: Config) {
-  // @ts-expect-error inject structure not compatiable
+  // @ts-expect-error inject structure not compatible
   ctx.plugin(ImageService, config)
-  // @ts-expect-error inject structure not compatiable
+  // @ts-expect-error inject structure not compatible
   ctx.plugin(Command, config)
 
   // eslint-disable-next-line @typescript-eslint/no-var-requires
