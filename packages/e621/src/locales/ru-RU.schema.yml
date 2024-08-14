@@ -1,0 +1,8 @@
+$description: 搜索设置
+endpoint: e621/e926 的 URL。
+keyPairs:
+  $description: 'e621/e926 的登录凭据。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/e621.html#configure-credentials)'
+  $inner:
+    login: e621/e926 的用户名。
+    apiKey: e621/e926 的 API Key。
+userAgent: 设置请求的 User Agent。
