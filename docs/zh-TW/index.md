@@ -19,7 +19,7 @@ Booru 是一个基于 [Koishi](https://koishi.chat/) 的图片检索插件，支
 
 Booru 插件支持多个图源站点，每个图源站点都有一个对应的插件。目前支持的图源站点有：
 
-| 图源                                                    | 插件                                                        |
+| 图源                                                    | 外掛                                                        |
 | ----------------------------------------------------- | --------------------------------------------------------- |
 | [Danbooru](https://danbooru.donmai.us/)               | [`koishi-plugin-booru-danbooru`](./plugins/danbooru.md)   |
 | [e621](https://e621.net/)                             | [`koishi-plugin-booru-e621`](./plugins/e621.md)           |
