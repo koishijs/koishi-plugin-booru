@@ -21,4 +21,4 @@
 - 类型：`Array<{ login: string; password: string }>`
 - 默认值：`[]`
 
-SankakuComplex 的登录凭据。如该项为空，则使用匿名登录。如该项为空，则使用匿名登录。
+SankakuComplex 的登录凭据。如该项为空，则使用匿名登录。
