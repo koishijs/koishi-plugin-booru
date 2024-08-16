@@ -1,4 +1,4 @@
-$description: 搜索设置
+$description: 搜尋設定
 endpoint: Lolicon API 的 URL。
 r18:
   $description: 是否检索 R18 图片。
