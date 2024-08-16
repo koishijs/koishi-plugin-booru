@@ -1,5 +1,5 @@
 {
-  "description": "最好的圖像檢索外掛程式！",
+  "description": "最好的涩图插件！",
   "head": [
     [
       "link",
@@ -26,7 +26,7 @@
   "themeConfig": {
     "editLink": {
       "text": "在 Crowdin 上翻譯此頁面",
-      "pattern": "https://crowdin.com/translate/koishi/:id/zhcn-zhtw"
+      "pattern": "https://github.com/koishijs/koishi-plugin-booru/edit/main/docs/:path"
     },
     "sidebar": {
       "/": [
