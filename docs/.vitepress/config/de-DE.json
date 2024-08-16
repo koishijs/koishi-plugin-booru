@@ -1,5 +1,5 @@
 {
-  "description": "最好的涩图插件！",
+  "description": "Bildersuche",
   "head": [
     [
       "link",
@@ -26,15 +26,15 @@
   "themeConfig": {
     "editLink": {
       "text": "Übersetzen dieser Seite auf Crowdin",
-      "pattern": "https://github.com/koishijs/koishi-plugin-booru/edit/main/docs/:path"
+      "pattern": "https://crowdin.com/translate/koishi/:id/zhcn-de"
     },
     "sidebar": {
       "/": [
         {
-          "text": "指南",
+          "text": "Anleitung",
           "items": [
             {
-              "text": "介绍",
+              "text": "Einleitung",
               "link": "/"
             },
             {
@@ -48,7 +48,7 @@
           ]
         },
         {
-          "text": "插件",
+          "text": "Plugins",
           "items": [
             {
               "text": "Danbooru",
