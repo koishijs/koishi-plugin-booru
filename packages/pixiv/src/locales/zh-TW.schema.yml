@@ -1,4 +1,4 @@
-$description: 搜索设置
+$description: 搜尋設定
 $inner:
   - 
     endpoint: Pixiv 的 API Root
