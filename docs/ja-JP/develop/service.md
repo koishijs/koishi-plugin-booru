@@ -65,8 +65,7 @@ class PixivSource {
   name = 'pixiv'
   languages = ['zh-CN', 'ja']
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    // ...
-  }
+    // ... }
 }
 
 export function apply(ctx: Context, config: Config) {
