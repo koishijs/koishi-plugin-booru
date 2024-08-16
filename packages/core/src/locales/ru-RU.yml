@@ -1,6 +1,6 @@
 commands:
   booru:
-    description: Поискать картинок
+    description: 搜索图片
     options:
       label: 指定图源标签
     messages:
