@@ -1,5 +1,5 @@
 {
-  "description": "最高な画像検索プラグイン！",
+  "description": "最好的涩图插件！",
   "head": [
     [
       "link",
@@ -26,7 +26,7 @@
   "themeConfig": {
     "editLink": {
       "text": "Crowdin でこのページを翻訳する",
-      "pattern": "https://crowdin.com/translate/koishi/:id/zhcn-ja"
+      "pattern": "https://github.com/koishijs/koishi-plugin-booru/edit/main/docs/:path"
     },
     "sidebar": {
       "/": [
@@ -38,7 +38,7 @@
               "link": "/"
             },
             {
-              "text": "使用",
+              "text": "使い方",
               "link": "/usage"
             },
             {
