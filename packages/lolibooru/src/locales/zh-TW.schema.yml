@@ -1,4 +1,4 @@
-$description: 搜索设置
+$description: 搜尋設定
 endpoint: Lolibooru 的 URL。
 keyPairs:
   $description: Lolibooru 的登录凭据。
