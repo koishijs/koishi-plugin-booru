@@ -1,6 +1,6 @@
 $inner:
   - 
-    $description: 搜索设置
+    $description: 搜尋設定
     detectLanguage: 自动检测输入语言并选择语言匹配的图源。
     confidence: 语言检测的置信度。
     maxCount: 每次搜索的最大数量。
