@@ -1,5 +1,5 @@
 {
-  "description": "Recherche des images, c'est très bien !",
+  "description": "最好的涩图插件！",
   "head": [
     [
       "link",
@@ -26,7 +26,7 @@
   "themeConfig": {
     "editLink": {
       "text": "Traduire cette page sur Crowdin",
-      "pattern": "https://crowdin.com/translate/koishi/:id/zhcn-fr"
+      "pattern": "https://github.com/koishijs/koishi-plugin-booru/edit/main/docs/:path"
     },
     "sidebar": {
       "/": [
