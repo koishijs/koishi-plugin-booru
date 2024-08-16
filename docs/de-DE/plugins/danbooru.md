@@ -28,7 +28,7 @@ Danbooru 的 API 地址。
 - 类型：`Array<{ login: string; apiKey: string }>`
 - 默认值：`[]`
 
-Danbooru 的登录凭据。如该项为空，则使用匿名登录。如该项为空，则使用匿名登录。
+Danbooru 的登录凭据。如该项为空，则使用匿名登录。
 
 由于 Danbooru 的 [API 限制](https://danbooru.donmai.us/wiki_pages/help%3Ausers)，匿名用户一次只能搜索 2 个标签，且极易触发 CloudFlare 防火墙限制（这表现为请求时无法获取图片，并返回 403 错误码）。因此推荐设置至少一个登录凭据用于检索图片，当登录凭据设置为多个时，将会针对每个凭据的搜索次数进行平均分配。
 
