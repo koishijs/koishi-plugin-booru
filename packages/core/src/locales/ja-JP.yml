@@ -1,11 +1,11 @@
 commands:
   booru:
-    description: 画像検索
+    description: 搜索图片
     options:
-      label: 検索タグを指定
+      label: 指定图源标签
     messages:
-      no-source: ソースプラグインが見つかりませんでした。プラグインマーケットプレイスから booru ソースプラグインを追加及び有効にしてください (一般的に、booru ソースプラグイン名は「booru₋」で始まります)。
-      no-result: クエリが一致する画像が見つかりません。
+      no-source: 当前未找到可用图源。请从插件市场添加 booru 系图源插件并启用 (插件名通常以 booru- 开头)。
+      no-result: 没有找到符合条件的图片
       no-image: 获取图片失败
       output:
         desc: '{0}'
