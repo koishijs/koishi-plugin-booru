@@ -1,4 +1,4 @@
-$description: 搜索设置
+$description: 搜尋設定
 keyPairs:
   $description: SankakuComplex 的登录凭证
   $inner:
