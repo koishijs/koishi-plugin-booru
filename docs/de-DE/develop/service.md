@@ -38,6 +38,7 @@ export function apply(ctx: Context) {
   <source srcset="https://pixiv.re/101250949.jpg" />
   <img src="https://pixiv.cat/101250949.jpg">
 </picture>
+
 I miss You <br>
 作者: 京田スズカ <br>
 页面地址: https://www.pixiv.net/artworks/101250949 <br>
@@ -53,7 +54,6 @@ I miss You <br>
 
 :::warn
 如果你在开发图源插件，只需要继承 `ImageSource` 类，它会自动将自己注册到 `booru` 服务中。
-:::
 :::
 
 你也可以手动注册和注销图源，这在你需要动态注册图源时非常有用。
