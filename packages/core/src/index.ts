@@ -1,4 +1,4 @@
-import { Computed, Context, Logger, Quester, Schema, Service, remove } from 'koishi'
+import { Computed, Context, Logger, HTTP, Schema, Service, remove } from 'koishi'
 import LanguageDetect from 'languagedetect'
 
 import * as Command from './command'
@@ -67,7 +67,7 @@ class ImageService extends Service {
     for (const source of sources) {
       const tags = source.tokenize(query.query)
       const images = await source.get({ count: query.count, tags, raw: query.query }).catch((err) => {
-        if (Quester.Error.is(err)) {
+        if (HTTP.Error.is(err)) {
           logger.warn(
             [
               `source ${source.config.label} request failed`,
@@ -102,7 +102,7 @@ class ImageService extends Service {
     const resp = await this.ctx
       .http(url, { method: 'GET', responseType: 'arraybuffer', proxyAgent: '' })
       .catch((err) => {
-        if (Quester.Error.is(err)) {
+        if (HTTP.Error.is(err)) {
           logger.warn(
             `Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
           )
@@ -158,7 +158,7 @@ class ImageService extends Service {
         return `data:${resp.headers['content-type']};base64,${Buffer.from(resp.data).toString('base64')}`
       })
       .catch((err) => {
-        if (Quester.Error.is(err)) {
+        if (HTTP.Error.is(err)) {
           logger.warn(
             `Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
           )
