@@ -1,4 +1,4 @@
-import { Context, Element, Quester, Schema } from 'koishi'
+import { Context, Element, HTTP, Schema } from 'koishi'
 
 import type {} from '@cordisjs/plugin-proxy-agent'
 
@@ -8,7 +8,7 @@ export abstract class ImageSource<Config extends ImageSource.Config = ImageSourc
   languages: string[] = []
   source: string
 
-  http: Quester
+  http: HTTP
 
   constructor(
     public ctx: Context,

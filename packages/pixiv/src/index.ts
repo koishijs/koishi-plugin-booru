@@ -5,7 +5,7 @@ import { ReadableStream } from 'node:stream/web'
 import {} from '@koishijs/assets'
 import {} from '@koishijs/plugin-server'
 
-import { Context, Quester, Random, Schema, trimSlash } from 'koishi'
+import { Context, HTTP, Random, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
 import { PixivAppApi } from './types'
@@ -105,7 +105,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
           }),
       )
     } catch (err) {
-      if (Quester.Error.is(err)) {
+      if (HTTP.Error.is(err)) {
         throw new Error('get pixiv image failed: ' + `${err.message} (${err.response?.status})`)
       } else {
         throw new Error('get pixiv image failed: ' + err)
@@ -180,7 +180,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
 
       return this.accessToken
     } catch (err) {
-      if (Quester.Error.is(err)) {
+      if (HTTP.Error.is(err)) {
         throw new Error('Login failed with status code ' + err.response?.status + '\n' + JSON.stringify(err.response))
       } else {
         throw new Error('Login failed with unknown error: ' + err.message)
