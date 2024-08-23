@@ -1,0 +1,11 @@
+$description: 搜索设置
+endpoint:
+  $description: Konachan 的 URL。
+  $inner:
+    - Konachan.com (NSFW)
+    - Konachan.net (SFW)
+keyPairs:
+  $description: Konachan 的登录凭据。
+  $inner:
+    login: 用户名
+    password: 密码

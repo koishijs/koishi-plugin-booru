@@ -31,10 +31,10 @@
     "sidebar": {
       "/": [
         {
-          "text": "指南",
+          "text": "Anleitung",
           "items": [
             {
-              "text": "介绍",
+              "text": "Einleitung",
               "link": "/"
             },
             {
@@ -48,7 +48,7 @@
           ]
         },
         {
-          "text": "插件",
+          "text": "Plugins",
           "items": [
             {
               "text": "Danbooru",

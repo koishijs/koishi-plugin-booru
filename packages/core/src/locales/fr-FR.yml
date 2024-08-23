@@ -4,7 +4,7 @@ commands:
     options:
       label: Définir le nom de source images
     messages:
-      no-source: Aucune source images n'est disponible actuellement. Veuillez ajouter et activer plugins source du booru depuis la place de marché (les noms de plugins commencent généralement par « booru- »).
+      no-source: 当前未找到可用图源。请从插件市场添加 booru 系图源插件并启用 (插件名通常以 booru- 开头)。
       no-result: Aucune image correspondante trouvée
       no-image: 获取图片失败
       output:

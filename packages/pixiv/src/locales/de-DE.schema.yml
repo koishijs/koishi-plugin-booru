@@ -1,0 +1,35 @@
+$description: 搜索设置
+$inner:
+  - 
+    endpoint: Pixiv 的 API Root
+    token: Pixiv 的 Refresh Token
+    minBookmarks: 最少收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用
+    rank:
+      $description: 年龄分级
+      $inner:
+        - 全年龄
+        - R18
+        - R18G
+    ai:
+      $description: 是否允许搜索AI作品
+      $inner:
+        - 不允许AI作品
+        - 允许AI作品
+  - 
+    bypassMethod:
+      $description: '突破 Pixiv 站点图片防外部引用检测的方式。[参考](https://booru.koishi.chat/zh-CN/plugins/pixiv.html#bypass-pixiv-detection)'
+      $inner:
+        - 使用现有反代服务
+        - 使用插件本地反代
+        - 下载到 assets 缓存
+    proxy:
+      $description: Pixiv 反代服务。
+      $inner:
+        - i.pixiv.re
+        - i.pixiv.cat
+        - i.pixiv.nl
+        - 
+          $description: 自定义
+          endpoint: 反代服务的地址。
+    route: 反代服务的路径（需在 server 插件配置中填写 `selfUrl`）。
+    aesKey: AES 加密密钥

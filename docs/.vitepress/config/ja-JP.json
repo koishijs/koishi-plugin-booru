@@ -34,11 +34,11 @@
           "text": "指南",
           "items": [
             {
-              "text": "介绍",
+              "text": "紹介",
               "link": "/"
             },
             {
-              "text": "使用",
+              "text": "使い方",
               "link": "/usage"
             },
             {
