@@ -200,6 +200,7 @@ export interface Config {
   preferSize: ImageSource.PreferSize
   autoResize: Computed<boolean>
   nsfw: boolean
+  blacklist: string[]
   asset: boolean
   base64: boolean
   spoiler: SpoilerType
@@ -224,6 +225,7 @@ export const Config = Schema.intersect([
     Schema.object({
       maxCount: Schema.number().default(10),
       nsfw: Schema.boolean().default(false),
+      blacklist: Schema.array(Schema.string()).default([]),
     }),
   ]),
   Schema.object({
