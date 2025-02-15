@@ -66,7 +66,16 @@ export function apply(ctx: Context, config: Config) {
       })
       const source = images?.source
 
-      const filtered = images?.filter((image) => config.nsfw || !image.nsfw)
+      const filtered = images?.filter((image) => {
+        if (config.nsfw && image.nsfw) return false
+
+        if (config.blacklist?.length && image.tags?.length) {
+          for (const tag of image.tags) {
+            if (config.blacklist.includes(tag)) return false
+          }
+        }
+        return true
+      })
 
       if (!filtered?.length) return session?.text('commands.booru.messages.no-result')
 

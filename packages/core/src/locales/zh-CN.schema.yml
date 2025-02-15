@@ -4,6 +4,7 @@ $inner:
     confidence: 语言检测的置信度。
     maxCount: 每次搜索的最大数量。
     nsfw: 是否允许输出 NSFW 内容。
+    blacklist: 黑名单列表，一旦匹配到黑名单中的关键词，将不会发送图片。
 
   - $description: 输出设置
     output:
