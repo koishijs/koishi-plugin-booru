@@ -96,17 +96,9 @@ export function apply(ctx: Context, config: Config) {
         }
 
         if (config.asset && ctx.assets) {
-          url = await ctx.booru.imgUrlToAssetUrl(url)
-          if (!url) {
-            children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
-            continue
-          }
+          url = await ctx.booru.imgUrlToAssetUrl(url) ?? url
         } else if (config.base64) {
-          url = await ctx.booru.imgUrlToBase64(url)
-          if (!url) {
-            children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
-            continue
-          }
+          url = await ctx.booru.imgUrlToBase64(url) ?? url
         }
         switch (config.output) {
           case OutputType.All:
