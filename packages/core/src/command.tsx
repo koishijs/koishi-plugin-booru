@@ -57,7 +57,7 @@ export function apply(ctx: Context, config: Config) {
 
       const images = await ctx.booru.get({
         query,
-        count: options.count,
+        count: options.count || 1,
         labels:
           options.label
             ?.split(',')
