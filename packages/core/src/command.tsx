@@ -96,9 +96,9 @@ export function apply(ctx: Context, config: Config) {
         }
 
         if (config.asset && ctx.assets) {
-          url = await ctx.booru.imgUrlToAssetUrl(url) ?? url
+          url = (await ctx.booru.imgUrlToAssetUrl(url)) ?? url
         } else if (config.base64) {
-          url = await ctx.booru.imgUrlToBase64(url) ?? url
+          url = (await ctx.booru.imgUrlToBase64(url)) ?? url
         }
         switch (config.output) {
           case OutputType.All:
