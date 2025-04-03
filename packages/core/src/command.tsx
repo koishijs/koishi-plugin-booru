@@ -24,7 +24,7 @@ export function apply(ctx: Context, config: Config) {
   const count = (value: string, session: Session) => {
     const count = parseInt(value)
     if (count < 1 || count > config.maxCount) {
-      session.send('booru.count-invalid')
+      session.send(session.text('commands.booru.messages.count-invalid'))
       return 1
     }
     return count
