@@ -117,11 +117,21 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     const url = '/v1/search/illust'
     const params: PixivAppApi.SearchParams = {
       word: keyword,
-      search_target: 'partial_match_for_tags',
+      search_target: this.config.target,
       search_ai_type: this.config.ai === 2 ? PixivAppApi.SearchAIType.SHOW_AI : PixivAppApi.SearchAIType.HIDE_AI,
-      sort: 'date_desc', // TODO: Pixiv member could use 'popular_desc'
+      sort: this.config.sort,
+      duration: this.config.duration !== 'all' && this.config.duration !== 'custom' ? this.config.duration : undefined,
+      min_bookmarks: this.config.minBookmarks || undefined,
+      max_bookmarks: this.config.maxBookmarks || undefined,
       filter: 'for_ios',
     }
+
+    // remove undefined params
+    Object.keys(params).forEach((key) => {
+      if (params[key as keyof PixivAppApi.SearchParams] === undefined) {
+        delete params[key as keyof PixivAppApi.SearchParams]
+      }
+    })
 
     if (!this.accessToken) {
       await this._login()
@@ -229,7 +239,11 @@ namespace PixivImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
     token?: string
+    target: 'partial_match_for_tags' | 'exact_match_for_tags' | 'title_and_caption'
+    sort: 'date_desc' | 'date_asc' | 'popular_desc'
+    duration: 'within_last_day' | 'within_last_week' | 'within_last_month' | 'all' | 'custom'
     minBookmarks: number
+    maxBookmarks: number
     rank: number
     ai: number
     bypassMethod: 'proxy' | 'route' | 'asset'
@@ -245,7 +259,25 @@ namespace PixivImageSource {
         endpoint: Schema.string().default('https://app-api.pixiv.net/'),
         // TODO: set token as non-required for illust recommend
         token: Schema.string().required().role('secret'),
+        target: Schema.union([
+          Schema.const('partial_match_for_tags'),
+          Schema.const('exact_match_for_tags'),
+          Schema.const('title_and_caption'),
+        ]).default('partial_match_for_tags'),
+        sort: Schema.union([
+          Schema.const('date_desc'),
+          Schema.const('date_asc'),
+          Schema.const('popular_desc'),
+        ]).default('date_desc'),
+        duration: Schema.union([
+          Schema.const('within_last_day'),
+          Schema.const('within_last_week'),
+          Schema.const('within_last_month'),
+          Schema.const('all'),
+          Schema.const('custom').disabled(),
+        ]).default('all'),
         minBookmarks: Schema.number().default(0),
+        maxBookmarks: Schema.number().default(0),
         rank: Schema.union([Schema.const(0), Schema.const(1), Schema.const(2)]).default(0),
         ai: Schema.union([Schema.const(1), Schema.const(2)]).default(1),
       }),
