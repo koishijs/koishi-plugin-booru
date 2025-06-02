@@ -7,6 +7,7 @@ commands:
       no-source: 当前未找到可用图源。请从插件市场添加 booru 系图源插件并启用 (插件名通常以 booru- 开头)。
       no-result: 没有找到符合条件的图片
       no-image: 获取图片失败
+      count-invalid: 指定的数量过多或无效。
       output:
         desc: '{0}'
         author: '作者: {0}'
