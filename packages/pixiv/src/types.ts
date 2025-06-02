@@ -35,6 +35,8 @@ export namespace PixivAppApi {
     filter: Filter
     duration?: Duration
     offset?: number
+    min_bookmarks?: number
+    max_bookmarks?: number
   }
 
   export interface RecommendParams {
