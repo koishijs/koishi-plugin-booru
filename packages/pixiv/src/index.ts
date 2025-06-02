@@ -264,11 +264,9 @@ namespace PixivImageSource {
           Schema.const('exact_match_for_tags'),
           Schema.const('title_and_caption'),
         ]).default('partial_match_for_tags'),
-        sort: Schema.union([
-          Schema.const('date_desc'),
-          Schema.const('date_asc'),
-          Schema.const('popular_desc'),
-        ]).default('date_desc'),
+        sort: Schema.union([Schema.const('date_desc'), Schema.const('date_asc'), Schema.const('popular_desc')]).default(
+          'date_desc',
+        ),
         duration: Schema.union([
           Schema.const('within_last_day'),
           Schema.const('within_last_week'),
