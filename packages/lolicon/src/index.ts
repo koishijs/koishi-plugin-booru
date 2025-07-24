@@ -6,6 +6,7 @@ import { Lolicon } from './types'
 class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
   languages = ['en', 'zh-CN', 'ja']
   source = 'lolicon'
+  reusable = true
 
   override tokenize(query: string) {
     return query.split(/\s+/)

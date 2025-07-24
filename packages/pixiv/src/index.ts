@@ -22,6 +22,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
 
   languages = ['en', 'zh', 'zh-CN', 'zh-TW', 'ja', 'ko']
   source = 'pixiv'
+  reusable = true
 
   private userId?: string
   private accessToken?: string

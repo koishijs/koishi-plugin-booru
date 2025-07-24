@@ -6,6 +6,7 @@ import { e621 } from './types'
 class e621ImageSource extends ImageSource<e621ImageSource.Config> {
   languages = ['en']
   source = 'e621'
+  reusable = true
 
   constructor(ctx: Context, config: e621ImageSource.Config) {
     super(ctx, config)

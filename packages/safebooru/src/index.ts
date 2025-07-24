@@ -6,6 +6,7 @@ import { Safebooru } from './types'
 class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
   languages = ['en']
   source = 'safebooru'
+  reusable = true
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://safebooru.org/index.php?page=help&topic=dapi
