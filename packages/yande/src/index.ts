@@ -21,6 +21,7 @@ function hashPassword(password: string) {
 class YandeImageSource extends ImageSource<YandeImageSource.Config> {
   languages = ['en']
   source = 'yande'
+  reusable = true
 
   get keyPair() {
     if (!this.config.keyPairs.length) return

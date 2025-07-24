@@ -6,6 +6,7 @@ import { Danbooru } from './types'
 class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
   languages = ['en']
   source = 'danbooru'
+  reusable = true
 
   get keyPair() {
     if (!this.config.keyPairs.length) return

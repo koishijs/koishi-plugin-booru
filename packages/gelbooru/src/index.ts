@@ -6,6 +6,7 @@ import { Gelbooru } from './types'
 class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
   languages = ['en']
   source = 'gelbooru'
+  reusable = true
 
   get keyPair() {
     if (!this.config.keyPairs.length) return

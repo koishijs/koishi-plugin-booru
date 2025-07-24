@@ -21,6 +21,7 @@ function hashPassword(password: string) {
 class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
   languages = ['en']
   source = 'konachan'
+  reusable = true
 
   get keyPair() {
     if (!this.config.keyPairs.length) return

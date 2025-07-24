@@ -20,6 +20,7 @@ function hashPassword(password: string) {
 class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
   languages = ['en']
   source = 'lolibooru'
+  reusable = true
 
   get keyPair() {
     if (!this.config.keyPairs.length) return
