@@ -3,7 +3,28 @@ $inner:
   - 
     endpoint: Pixiv 的 API Root
     token: Pixiv 的 Refresh Token
+    target:
+      $description: 搜索目标类型
+      $inner:
+        - 标签部分一致
+        - 标签完全一致
+        - 标题或介绍说明
+    sort:
+      $description: 搜索结果排序方式
+      $inner:
+        - 上传时间较近优先
+        - 上传时间较远优先
+        - 收藏数较多优先 (需要 Pixiv Premium)
+    duration:
+      $description: 搜索时间范围
+      $inner:
+        - 24 小时内
+        - 一周内
+        - 一个月内
+        - 全部时间
+        - 自定义
     minBookmarks: 最少收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用
+    maxBookmarks: 最大收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用
     rank:
       $description: 年龄分级
       $inner:
