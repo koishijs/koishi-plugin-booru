@@ -1,4 +1,4 @@
-import { Context, Element, Quester, Schema } from 'koishi'
+import { Context, Element, HTTP, Schema } from 'koishi'
 
 import type {} from '@cordisjs/plugin-proxy-agent'
 
@@ -8,7 +8,7 @@ export abstract class ImageSource<Config extends ImageSource.Config = ImageSourc
   languages: string[] = []
   source: string
 
-  http: Quester
+  http: HTTP
 
   constructor(
     public ctx: Context,
@@ -45,16 +45,15 @@ export namespace ImageSource {
   export function createSchema(o: { label: string }) {
     return Schema.intersect([
       Schema.object({
-        label: Schema.string().default(o.label).description('图源标签，可用于在指令中手动指定图源。'),
-        weight: Schema.number()
-          .min(1)
-          .default(1)
-          .description('图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。'),
-      }).description('全局设置'),
+        label: Schema.string().default(o.label),
+        weight: Schema.number().min(1).default(1),
+      }),
       Schema.object({
-        proxyAgent: Schema.string().default(undefined).description('请求图片时使用代理服务器。'),
-      }).description('请求设置'),
-    ])
+        proxyAgent: Schema.string().default(undefined),
+      }),
+    ]).i18n({
+      'zh-CN': require('./locales/zh-CN.source.schema.yml'),
+    })
   }
 
   export const Config: Schema<Config> = createSchema({ label: 'default' })

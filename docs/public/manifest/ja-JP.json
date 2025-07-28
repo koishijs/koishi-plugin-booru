@@ -2,7 +2,7 @@
   "name": "koishi-plugin-booru",
   "short_name": "Booru",
   "description": "最高な画像検索プラグイン！",
-  "start_url": "/zh-CN/",
+  "start_url": "/ja-JP/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#5546a3",

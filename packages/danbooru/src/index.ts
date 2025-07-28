@@ -6,6 +6,7 @@ import { Danbooru } from './types'
 class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
   languages = ['en']
   source = 'danbooru'
+  reusable = true
 
   get keyPair() {
     if (!this.config.keyPairs.length) return
@@ -53,21 +54,19 @@ namespace DanbooruImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'danbooru' }),
     Schema.object({
-      endpoint: Schema.string().description('Danbooru 的 URL。').default('https://danbooru.donmai.us/'),
+      endpoint: Schema.string().default('https://danbooru.donmai.us/'),
       /**
        * @see https://danbooru.donmai.us/wiki_pages/help%3Aapi
        */
       keyPairs: Schema.array(
         Schema.object({
-          login: Schema.string().required().description('用户名。'),
-          apiKey: Schema.string().required().role('secret').description('API 密钥。'),
+          login: Schema.string().required(),
+          apiKey: Schema.string().required().role('secret'),
         }),
-      )
-        .default([])
-        .description(
-          'Danbooru 的登录凭据。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/danbooru.html#configure-credentials)',
-        ),
-    }).description('搜索设置'),
+      ).default([]),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 

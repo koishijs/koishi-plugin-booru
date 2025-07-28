@@ -5,6 +5,10 @@ pull_request_labels:
 files:
   - source: /packages/*/src/locales/zh-CN.yml
     translation: /%original_path%/%locale%.yml
+  - source: /packages/*/src/locales/zh-CN.schema.yml
+    translation: /%original_path%/%locale%.schema.yml
+  - source: /packages/*/src/locales/zh-CN.source.schema.yml
+    translation: /%original_path%/%locale%.source.schema.yml
   - source: /docs/zh-CN/**/*.md
     translation: /docs/%locale%/**/%file_name%.md
   - source: /docs/**/zh-CN.json

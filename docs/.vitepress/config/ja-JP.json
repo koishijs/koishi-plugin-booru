@@ -34,11 +34,11 @@
           "text": "指南",
           "items": [
             {
-              "text": "介绍",
+              "text": "紹介",
               "link": "/"
             },
             {
-              "text": "使用",
+              "text": "使い方",
               "link": "/usage"
             },
             {
@@ -127,6 +127,10 @@
             {
               "text": "爱发电：@迷子",
               "link": "https://afdian.net/a/ff14_hamster"
+            },
+            {
+              "text": "贡献翻译",
+              "link": "https://crowdin.com/editor/koishi/1932"
             }
           ]
         }

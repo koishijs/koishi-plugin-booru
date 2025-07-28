@@ -1,0 +1,7 @@
+$inner:
+  - $description: 全局设置
+    label: 图源标签，可用于在指令中手动指定图源。
+    weight: 图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。
+
+  - $description: 请求设置
+    proxyAgent: 请求图片时使用代理服务器。

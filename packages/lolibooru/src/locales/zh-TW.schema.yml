@@ -1,0 +1,7 @@
+$description: 搜尋設定
+endpoint: Lolibooru 的 URL。
+keyPairs:
+  $description: Lolibooru 的登录凭据。
+  $inner:
+    login: 用户名
+    password: 密码

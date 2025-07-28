@@ -11,6 +11,7 @@ const availableTags: string[] = Object.entries(ids)
 
 class MoehuImageSource extends ImageSource<MoehuImageSource.Config> {
   languages = ['en', 'zh']
+  reusable = true
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://img.moehu.org/
@@ -61,8 +62,10 @@ namespace MoehuImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'moehu' }),
     Schema.object({
-      endpoint: Schema.string().description('Moehu 的 URL。').default('https://img.moehu.org/pic.php'),
-    }).description('搜索设置'),
+      endpoint: Schema.string().default('https://img.moehu.org/pic.php'),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 

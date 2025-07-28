@@ -6,6 +6,7 @@ import { Safebooru } from './types'
 class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
   languages = ['en']
   source = 'safebooru'
+  reusable = true
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://safebooru.org/index.php?page=help&topic=dapi
@@ -60,8 +61,10 @@ namespace SafebooruImageSource {
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'safebooru' }),
     Schema.object({
-      endpoint: Schema.string().description('Safebooru 的 URL。').default('https://safebooru.org/index.php'),
-    }).description('搜索设置'),
+      endpoint: Schema.string().default('https://safebooru.org/index.php'),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 

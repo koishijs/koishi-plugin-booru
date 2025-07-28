@@ -7,6 +7,7 @@ import { SankakuComplex } from './types'
 class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Config> {
   languages = ['en']
   source = 'sankaku'
+  reusable = true
 
   constructor(ctx: Context, config: SankakuComplexImageSource.Config) {
     super(ctx, config)
@@ -96,19 +97,19 @@ namespace SankakuComplexImageSource {
     Schema.object({
       keyPairs: Schema.array(
         Schema.object({
-          login: Schema.string().required().description('SankakuComplex 用户名'),
-          password: Schema.string().required().role('secret').description('SankakuComplex 密码'),
-          tokenType: Schema.string().hidden().default('Bearer').description('SankakuComplex 访问令牌类型'),
-          accessToken: Schema.string().hidden().description('SankakuComplex 访问令牌'),
+          login: Schema.string().required(),
+          password: Schema.string().required().role('secret'),
+          tokenType: Schema.string().hidden().default('Bearer'),
+          accessToken: Schema.string().hidden(),
         }),
-      )
-        .default([])
-        .description('SankakuComplex 的登录凭证'),
-      userAgent: Schema.string().description('设置请求的 User Agent。').default(
+      ).default([]),
+      userAgent: Schema.string().default(
         // eslint-disable-next-line max-len
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
       ),
-    }).description('搜索设置'),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 

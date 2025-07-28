@@ -6,6 +6,7 @@ import { Lolicon } from './types'
 class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
   languages = ['en', 'zh-CN', 'ja']
   source = 'lolicon'
+  reusable = true
 
   override tokenize(query: string) {
     return query.split(/\s+/)
@@ -83,7 +84,9 @@ namespace LoliconImageSource {
       ])
         .description('是否排除 AI 作品。')
         .default(true),
-    }).description('搜索设置'),
+    }).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 

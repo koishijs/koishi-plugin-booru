@@ -9,7 +9,7 @@
 ### 全局设置
 
 :::tip
-此处的配置项可参考[图源全局设置](../config#图源全局设置)
+此处的配置项可参考[图源全局设置](../config#global-settings)
 :::
 
 ### 搜索设置
@@ -35,7 +35,7 @@ Danbooru 的登录凭据。如该项为空，则使用匿名登录。
 ## 获取与设置登录凭据 {#configure-credentials}
 
 1. 访问 [Danbooru](https://danbooru.donmai.us) 并登录。如果你还没有账号，你需要先注册一个账号。
-1. 访问 [个人页面](https://danbooru.donmai.us/profile)，找到 `API Key` 字样并点击其右方的 `View` 按钮。
-1. 在新的页面中，单击 `Add` 按钮添加一个新的 API 密钥，一般情况下只需要填写 `Name` 字段并点击 `Create` 按钮即可。
-1. 在列表中找到你刚刚创建的 API 密钥，复制 `Key` 字段的内容并粘贴到 Koishi 端的 `kayPairs` 配置项中的 `apiKey` 字段中。
-1. 在 `login` 字段中填写你的用户名，并保存配置。
+2. 访问 [个人页面](https://danbooru.donmai.us/profile)，找到 `API Key` 字样并点击其右方的 `View` 按钮。
+3. 在新的页面中，单击 `Add` 按钮添加一个新的 API 密钥，一般情况下只需要填写 `Name` 字段并点击 `Create` 按钮即可。
+4. 在列表中找到你刚刚创建的 API 密钥，复制 `Key` 字段的内容并粘贴到 Koishi 端的 `kayPairs` 配置项中的 `apiKey` 字段中。
+5. 在 `login` 字段中填写你的用户名，并保存配置。

@@ -9,7 +9,7 @@
 ### 全局设置
 
 :::tip
-此处的配置项可参考[图源全局设置](../config#图源全局设置)
+此处的配置项可参考[图源全局设置](../config#global-settings)
 :::
 
 ### 搜索设置
@@ -35,6 +35,6 @@ Gelbooru 的登录凭据。如该项为空，则使用匿名登录。
 ## 获取与设置登录凭据 {#configure-credentials}
 
 1. 访问 [Gelbooru](https://gelbooru.com) 并登录。如果你还没有账号，你需要先注册一个账号。
-1. 访问 [个人页面](https://gelbooru.com/index.php?page=account&s=options) 并翻阅到页面底部找到 `API Access Credentials` 字样，复制其右侧的文本框的内容。
-1. 在 Koishi 端的 `kayPairs` 配置项中添加项目，并粘贴刚刚复制的内容。
-1. 保存配置。
+2. 访问 [个人页面](https://gelbooru.com/index.php?page=account&s=options) 并翻阅到页面底部找到 `API Access Credentials` 字样，复制其右侧的文本框的内容。
+3. 在 Koishi 端的 `kayPairs` 配置项中添加项目，并粘贴刚刚复制的内容。
+4. 保存配置。

@@ -184,19 +184,21 @@ namespace LocalImageSource {
 
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'local' }),
-    Schema.object({
-      // TODO: Schema.path()?
-      endpoint: Schema.array(String).description('图源文件夹，支持多个不同的文件夹'),
-      storage: Schema.union<Mapping.Storage>(['file', 'database']).description('图源数据保存方式').default('file'),
-      reload: Schema.boolean().description('每次启动时重新构建图源数据').default(false),
-      languages: Schema.array(String).description('支持的语言').default(['zh-CN']),
-    }).description('图源设置'),
-    Schema.object({
-      scraper: Schema.string()
-        .description('文件名元信息生成格式，详见<a herf="https://booru.koishi.chat/plugins/local.html">文档</a>')
-        .default('{filename}-{tag}'),
-      extension: Schema.array(String).description('支持的扩展名').default(['.jpg', '.png', '.jpeg', '.gif']),
-    }).description('文件设置'),
+    Schema.intersect([
+      Schema.object({
+        // TODO: Schema.path()?
+        endpoint: Schema.array(String),
+        storage: Schema.union<Mapping.Storage>(['file', 'database']).default('file'),
+        reload: Schema.boolean().default(false),
+        languages: Schema.array(String).default(['zh-CN']),
+      }),
+      Schema.object({
+        scraper: Schema.string().default('{filename}-{tag}'),
+        extension: Schema.array(String).default(['.jpg', '.png', '.jpeg', '.gif']),
+      }),
+    ]).i18n({
+      'zh-CN': require('./locales/zh-CN.schema'),
+    }),
   ])
 }
 

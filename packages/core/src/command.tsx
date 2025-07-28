@@ -24,7 +24,7 @@ export function apply(ctx: Context, config: Config) {
   const count = (value: string, session: Session) => {
     const count = parseInt(value)
     if (count < 1 || count > config.maxCount) {
-      session.send('booru.count-invalid')
+      session.send(session.text('commands.booru.messages.count-invalid'))
       return 1
     }
     return count
@@ -57,7 +57,7 @@ export function apply(ctx: Context, config: Config) {
 
       const images = await ctx.booru.get({
         query,
-        count: options.count,
+        count: options.count || 1,
         labels:
           options.label
             ?.split(',')
@@ -66,7 +66,16 @@ export function apply(ctx: Context, config: Config) {
       })
       const source = images?.source
 
-      const filtered = images?.filter((image) => config.nsfw || !image.nsfw)
+      const filtered = images?.filter((image) => {
+        if (config.nsfw && image.nsfw) return false
+
+        if (config.blacklist?.length && image.tags?.length) {
+          for (const tag of image.tags) {
+            if (config.blacklist.includes(tag)) return false
+          }
+        }
+        return true
+      })
 
       if (!filtered?.length) return session?.text('commands.booru.messages.no-result')
 
@@ -87,17 +96,9 @@ export function apply(ctx: Context, config: Config) {
         }
 
         if (config.asset && ctx.assets) {
-          url = await ctx.booru.imgUrlToAssetUrl(url)
-          if (!url) {
-            children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
-            continue
-          }
+          url = (await ctx.booru.imgUrlToAssetUrl(url)) ?? url
         } else if (config.base64) {
-          url = await ctx.booru.imgUrlToBase64(url)
-          if (!url) {
-            children.unshift(<i18n path='commands.booru.messages.no-image'></i18n>)
-            continue
-          }
+          url = (await ctx.booru.imgUrlToBase64(url)) ?? url
         }
         switch (config.output) {
           case OutputType.All:

@@ -48,7 +48,7 @@
           ]
         },
         {
-          "text": "插件",
+          "text": "外掛",
           "items": [
             {
               "text": "Danbooru",
@@ -127,6 +127,10 @@
             {
               "text": "爱发电：@迷子",
               "link": "https://afdian.net/a/ff14_hamster"
+            },
+            {
+              "text": "贡献翻译",
+              "link": "https://crowdin.com/editor/koishi/1932"
             }
           ]
         }
