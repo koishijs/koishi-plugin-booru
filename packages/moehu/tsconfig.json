@@ -3,7 +3,13 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "lib",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "koishi-plugin-booru": ["../../core/src"],
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.json"]
+  "include": ["src", "src/**/*.json"],
+  "references": [
+    { "path": "../core" }
+  ]
 }
