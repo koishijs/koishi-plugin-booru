@@ -1,6 +1,6 @@
 import { basename, extname } from 'path'
 
-import { LocalStorage, Scraper } from './types'
+import LocalImageSource from '.'
 
 const element = {
   filename: '(.+)',
@@ -26,7 +26,7 @@ const mapping = {
   tag: 'tags',
 }
 
-function name(scraper: string, path: string, hash: string): LocalStorage.Response {
+function name(scraper: string, path: string, hash: string): LocalImageSource.ImageMetadata {
   const filename = basename(path, extname(path))
   scraper = scraper.toLowerCase()
 
@@ -49,18 +49,20 @@ function name(scraper: string, path: string, hash: string): LocalStorage.Respons
         ]
       : pattren.map((k, i) => [mapping[k], format[k](unitData[i + 1])])),
     ['hash', hash],
-    ['path', path],
+    ['sourcePath', path],
   ])
 }
 
 // TODO: get from meta information in image file
-function meta(scraper: string, path: string, hash: string): LocalStorage.Response {
-  return { name: basename(path, extname(path)), hash, path }
+function meta(scraper: string, path: string, hash: string): LocalImageSource.ImageMetadata {
+  return { name: basename(path, extname(path)), hash, sourcePath: path, tags: [], nsfw: false }
 }
 
-export function scraper<T extends Scraper.String>(scraper: T) {
+export function scraper<T extends LocalImageSource.Scraper.String>(scraper: T): {
+  (path: string, hash: string): LocalImageSource.ImageMetadata
+} {
   // eslint-disable-next-line @typescript-eslint/ban-types
-  const func: Record<Scraper.Type, Function> = { name, meta }
+  const func: Record<LocalImageSource.Scraper.Type, Function> = { name, meta }
   const typer = /^\#(.+)#(.+)/.exec(scraper)
   if (typer === null) return (path: string, hash: string) => name(scraper, path, hash)
   else return (path: string, hash: string) => func[typer[1]](typer[2], path, hash)

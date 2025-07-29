@@ -4,8 +4,8 @@ import Main from './main.vue'
 
 export default (ctx: Context) => {
   ctx.page({
-    name: '页面标题',
-    path: '/custom-page',
+    name: 'Local WebUI',
+    path: '/booru-local-ui',
     component: Main,
   })
 }

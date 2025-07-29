@@ -3,9 +3,9 @@ $inner:
     $inner:
       endpoint: 图源文件夹，支持多个不同的文件夹
       storage: 图源数据保存方式
-      reload: 每次启动时重新构建图源数据
+      buildByReload: 每次启动时重新构建图源数据
       languages: 支持的语言
   - $description: 文件设置
     $inner:
-      scraper: 文件名元信息生成格式，详见<a herf="https://booru.koishi.chat/plugins/local.html">文档</a>
+      scraper: 文件名元信息生成格式，详见[文档](https://booru.koishi.chat/plugins/local.html)
       extension: 支持的扩展名
