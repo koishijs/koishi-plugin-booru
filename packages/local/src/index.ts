@@ -251,6 +251,8 @@ namespace LocalImageSource {
     tags?: string[]
     nsfw?: boolean
     sourcePath: string
+    author?: string
+    [key: string]: unknown // Additional properties can be added by the scraper
   }
 
   export namespace Scraper {

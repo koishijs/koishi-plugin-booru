@@ -2,68 +2,134 @@ import { basename, extname } from 'path'
 
 import LocalImageSource from '.'
 
-const element = {
-  filename: '(.+)',
-  tag: '(\\[.+\\])',
+export type ScraperType = 'name' | 'meta'
+export type ScraperFormatFunction = (scraper: string, path: string, hash: string) => LocalImageSource.ImageMetadata
+export type TokenDefinitionsKeys = keyof typeof tokenDefinitions
+export type ScraperParses = Record<ScraperType, ScraperFormatFunction>
+
+export interface TokenDefinitions {
+  [key: string]: {
+    matcher: string
+    formatter: (...args: unknown[]) => unknown
+  }
 }
 
-const nsfw = [true, false, 'furry', 'guro', 'shota', 'bl']
-// type Nsfw = boolean | 'furry' | 'guro' | 'shota' | 'bl'
+export const NSFW_TOKENS = ['furry', 'guro', 'shota', 'bl']
+export const SEPARATORS = ['-']
 
-const format = {
-  filename: (name: string) => name,
-  tag: (tags: string) =>
-    tags
-      .slice(1, -1)
-      .replace('，', ',')
-      .split(',')
-      .map((s) => s.trim()),
-  nsfw: (tag: string) => nsfw.includes(tag.split('=')[1]),
+/**
+ * Scraper configuration interface.
+ */
+export const tokenDefinitions: TokenDefinitions = {
+  filename: {
+    matcher: '(.+?)',
+    formatter: (name: string) => name,
+  },
+  author: {
+    matcher: '(.+?)',
+    formatter: (author: string) => author,
+  },
+  tag: {
+    matcher: '(\\[[^\\]]+\\])',
+    formatter: (tags: string) =>
+      tags.slice(1, -1)
+        .replace(/，/g, ',')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
+  },
+  nsfw: {
+    matcher: `(nsfw|nsfw=(?:true|false|${NSFW_TOKENS.join('|')}))`,
+    formatter: (tag: string) => {
+      if (tag === 'nsfw') return true
+      const value = tag.split('=')[1]
+      return ['true', 'false'].includes(value) ? value === 'true' : value
+    },
+  },
 }
 
-const mapping = {
-  filename: 'name',
-  tag: 'tags',
+// #region Scraper Patterns
+
+export const patternsKeys: TokenDefinitionsKeys[] = Object.keys(tokenDefinitions) as TokenDefinitionsKeys[]
+
+const scraperStrategies: Record<ScraperType, ScraperFormatFunction> = {
+  name: (scraper: string, path: string, hash: string) => {
+    scraper = scraper.toLowerCase()
+    const typeMatch = scraper.match(/^#(\w+)#/)
+    scraper = typeMatch ? scraper.slice(typeMatch[0].length) : scraper
+    const filename = basename(path, extname(path))
+    const separator = SEPARATORS.find((sep) => scraper.includes(sep)) || SEPARATORS[0]
+
+    const regex = createRegexPattern(scraper, separator, tokenDefinitions)
+    const match = regex.exec(filename)
+
+    const tokenizer = scraper
+      .replace(/^\./gm, '')
+      .replace(/\+$/gm, '')
+      .split(separator)
+      .filter(part => part.startsWith('{') && part.endsWith('}'))
+      .map(part => part.slice(1, -1))
+
+    const extraObject = match
+      ? tokenizer.map((key, index) => {
+        const patternKey = Object.keys(tokenDefinitions).find(k => key === k)
+        if (!patternKey || !match[index + 1]) return null
+        return [patternKey, tokenDefinitions[patternKey].formatter(match[index + 1])]
+      }).filter(Boolean)
+      : []
+
+    const result = Object.fromEntries([
+      ['name', filename],
+      ['hash', hash],
+      ...extraObject,
+    ])
+
+    return Object.assign(result, {
+      ...result,
+      sourcePath: path,
+      tags: Array.isArray(result.tag) ? result.tag : [],
+      nsfw: !!result.nsfw,
+    }) as LocalImageSource.ImageMetadata
+  },
+  meta: (scraper: string, path: string, hash: string) => {
+    return { name: basename(path, extname(path)), hash, sourcePath: path, tags: [], nsfw: false }
+  },
 }
 
-function name(scraper: string, path: string, hash: string): LocalImageSource.ImageMetadata {
-  const filename = basename(path, extname(path))
-  scraper = scraper.toLowerCase()
+function createRegexPattern(scraperPattern: string, separator: string, patterns: TokenDefinitions) {
+  const prefixMatch = scraperPattern.match(/^#(\w+)#/)
+  const cleanPattern = prefixMatch ? scraperPattern.slice(prefixMatch[0].length) : scraperPattern
+  const startWith = cleanPattern.startsWith('.') ? '^\\.' : '^'
+  const endWith = cleanPattern.endsWith('+') ? '(.+)' : '$'
+  const patternWithoutPrefix = cleanPattern.replace(/^\./, '')
+  const hasPlusSuffix = cleanPattern.endsWith('+')
+  const lastToken = patternWithoutPrefix
+    .replace(/\+$/, '')
+    .split(new RegExp(SEPARATORS.join('|')))
+    .pop() || ''
+  const shouldIgnorePlus = lastToken === '{filename}' && hasPlusSuffix
+  const patternWithoutSuffix = shouldIgnorePlus
+    ? patternWithoutPrefix
+    : patternWithoutPrefix.replace(/\+$/, '')
+  const parts = patternWithoutSuffix.split(new RegExp(SEPARATORS.join('|')))
 
-  const start = scraper.charAt(0) === '.' ? '^\\.' : '^'
-  const end = scraper.charAt(-1) === '+' ? '(.+)' : '$'
-  const pattren = scraper
-    .replace(/^\./gm, '')
-    .replace(/\+$/gm, '')
-    .split('-')
-    .map((k) => k.slice(1, -1))
-    .filter((k) => Object.keys(element).includes(k))
+  const regexParts = parts.map(part => {
+    if (part.startsWith('{') && part.endsWith('}')) {
+      const tokenName = part.slice(1, -1)
+      return patterns[tokenName]?.matcher || '(.+?)'
+    }
+    return part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  })
 
-  const rule = new RegExp(start + pattren.map((key) => element[key]).join('-') + end, 'g')
-  const unitData = rule.exec(filename)
-  return Object.fromEntries([
-    ...(unitData === null
-      ? [
-          ['name', filename],
-          ['tags', []],
-        ]
-      : pattren.map((k, i) => [mapping[k], format[k](unitData[i + 1])])),
-    ['hash', hash],
-    ['sourcePath', path],
-  ])
-}
-
-// TODO: get from meta information in image file
-function meta(scraper: string, path: string, hash: string): LocalImageSource.ImageMetadata {
-  return { name: basename(path, extname(path)), hash, sourcePath: path, tags: [], nsfw: false }
+  return new RegExp(startWith + regexParts.join(separator) + endWith)
 }
 
 export function scraper<T extends LocalImageSource.Scraper.String>(scraper: T): {
   (path: string, hash: string): LocalImageSource.ImageMetadata
 } {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  const func: Record<LocalImageSource.Scraper.Type, Function> = { name, meta }
-  const typer = /^\#(.+)#(.+)/.exec(scraper)
-  if (typer === null) return (path: string, hash: string) => name(scraper, path, hash)
-  else return (path: string, hash: string) => func[typer[1]](typer[2], path, hash)
+  const type = scraper.startsWith('#') ? scraper.split('#')[1] as ScraperType : 'name'
+  const format = scraperStrategies[type] || scraperStrategies.name
+  return (path: string, hash: string) => format(scraper, path, hash)
 }
+
+// #endregion
