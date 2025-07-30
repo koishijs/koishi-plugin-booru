@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { createReadStream } from 'node:fs'
 import { readdir, readFile, rename, writeFile } from 'node:fs/promises'
 import { basename, extname, resolve } from 'node:path'
+import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { pathToFileURL } from 'node:url'
 
@@ -16,13 +17,19 @@ import { mkdirs } from './utils'
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   static override inject = {
     required: ['booru', 'console', 'notifier'],
+    optional: ['server'],
   }
 
   private logger: Logger
   private index: LocalImageSource.IndexStore = {
     version: '1',
     imageMap: new Map<string, LocalImageSource.ImageMetadata>(),
-    auxiliary: {},
+    auxiliary: {
+      tag: {},
+      nsfw: { nsfw: [], safe: [] },
+      author: {},
+      hash: {},
+    },
   }
 
   private initialized = false
@@ -40,6 +47,31 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         dev: resolve(__dirname, '../client/index.ts'),
         prod: resolve(__dirname, '../dist'),
       })
+    }
+
+    if (config.proxy && ctx.server) {
+      ctx.server.get('/booru-local/:hash', async (ctx, next) => {
+        const { hash } = ctx.params
+        const source = this.index.auxiliary.hash?.[hash]
+        if (!source) {
+          ctx.status = 404
+          ctx.body = 'Image not found'
+        } else {
+          ctx.status = 200
+          ctx.type = 'image/' + extname(source).slice(1)
+          ctx.body = Readable.from(await readFile(source))
+        }
+        return next()
+      })
+    }
+  }
+
+  private imageUrl(metadata: LocalImageSource.ImageMetadata): string {
+    if (this.config.proxy) {
+      const { hash } = metadata
+      return new URL(`/booru-local/${hash}`, this.ctx.server.selfUrl).href
+    } else {
+      return pathToFileURL(metadata.sourcePath).href
     }
   }
 
@@ -71,7 +103,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         yield* this.readImageDir(absPath)
       } else if (entry.isFile()) {
         const ext = extname(entry.name).toLowerCase()
-        if (this.config.extension.includes(`.${ext}`)) {
+        if (this.config.extension.includes(ext)) {
           yield absPath
         }
       }
@@ -137,6 +169,21 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
             if (this.index.imageMap.values().some(img => img.hash === imageHash)) continue
             const metadata = imageScraper(imageFile, imageHash)
             this.index.imageMap.set(basename(imageFile), metadata)
+            this.index.auxiliary.hash![imageHash] = imageFile
+            metadata.tags?.forEach(tag => {
+              this.index.auxiliary.tag![tag].push(imageFile)
+            })
+            if (metadata.nsfw) {
+              this.index.auxiliary.nsfw!.nsfw.push(imageFile)
+            } else {
+              this.index.auxiliary.nsfw!.safe.push(imageFile)
+            }
+            if (metadata.author) {
+              if (!this.index.auxiliary.author![metadata.author]) {
+                this.index.auxiliary.author![metadata.author] = []
+              }
+              this.index.auxiliary.author![metadata.author].push(imageFile)
+            }
           }
         }
       } catch (error) {
@@ -160,10 +207,11 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   private createImageResult(metadata: LocalImageSource.ImageMetadata): ImageSource.Result {
     return {
       title: metadata.name,
-      nsfw: metadata.nsfw,
+      nsfw: metadata.nsfw || false,
       tags: metadata.tags || [],
+      author: metadata.author || '',
       urls: {
-        original: pathToFileURL(metadata.sourcePath).href,
+        original: this.imageUrl(metadata),
       },
     }
   }
@@ -212,6 +260,7 @@ namespace LocalImageSource {
     endpoint: string[]
     extension: string[]
     languages: string[]
+    proxy: boolean
     buildByReload: boolean
     scraper: string
   }
@@ -223,6 +272,7 @@ namespace LocalImageSource {
         endpoint: Schema.array(Schema.path({ allowCreate: true, filters: ['directory'] })),
         buildByReload: Schema.boolean().default(false),
         languages: Schema.array(String).default(['zh-CN']),
+        proxy: Schema.boolean().default(false),
       }),
       Schema.object({
         scraper: Schema.string().default('{filename}-{tag}'),
@@ -243,6 +293,9 @@ namespace LocalImageSource {
   export interface IndexAuxiliary {
     tag?: Record<string, string[]>
     nsfw?: { nsfw: string[]; safe: string[] }
+    author?: Record<string, string[]>
+    // hash: fullPath
+    hash?: Record<string, string>
   }
 
   export interface ImageMetadata {

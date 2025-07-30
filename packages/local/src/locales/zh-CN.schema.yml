@@ -5,6 +5,7 @@ $inner:
       storage: 图源数据保存方式
       buildByReload: 每次启动时重新构建图源数据
       languages: 支持的语言
+      proxy: 是否启用链接代理
   - $description: 文件设置
     $inner:
       scraper: 文件名元信息生成格式，详见[文档](https://booru.koishi.chat/plugins/local.html)
