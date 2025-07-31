@@ -6,24 +6,33 @@ import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { pathToFileURL } from 'node:url'
 
+import { DataService } from '@koishijs/plugin-console'
 import { Notifier } from '@koishijs/plugin-notifier'
-import { } from '@koishijs/plugin-console'
 import { Context, Logger, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
+import * as BooruLocalConsole from './console'
 import { scraper } from './scraper'
+import { ImageMetadata, IndexStore, IndexUserStore } from './types'
 import { mkdirs } from './utils'
+
+declare module '@koishijs/plugin-console' {
+  interface Events {
+    'booru-local/load-user-index': IndexUserStore
+  }
+}
 
 class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   static override inject = {
-    required: ['booru', 'console', 'notifier'],
-    optional: ['server'],
+    required: ['booru'],
+    optional: ['server', 'console', 'notifier'],
   }
 
   private logger: Logger
-  private index: LocalImageSource.IndexStore = {
-    version: '1',
-    imageMap: new Map<string, LocalImageSource.ImageMetadata>(),
+  private index: IndexStore = {
+    version: 1,
+    imageMap: new Map<string, ImageMetadata>(),
+    updatedAt: -1,
     auxiliary: {
       tag: {},
       nsfw: { nsfw: [], safe: [] },
@@ -35,7 +44,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   /**
    * User changes to the index will be observed here.
    */
-  private indexObserve = {}
+  private indexObserve: Record<string, ImageMetadata> = {}
   private initialized = false
   private readonly dataDir = './data/booru-local'
 
@@ -46,9 +55,11 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
     ctx.on('ready', this.init.bind(this))
 
-    ctx.console.addEntry({
-      dev: resolve(__dirname, '../client/index.ts'),
-      prod: resolve(__dirname, '../dist'),
+    ctx.inject(['console'], (ctx) => {
+      ctx.plugin(BooruLocalConsole, {
+        index: this.index,
+        indexObserve: this.indexObserve,
+      })
     })
 
     if (config.proxy && ctx.server) {
@@ -68,7 +79,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     }
   }
 
-  private imageUrl(metadata: LocalImageSource.ImageMetadata): string {
+  private imageUrl(metadata: ImageMetadata): string {
     if (this.config.proxy) {
       const { hash } = metadata
       return new URL(`/booru-local/${hash}`, this.ctx.server.selfUrl).href
@@ -121,7 +132,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
   private async loadIndex(path: string) {
     try {
-      const indexData = JSON.parse(await readFile(path, 'utf-8')) as LocalImageSource.IndexStore
+      const indexData = JSON.parse(await readFile(path, 'utf-8')) as IndexStore
       indexData.imageMap = new Map(Object.entries(indexData.imageMap))
       this.index = indexData
       return true
@@ -134,8 +145,8 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   }
 
   private async saveIndex(path: string) {
-    const indexData: LocalImageSource.IndexStore = {
-      version: '1',
+    const indexData: IndexStore = {
+      version: 1,
       updatedAt: Date.now(),
       // Map to Object conversion for JSON serialization
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -155,8 +166,8 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   }
 
   private async saveUserIndex() {
-    const userIndex: LocalImageSource.IndexUserStore = {
-      version: '1',
+    const userIndex: IndexUserStore = {
+      version: 1,
       updatedAt: Date.now(),
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -176,9 +187,8 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   private async loadUserIndex() {
     const userIndexPath = resolve(this.ctx.root.baseDir, this.dataDir, this.indexUserFile)
     try {
-      const userIndexData = JSON.parse(await readFile(userIndexPath, 'utf-8')) as LocalImageSource.IndexUserStore
-      userIndexData.imageMap = new Map(Object.entries(userIndexData.imageMap))
-      this.indexObserve = new Proxy(userIndexData.imageMap, {
+      const userIndexData = JSON.parse(await readFile(userIndexPath, 'utf-8')) as IndexUserStore
+      this.indexObserve = new Proxy(Object.fromEntries(userIndexData.imageMap), {
         set: (target, key, value) => {
           if (typeof key !== 'string') return false
           this.indexObserve[key] = value
@@ -258,14 +268,14 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     this.initialized = true
   }
 
-  private* filterImages(query: ImageSource.Query): Generator<LocalImageSource.ImageMetadata> {
+  private* filterImages(query: ImageSource.Query): Generator<ImageMetadata> {
     for (const metadata of this.index.imageMap.values()) {
       if (query.tags && !query.tags.every(tag => metadata.tags?.includes(tag))) continue
       yield metadata
     }
   }
 
-  private createImageResult(metadata: LocalImageSource.ImageMetadata): ImageSource.Result {
+  private createImageResult(metadata: ImageMetadata): ImageSource.Result {
     return {
       title: metadata.name,
       nsfw: metadata.nsfw || false,
@@ -277,9 +287,9 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     }
   }
 
-  private randomPick(generator: Generator<LocalImageSource.ImageMetadata>, count: number): ImageSource.Result[] {
+  private randomPick(generator: Generator<ImageMetadata>, count: number): ImageSource.Result[] {
     const results: ImageSource.Result[] = []
-    const pikers: LocalImageSource.ImageMetadata[] = []
+    const pikers: ImageMetadata[] = []
     let pickIndex = 0
 
     for (const item of generator) {
@@ -343,39 +353,8 @@ namespace LocalImageSource {
       'zh-CN': require('./locales/zh-CN.schema'),
     }),
   ])
-
-  export interface IndexStore {
-    version: '1'
-    imageMap: Map<string, ImageMetadata>
-    updatedAt?: number
-    auxiliary: IndexAuxiliary
-  }
-
-  export type IndexUserStore = Omit<IndexStore, 'auxiliary'>
-
-  export interface IndexAuxiliary {
-    tag?: Record<string, string[]>
-    nsfw?: { nsfw: string[]; safe: string[] }
-    author?: Record<string, string[]>
-    // NOTE: { md5Hash: fullPath }
-    hash?: Record<string, string>
-  }
-
-  export interface ImageMetadata {
-    name: string
-    hash: string
-    tags?: string[]
-    nsfw?: boolean
-    sourcePath: string
-    author?: string
-    [key: string]: unknown // Additional properties can be added by the scraper
-  }
-
-  export namespace Scraper {
-    export type String = `#${Type}#${string}` | string
-    export type Type = 'name' | 'meta'
-    export type Function = (path: string, hash: string) => ImageMetadata
-  }
 }
+
+export class LocalImageSourceProvide extends DataService {}
 
 export default LocalImageSource

@@ -1,18 +1,6 @@
 import { basename, extname } from 'path'
 
-import LocalImageSource from '.'
-
-export type ScraperType = 'name' | 'meta'
-export type ScraperFormatFunction = (scraper: string, path: string, hash: string) => LocalImageSource.ImageMetadata
-export type TokenDefinitionsKeys = keyof typeof tokenDefinitions
-export type ScraperParses = Record<ScraperType, ScraperFormatFunction>
-
-export interface TokenDefinitions {
-  [key: string]: {
-    matcher: string
-    formatter: (...args: unknown[]) => unknown
-  }
-}
+import { ImageMetadata, Scraper } from './types'
 
 export const NSFW_TOKENS = ['furry', 'guro', 'shota', 'bl']
 export const SEPARATORS = ['-']
@@ -20,7 +8,7 @@ export const SEPARATORS = ['-']
 /**
  * Scraper configuration interface.
  */
-export const tokenDefinitions: TokenDefinitions = {
+export const tokenDefinitions: Scraper.TokenDefinitions = {
   filename: {
     matcher: '(.+?)',
     formatter: (name: string) => name,
@@ -50,9 +38,9 @@ export const tokenDefinitions: TokenDefinitions = {
 
 // #region Scraper Patterns
 
-export const patternsKeys: TokenDefinitionsKeys[] = Object.keys(tokenDefinitions) as TokenDefinitionsKeys[]
+export const patternsKeys: Scraper.TokenKeys[] = Object.keys(tokenDefinitions) as Scraper.TokenKeys[]
 
-const scraperStrategies: Record<ScraperType, ScraperFormatFunction> = {
+const scraperStrategies: Scraper.Strategies = {
   name: (scraper: string, path: string, hash: string) => {
     scraper = scraper.toLowerCase()
     const typeMatch = scraper.match(/^#(\w+)#/)
@@ -89,14 +77,14 @@ const scraperStrategies: Record<ScraperType, ScraperFormatFunction> = {
       sourcePath: path,
       tags: Array.isArray(result.tag) ? result.tag : [],
       nsfw: !!result.nsfw,
-    }) as LocalImageSource.ImageMetadata
+    }) as ImageMetadata
   },
   meta: (scraper: string, path: string, hash: string) => {
     return { name: basename(path, extname(path)), hash, sourcePath: path, tags: [], nsfw: false }
   },
 }
 
-function createRegexPattern(scraperPattern: string, separator: string, patterns: TokenDefinitions) {
+function createRegexPattern(scraperPattern: string, separator: string, patterns: Scraper.TokenDefinitions) {
   const prefixMatch = scraperPattern.match(/^#(\w+)#/)
   const cleanPattern = prefixMatch ? scraperPattern.slice(prefixMatch[0].length) : scraperPattern
   const startWith = cleanPattern.startsWith('.') ? '^\\.' : '^'
@@ -124,10 +112,10 @@ function createRegexPattern(scraperPattern: string, separator: string, patterns:
   return new RegExp(startWith + regexParts.join(separator) + endWith)
 }
 
-export function scraper<T extends LocalImageSource.Scraper.String>(scraper: T): {
-  (path: string, hash: string): LocalImageSource.ImageMetadata
+export function scraper<T extends Scraper.String>(scraper: T): {
+  (path: string, hash: string): ImageMetadata
 } {
-  const type = scraper.startsWith('#') ? scraper.split('#')[1] as ScraperType : 'name'
+  const type = scraper.startsWith('#') ? scraper.split('#')[1] as Scraper.Type : 'name'
   const format = scraperStrategies[type] || scraperStrategies.name
   return (path: string, hash: string) => format(scraper, path, hash)
 }
