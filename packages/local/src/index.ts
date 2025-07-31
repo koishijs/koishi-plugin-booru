@@ -32,6 +32,10 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     },
   }
 
+  /**
+   * User changes to the index will be observed here.
+   */
+  private indexObserve = {}
   private initialized = false
   private readonly dataDir = './data/booru-local'
 
@@ -42,12 +46,10 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
     ctx.on('ready', this.init.bind(this))
 
-    if (ctx.console) {
-      ctx.console.addEntry({
-        dev: resolve(__dirname, '../client/index.ts'),
-        prod: resolve(__dirname, '../dist'),
-      })
-    }
+    ctx.console.addEntry({
+      dev: resolve(__dirname, '../client/index.ts'),
+      prod: resolve(__dirname, '../dist'),
+    })
 
     if (config.proxy && ctx.server) {
       ctx.server.get('/booru-local/:hash', async (ctx, next) => {
@@ -75,10 +77,17 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     }
   }
 
-  private get indexFile() {
-    const id = Object.keys(this.ctx.runtime.parent.config as Record<string, unknown>)
+  private get __pluginID() {
+    return Object.keys(this.ctx.runtime.parent.config as Record<string, unknown>)
       .find(key => key.startsWith('booru-local')).split(':')[1]
-    return `index.${id || 'default'}.json`
+  }
+
+  private get indexFile() {
+    return 'index.' + this.__pluginID + '.json'
+  }
+
+  private get indexUserFile() {
+    return 'index.user.' + this.__pluginID + '.json'
   }
 
   private notifier = (content: string, type: Notifier.Type = 'primary') => this.ctx.notifier.create({
@@ -145,6 +154,56 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     }
   }
 
+  private async saveUserIndex() {
+    const userIndex: LocalImageSource.IndexUserStore = {
+      version: '1',
+      updatedAt: Date.now(),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      imageMap: Object.fromEntries(this.indexObserve),
+    }
+
+    try {
+      const temp = `${this.indexUserFile}.tmp`
+      await writeFile(temp, JSON.stringify(userIndex))
+      await rename(temp, resolve(this.ctx.root.baseDir, this.dataDir, this.indexUserFile))
+      this.logger.debug(`user index saved to ${this.indexUserFile}`)
+    } catch (error) {
+      this.logger.error(`failed to save user index:`, error)
+    }
+  }
+
+  private async loadUserIndex() {
+    const userIndexPath = resolve(this.ctx.root.baseDir, this.dataDir, this.indexUserFile)
+    try {
+      const userIndexData = JSON.parse(await readFile(userIndexPath, 'utf-8')) as LocalImageSource.IndexUserStore
+      userIndexData.imageMap = new Map(Object.entries(userIndexData.imageMap))
+      this.indexObserve = new Proxy(userIndexData.imageMap, {
+        set: (target, key, value) => {
+          if (typeof key !== 'string') return false
+          this.indexObserve[key] = value
+          this.saveUserIndex()
+          return true
+        },
+        get: (target, key) => {
+          if (typeof key !== 'string') return undefined
+          return this.indexObserve[key]
+        },
+        has: (target, key) => {
+          if (typeof key !== 'string') return false
+          return key in this.indexObserve
+        },
+      })
+      this.logger.debug(`user index loaded from ${userIndexPath}`)
+      return true
+    } catch (error) {
+      if (error.code !== 'ENOENT') {
+        this.logger.error(`failed to load user index from ${userIndexPath}:`, error)
+      }
+    }
+    return false
+  }
+
   async init() {
     if (this.config.endpoint.length === 0) {
       this.notifier('配置 endpoint 以使用本地图源', 'warning')
@@ -156,6 +215,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     const folders = new Set(this.config.endpoint.map(p => resolve(this.ctx.root.baseDir, p)))
     const imageScraper = scraper(this.config.scraper)
     const loaded = await this.loadIndex(absPath)
+    this.loadUserIndex()
 
     if (this.config.buildByReload || !loaded) {
       const startTime = Date.now()
@@ -169,6 +229,7 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
             if (this.index.imageMap.values().some(img => img.hash === imageHash)) continue
             const metadata = imageScraper(imageFile, imageHash)
             this.index.imageMap.set(basename(imageFile), metadata)
+            // auxiliary index
             this.index.auxiliary.hash![imageHash] = imageFile
             metadata.tags?.forEach(tag => {
               this.index.auxiliary.tag![tag].push(imageFile)
@@ -290,11 +351,13 @@ namespace LocalImageSource {
     auxiliary: IndexAuxiliary
   }
 
+  export type IndexUserStore = Omit<IndexStore, 'auxiliary'>
+
   export interface IndexAuxiliary {
     tag?: Record<string, string[]>
     nsfw?: { nsfw: string[]; safe: string[] }
     author?: Record<string, string[]>
-    // hash: fullPath
+    // NOTE: { md5Hash: fullPath }
     hash?: Record<string, string>
   }
 
