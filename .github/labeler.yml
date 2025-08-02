@@ -17,6 +17,9 @@
 'source: danbooru':
   - changed-files:
       - any-glob-to-any-file: packages/danbooru/**
+'source: derpibooru':
+  - changed-files:
+      - any-glob-to-any-file: packages/derpibooru/**
 'source: e621':
   - changed-files:
       - any-glob-to-any-file: packages/e621/**
