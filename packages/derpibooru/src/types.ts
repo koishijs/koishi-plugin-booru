@@ -1,9 +1,19 @@
 export namespace Derpibooru {
+  export interface RequestParams {
+    q: string
+    sf: 'random' | 'score' | 'created_at' | 'updated_at'
+    limit?: number
+    page?: number
+    per_page?: number
+    key?: string
+    filter_id?: number
+  }
+
   export interface ImagesResponse {
     images: ImageResponse[]
   }
 
-  interface ImageResponse {
+  export interface ImageResponse {
     id: number
     animated: boolean
     aspect_ratio: number
@@ -47,7 +57,7 @@ export namespace Derpibooru {
     wilson_score: number
   }
 
-  interface Intensities {
+  export interface Intensities {
     nw: number
     ne: number
     sw: number

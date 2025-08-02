@@ -18,9 +18,13 @@ class DerpibooruImageSource extends ImageSource<DerpibooruImageSource.Config> {
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://derpibooru.org/pages/api
-    const params = {
-      q: query.tags.join('+'),
+    const params: Derpibooru.RequestParams = {
+      q: query.tags.join('+') || '*',
       sf: 'random',
+    }
+
+    if (this.keyPair) {
+      params.key = this.keyPair
     }
 
     const data = await this.http.get(
@@ -32,7 +36,7 @@ class DerpibooruImageSource extends ImageSource<DerpibooruImageSource.Config> {
       return []
     }
 
-    return data.images.map((image) => {
+    return data.images.slice(query.count).map((image) => {
       const rep = image.representations
       return {
         // Size: images.representations.{full,large,medium,small,tall,thumb,thumb_small,thumb_tiny}
