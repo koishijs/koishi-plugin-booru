@@ -1,5 +1,6 @@
 import { Context, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
 import { Derpibooru } from './types'
 
 class DerpibooruImageSource extends ImageSource<DerpibooruImageSource.Config> {
@@ -22,27 +23,34 @@ class DerpibooruImageSource extends ImageSource<DerpibooruImageSource.Config> {
       sf: 'random',
     }
 
-    const data = await this.http.get<Derpibooru.Response>(
+    const data = await this.http.get(
       trimSlash(this.config.endpoint) + '/api/v1/json/search/images',
       { params },
-    )
+    ) as Derpibooru.ImagesResponse
 
-    if (!Array.isArray(data.post)) {
+    if (!Array.isArray(data.images)) {
       return
     }
 
-    return data.post.map((post) => {
+    return data.images.map((image) => {
+      const rep = image.representations
       return {
-        // Size: file_url > sample_url > preview_url
+        // Size: images.representations.{full,large,medium,small,tall,thumb,thumb_small,thumb_tiny}
         urls: {
-          original: post.file_url,
-          medium: post.sample_url,
-          thumbnail: post.preview_url,
+          original: rep?.full,
+          large: rep?.large,
+          medium: rep?.medium,
+          small: rep?.small,
+          thumbnail: rep?.thumb || rep?.thumb_small || rep?.thumb_tiny,
         },
-        pageUrl: post.source,
-        author: post.owner.replace(/ /g, ', ').replace(/_/g, ' '),
-        tags: post.tags.split(' ').map((t) => t.replace(/_/g, ' ')),
-        nsfw: ['explicit', 'questionable'].includes(post.rating),
+        pageUrl: `${trimSlash(this.config.endpoint)}/images/${image.id}`,
+        author: image.uploader,
+        tags: image.tags,
+        authorUrl: image.uploader_id
+          ? `${trimSlash(this.config.endpoint)}/profile/${image.uploader}`
+          : undefined,
+        desc: image.description,
+        title: image.name,
       }
     })
   }
