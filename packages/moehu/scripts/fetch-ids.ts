@@ -11,7 +11,7 @@ const url = 'https://img.moehu.org/'
   if (response.status === 200) {
     const $ = cheerio.load(await response.text())
 
-    const menuDivs = $('.menuDiv').slice(0, -3)
+    const menuDivs = $('.menuDiv').slice(0, -2)
 
     const keyMap: Record<string, string> = {}
 
