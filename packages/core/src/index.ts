@@ -264,6 +264,6 @@ export function apply(ctx: Context, config: Config) {
   // @ts-expect-error inject structure not compatible
   ctx.plugin(Command, config)
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line ts/no-var-requires
   ctx.i18n.define('zh', require('./locales/zh-CN'))
 }
