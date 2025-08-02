@@ -29,7 +29,7 @@ class DerpibooruImageSource extends ImageSource<DerpibooruImageSource.Config> {
     ) as Derpibooru.ImagesResponse
 
     if (!Array.isArray(data.images)) {
-      return
+      return []
     }
 
     return data.images.map((image) => {
