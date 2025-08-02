@@ -1,0 +1,58 @@
+{
+  "name": "koishi-plugin-booru-derpibooru",
+  "description": "Image service by derpibooru for Koishi",
+  "version": "1.2.0",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "files": [
+    "lib",
+    "dist"
+  ],
+  "author": {
+    "name": "Maiko Tan",
+    "email": "maiko.tan.coding@gmail.com",
+    "url": "https://github.com/MaikoTan"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
+    "directory": "packages/derpibooru"
+  },
+  "bugs": {
+    "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
+  },
+  "homepage": "https://booru.koishi.chat/plugins/derpibooru.html",
+  "keywords": [
+    "chatbot",
+    "koishi",
+    "service",
+    "plugin",
+    "booru",
+    "image",
+    "picture",
+    "random",
+    "setu",
+    "derpibooru"
+  ],
+  "koishi": {
+    "description": {
+      "zh": "最好的涩图插件！ - Derpibooru 图源支持"
+    },
+    "service": {
+      "require": [
+        "booru"
+      ]
+    }
+  },
+  "peerDependencies": {
+    "koishi": "^4.17.0",
+    "koishi-plugin-booru": "^1.4.0"
+  },
+  "devDependencies": {
+    "koishi": "^4.17.0"
+  },
+  "publishConfig": {
+    "provenance": true
+  }
+}
