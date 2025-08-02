@@ -36,7 +36,7 @@ class DerpibooruImageSource extends ImageSource<DerpibooruImageSource.Config> {
       return []
     }
 
-    return data.images.slice(query.count).map((image) => {
+    return data.images.slice(0, query.count).map((image) => {
       const rep = image.representations
       return {
         // Size: images.representations.{full,large,medium,small,tall,thumb,thumb_small,thumb_tiny}
