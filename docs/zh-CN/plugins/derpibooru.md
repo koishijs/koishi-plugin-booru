@@ -34,5 +34,5 @@ Derpibooru 的密钥。
 
 1. 访问 [Derpibooru](https://derpibooru.org/) 并登录。如果你还没有账号，你需要先注册一个账号。
 1. 访问 [个人页面](https://derpibooru.org/registrations/edit)，找到 `API Key` 字样并点击复制按钮。
-1. 在列表中找到你刚刚创建的 API 密钥，复制 `Key` 字段的内容并粘贴到 Koishi 端的 `kayPairs` 配置项中。
+1. 在列表中找到你刚刚创建的 API 密钥，复制 `Key` 字段的内容并粘贴到 Koishi 端的 `keyPairs` 配置项中。
 1. 保存配置。
