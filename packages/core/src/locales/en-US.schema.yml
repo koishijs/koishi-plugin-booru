@@ -32,12 +32,12 @@ $inner:
         - Thumbnail
     autoResize:
       $description: Shrink oversized images based on `preferSize`. **Install plugin that provides canvas service**
-    asset: 优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。
-    base64: 使用 base64 发送图片。
+    asset: Use [assets service](https://assets.koishi.chat/) to cache image.
+    base64: Send image in base64 format.
     spoiler:
-      $description: 发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。
+      $description: Send image with Spoiler mask.
       $inner:
-        - 禁用
-        - 所有图片
-        - 仅 NSFW 图片
-    showTips: 是否输出使用提示信息。
+        - Disabled
+        - All
+        - NSFW Only
+    showTips: Append hint messages with images.
