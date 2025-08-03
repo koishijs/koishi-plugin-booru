@@ -8,34 +8,34 @@ $inner:
       $inner:
         - 标签部分一致
         - 标签完全一致
-        - 标题或介绍说明
+        - Title or description
     sort:
-      $description: 搜索结果排序方式
+      $description: Sort results by
       $inner:
-        - 上传时间较近优先
-        - 上传时间较远优先
-        - 收藏数较多优先 (需要 Pixiv Premium)
+        - Newest First
+        - Oldest First
+        - Popular First (Requires Pixiv Premium)
     duration:
-      $description: 搜索时间范围
+      $description: Search date range
       $inner:
-        - 24 小时内
-        - 一周内
-        - 一个月内
-        - 全部时间
+        - Within 24 Hours
+        - Within a Week
+        - Within a Month
+        - All Time
         - Custom
-    minBookmarks: 最少收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用
-    maxBookmarks: 最大收藏数，仅在设置了 Token 并有 Pixiv Premium 的情况下可用
+    minBookmarks: Minimum bookmarks, requires Token and Pixiv Premium
+    maxBookmarks: Maximum bookmarks, requires Token and Pixiv Premium
     rank:
-      $description: 年龄分级
+      $description: Rating
       $inner:
-        - 全年龄
+        - All Ages
         - R18
         - R18G
     ai:
-      $description: 是否允许搜索AI作品
+      $description: Whether to allow AI generated content
       $inner:
-        - 不允许AI作品
-        - 允许AI作品
+        - AI Work Not Allowed
+        - AI Work Allowed
   - 
     bypassMethod:
       $description: '突破 Pixiv 站点图片防外部引用检测的方式。[参考](https://booru.koishi.chat/zh-CN/plugins/pixiv.html#bypass-pixiv-detection)'
