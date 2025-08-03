@@ -52,5 +52,5 @@ $inner:
         - 
           $description: Custom
           endpoint: URL of reverse proxy server.
-    route: 反代服务的路径（需在 server 插件配置中填写 `selfUrl`）。
-    aesKey: AES 加密密钥
+    route: Path to reverse proxy service (`selfUrl` field is required in `server` plugin configuration)
+    aesKey: AES encryption key
