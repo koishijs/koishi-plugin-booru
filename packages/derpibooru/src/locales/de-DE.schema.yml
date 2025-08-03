@@ -1,0 +1,5 @@
+$description: 搜索设置
+endpoint: Derpibooru 的 URL。
+keyPairs:
+  $description: 'Derpibooru 的登录凭据。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/derpibooru.html#configure-credentials)'
+  $inner: Derpibooru 的密钥。
