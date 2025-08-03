@@ -38,19 +38,19 @@ $inner:
         - AI Work Allowed
   - 
     bypassMethod:
-      $description: '突破 Pixiv 站点图片防外部引用检测的方式。[参考](https://booru.koishi.chat/zh-CN/plugins/pixiv.html#bypass-pixiv-detection)'
+      $description: 'Bypass Pixiv''s image hotlinking protection methods. [Reference](https://booru.koishi.chat/en-US/plugins/pixiv.html#bypass-pixiv-detection)'
       $inner:
-        - 使用现有反代服务
-        - 使用插件本地反代
-        - 下载到 assets 缓存
+        - Use existing reverse proxy services
+        - Use the plugin's local reverse proxy
+        - Download to assets cache
     proxy:
-      $description: Pixiv 反代服务。
+      $description: Pixiv reverse proxy services.
       $inner:
         - i.pixiv.re
         - i.pixiv.cat
         - i.pixiv.nl
         - 
           $description: Custom
-          endpoint: 反代服务的地址。
+          endpoint: URL of reverse proxy server.
     route: 反代服务的路径（需在 server 插件配置中填写 `selfUrl`）。
     aesKey: AES 加密密钥
