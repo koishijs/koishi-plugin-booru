@@ -6,21 +6,21 @@ commands:
     messages:
       no-source: 当前未找到可用图源。请从插件市场添加 booru 系图源插件并启用 (插件名通常以 booru- 开头)。
       no-result: No pictures match your query were found.
-      no-image: 获取图片失败
-      count-invalid: 指定的数量过多或无效。
+      no-image: Failed to fetch images
+      count-invalid: The specified quantity of images is invalid
       output:
         desc: '{0}'
         author: 'By {0}'
         homepage: 'Author homepage: {0}'
         link: 'Homepage link: {0}'
-        source: '图源: {0}'
-        tags: '标签: {0}'
-      tips: '<b>提示：</b>{0}'
+        source: 'Source: {0}'
+        tags: 'Tags: {0}'
+      tips: '<b>Hint: </b>{0}'
 booru:
   tips:
     general:
-      - 不带参数调用此命令将会随机返回一张图片
-      - 可以使用 <code>-l &lt;label&gt;</code> 或 <code>--label &lt;label&gt;</code> 参数指定图源标签
-      - 可以使用 <code>-c &lt;count&gt;</code> 或 <code>--count &lt;count&gt;</code> 参数指定返回图片数量
-      - 使用 <code>{0} -c 3</code> 可以返回 3 张图片
-      - 指定的图片数量与实际返回的图片数量可能有所不同
+      - Invoke this command without parameters will return a random image.
+      - You can use <code>-l &lt;label&gt;</code> or <code>--label &lt;label&gt;</code> to specify the label of the sources.
+      - You can use <code>-c &lt;count&gt;</code> or <code>--count &lt;count&gt;</code> to specify the quantity of images.
+      - You can use <code>{0} -c 3</code> to get 3 images with single command invocation.
+      - The specified number of images may be different from the actually returned number of images.
