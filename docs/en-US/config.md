@@ -71,7 +71,7 @@
 - 类型: `boolean`
 - 默认值: `false`
 
-优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。
+Use [assets service](https://assets.koishi.chat/) to cache image.
 
 ### base64
 
@@ -85,14 +85,14 @@
 - 类型: `enum`
 - 可选值：`禁用`、`所有图片`、`仅 NSFW 图片`
 
-发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。
+Send image with Spoiler mask.
 
 ### showTips
 
 - 类型: `boolean`
 - 默认值: `true`
 
-是否输出使用提示信息。
+Append hint messages with images.
 
 ## 图源全局设置 {#global-settings}
 
