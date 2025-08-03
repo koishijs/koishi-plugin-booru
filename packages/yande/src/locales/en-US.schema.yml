@@ -1,5 +1,5 @@
-$description: 搜索设置
-endpoint: Yande.re 的 URL。
+$description: Search Settings
+endpoint: Yande.re URL.
 keyPairs:
   $description: Yande.re 的登录凭据。
   $inner:
