@@ -39,7 +39,7 @@
 
 黑名单列表，一旦匹配到黑名单中的关键词，将不会发送图片。
 
-## 输出设置
+## Output Settings
 
 ### output
 
@@ -71,30 +71,30 @@
 - 类型: `boolean`
 - 默认值: `false`
 
-优先使用 [assets服务](https://assets.koishi.chat/) 转存图片。
+Use [assets service](https://assets.koishi.chat/) to cache image.
 
 ### base64
 
-- 类型: `boolean`
-- 默认值: `false`
+- Type: `boolean`
+- Default value: `false`
 
-使用 base64 格式发送图片。
+Send images in base64 format.
 
 ### spoiler
 
-- 类型: `enum`
-- 可选值：`禁用`、`所有图片`、`仅 NSFW 图片`
+- Type: `enum`
+- Options: `Disabled`, `All`, `NSFW Only`
 
-发送为隐藏图片，单击后显示（在 QQ 平台中以「合并转发」发送）。
+Send image with Spoiler mask.
 
 ### showTips
 
-- 类型: `boolean`
-- 默认值: `true`
+- Type: `boolean`
+- Default value: `true`
 
-是否输出使用提示信息。
+Append hint messages with images.
 
-## 图源全局设置 {#global-settings}
+## Source Global Settings {#global-settings}
 
 :::tip
 此项设置存在于图源插件中而非全局设置里，因此可以针对不同的图源设置不同的配置。
@@ -105,7 +105,7 @@
 - 类型: `string`
 - 默认值: `图源名称`
 
-图源标签，可用于在指令中手动指定图源。
+Source label, can be used to specify the source in command invocation.
 
 ### weight
 

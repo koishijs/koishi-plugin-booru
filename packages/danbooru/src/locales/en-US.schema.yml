@@ -1,7 +1,7 @@
-$description: 搜索设置
-endpoint: Danbooru 的 URL。
+$description: Search Settings
+endpoint: Danbooru URL.
 keyPairs:
-  $description: 'Danbooru 的登录凭据。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/danbooru.html#configure-credentials)'
+  $description: 'Login credentials of Danbooru. [Refer to the instructions](https://booru.koishi.chat/en-US/plugins/danbooru.html#configure-credentials)'
   $inner:
-    login: 用户名。
-    apiKey: API 密钥。
+    login: Username
+    apiKey: API Key

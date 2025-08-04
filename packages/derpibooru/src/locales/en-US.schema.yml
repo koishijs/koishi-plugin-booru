@@ -1,0 +1,5 @@
+$description: Search Settings
+endpoint: Derpibooru URL.
+keyPairs:
+  $description: 'Login credentials of Derpibooru. [Refer to the instructions](https://booru.koishi.chat/en-US/plugins/derpibooru.html#configure-credentials)'
+  $inner: Derpibooru API Key.
