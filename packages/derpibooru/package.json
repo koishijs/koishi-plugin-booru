@@ -1,38 +1,28 @@
 {
-  "name": "koishi-plugin-booru-moehu",
-  "description": "Image service by moehu for Koishi",
-  "version": "1.1.1",
+  "name": "koishi-plugin-booru-derpibooru",
+  "description": "Image service by derpibooru for Koishi",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
     "dist"
   ],
-  "scripts": {
-    "fetchIds": "tsx scripts/fetch-ids.ts"
-  },
   "author": {
-    "email": "634469564@qq.com",
-    "name": "kbd",
-    "url": "https://github.com/Kabuda-czh"
+    "name": "Maiko Tan",
+    "email": "maiko.tan.coding@gmail.com",
+    "url": "https://github.com/MaikoTan"
   },
-  "maintainers": [
-    {
-      "name": "MaikoTan",
-      "email": "maiko.tan.coding@gmail.com",
-      "url": "https://github.com/MaikoTan"
-    }
-  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
-    "directory": "packages/moehu"
+    "directory": "packages/derpibooru"
   },
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
   },
-  "homepage": "https://booru.koishi.chat/plugins/moehu.html",
+  "homepage": "https://booru.koishi.chat/plugins/derpibooru.html",
   "keywords": [
     "chatbot",
     "koishi",
@@ -43,11 +33,11 @@
     "picture",
     "random",
     "setu",
-    "moehu"
+    "derpibooru"
   ],
   "koishi": {
     "description": {
-      "zh": "最好的涩图插件！ - moehu 图源支持"
+      "zh": "最好的涩图插件！ - Derpibooru 图源支持"
     },
     "service": {
       "require": [
@@ -60,12 +50,7 @@
     "koishi-plugin-booru": "^1.4.0"
   },
   "devDependencies": {
-    "koishi": "^4.17.0",
-    "tsx": "^4.20.3"
-  },
-  "dependencies": {
-    "cheerio": "^1.0.0-rc.12",
-    "fastest-levenshtein": "^1.0.16"
+    "koishi": "^4.17.0"
   },
   "publishConfig": {
     "provenance": true

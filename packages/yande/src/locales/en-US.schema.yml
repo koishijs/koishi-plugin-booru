@@ -1,7 +1,7 @@
-$description: 搜索设置
-endpoint: Yande.re 的 URL。
+$description: Search Settings
+endpoint: Yande.re URL.
 keyPairs:
-  $description: Yande.re 的登录凭据。
+  $description: Login credentials of Yande.re.
   $inner:
-    login: Yande.re 的用户名。
-    password: Yande.re 的密码。
+    login: Yande.re Username.
+    password: Yande.re Password.

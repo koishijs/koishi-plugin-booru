@@ -1,13 +1,13 @@
 $inner:
   - 
-    $description: 图源设置
+    $description: Source Settings
     $inner:
-      endpoint: 图源文件夹，支持多个不同的文件夹
-      storage: 图源数据保存方式
-      reload: 每次启动时重新构建图源数据
-      languages: 支持的语言
+      endpoint: Source folder, multiple folders are supported
+      storage: Source data saving method
+      reload: Rebuild source data on each boot
+      languages: Supported languages
   - 
-    $description: 文件设置
+    $description: File Settings
     $inner:
-      scraper: 文件名元信息生成格式，详见<a herf="https://booru.koishi.chat/plugins/local.html">文档</a>
-      extension: 支持的扩展名
+      scraper: Meta information format of file names, refer to <a herf="https://booru.koishi.chat/plugins/local.html">document</a> for details.
+      extension: Supported extensions

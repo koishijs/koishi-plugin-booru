@@ -1,8 +1,8 @@
 $inner:
   - 
-    $description: 全局设置
-    label: 图源标签，可用于在指令中手动指定图源。
-    weight: 图源权重。在多个符合标签的图源中，将按照各自的权重随机选择。
+    $description: Global Settings
+    label: Source label, can be used to specify the source in command invocation.
+    weight: Source weight, source plugin with a higher weight would be more likely chosen for searching images.
   - 
-    $description: 请求设置
-    proxyAgent: 请求图片时使用代理服务器。
+    $description: Request Settings
+    proxyAgent: Use proxy when requesting an image.

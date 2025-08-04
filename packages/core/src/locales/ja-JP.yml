@@ -10,12 +10,12 @@ commands:
       count-invalid: 指定的数量过多或无效。
       output:
         desc: '{0}'
-        author: '作者: {0}'
-        homepage: '作者主页: {0}'
-        link: '页面地址: {0}'
-        source: '图源: {0}'
-        tags: '标签: {0}'
-      tips: '<b>提示：</b>{0}'
+        author: '作者：{0}'
+        homepage: '作者ページ：{0}'
+        link: 'ページURL：{0}'
+        source: '画像の出典：{0}'
+        tags: 'タグ：{0}'
+      tips: '<b>ヒント：</b>{0}'
 booru:
   tips:
     general:

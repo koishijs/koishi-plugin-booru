@@ -14,7 +14,7 @@
 此处的配置项可参考[图源全局设置](../config#global-settings)
 :::
 
-### 图源设置
+### Source Settings
 
 <br>
 
@@ -22,7 +22,7 @@
 
 - 类型: `string[]`
 
-图源文件夹，支持多个不同的文件夹
+Source folder, multiple folders are supported
 
 #### storage
 
@@ -46,7 +46,7 @@
 
 图源支持的语言
 
-### 文件设置
+### File Settings
 
 #### scraper
 

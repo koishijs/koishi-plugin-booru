@@ -1,4 +1,4 @@
-$description: 搜索设置
-endpoint: Gelbooru 的 URL。
+$description: Search Settings
+endpoint: Gelbooru URL.
 keyPairs:
-  $description: 'Gelbooru 的登录凭据。[点击前往获取及设置教程](https://booru.koishi.chat/zh-CN/plugins/gelbooru.html#configure-credentials)'
+  $description: 'Login credentials of Gelbooru. [Refer to the instructions](https://booru.koishi.chat/en-US/plugins/gelbooru.html#configure-credentials)'
