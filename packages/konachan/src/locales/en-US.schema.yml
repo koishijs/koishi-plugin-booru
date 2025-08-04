@@ -5,7 +5,7 @@ endpoint:
     - Konachan.com (NSFW)
     - Konachan.net (SFW)
 keyPairs:
-  $description: Konachan 的登录凭据。
+  $description: Login credentials of Konachan.
   $inner:
-    login: 用户名
-    password: 密码
+    login: Username
+    password: Password
