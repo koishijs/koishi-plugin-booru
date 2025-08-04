@@ -1,7 +1,7 @@
-$description: 搜索设置
-endpoint: Lolibooru 的 URL。
+$description: Search Settings
+endpoint: Lolibooru URL.
 keyPairs:
-  $description: Lolibooru 的登录凭据。
+  $description: Login credentials for Lolibooru.
   $inner:
-    login: 用户名
-    password: 密码
+    login: Username
+    password: Password
