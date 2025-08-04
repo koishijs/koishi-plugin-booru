@@ -1,6 +1,6 @@
-$description: 搜索设置
+$description: Search Settings
 endpoint:
-  $description: Konachan 的 URL。
+  $description: Konachan URL.
   $inner:
     - Konachan.com (NSFW)
     - Konachan.net (SFW)
