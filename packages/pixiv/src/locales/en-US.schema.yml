@@ -1,13 +1,13 @@
-$description: 搜索设置
+$description: Search Settings
 $inner:
   - 
-    endpoint: Pixiv 的 API Root
-    token: Pixiv 的 Refresh Token
+    endpoint: Pixiv API Root
+    token: Refresh Token for Pixiv
     target:
-      $description: 搜索目标类型
+      $description: Search target type
       $inner:
-        - 标签部分一致
-        - 标签完全一致
+        - Tags partial matching
+        - Tags full matching
         - Title or description
     sort:
       $description: Sort results by
