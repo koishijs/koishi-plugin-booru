@@ -6,7 +6,8 @@ import { Context, Logger, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
 import * as BooruLocalWebUI from './console'
-import BooruLocalManager, { BooruTables, Image } from './manager'
+import BooruLocalManager, { BooruTables } from './manager'
+import { Image } from './types'
 import { AsyncQueue, LRUCache, randomPick } from './utils'
 
 class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {

@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { createReadStream, Stats } from 'node:fs'
+import { createReadStream } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
 import { basename } from 'node:path'
 import { Readable } from 'node:stream'
@@ -8,6 +8,7 @@ import { pipeline } from 'node:stream/promises'
 import { Context } from 'koishi'
 
 import { scraper } from './scraper'
+import { Galleries, Tags, Image } from './types'
 
 import type BooruLocalSource from '.'
 
@@ -27,38 +28,7 @@ export const BooruTables = {
 
 export const IMAGE_SCAN_LIMIT = 20
 
-export interface Galleries {
-  id: number
-  name: string
-  path: string
-  status: 'active' | 'disabled'
-}
-
-export interface Image {
-  id: string // md5 hash
-  gid: number // gallery id
-  filename: string
-  filepath: string // full path
-  tags?: number[] // tag ids
-  nsfw?: boolean
-  author?: string
-  size?: number
-  updated_at: Date
-  created_at: Date
-  source?: string // original source URL
-  mime?: string
-  stat_raw: Stats
-}
-
-export interface Tags {
-  id: number
-  name: string
-}
-
 class BooruLocalManager {
-  private cachedImages: Set<Image> = new Set()
-  private saveShake = 0
-
   constructor(public ctx: Context, public config: BooruLocalSource.Config) {
     // #region Database
     ctx.model.extend(BooruTables.GALLERIES, {
@@ -186,10 +156,6 @@ class BooruLocalManager {
   }
 }
 
-namespace BooruLocalManager {
-  export interface Config {
-    // Define any configuration options for the manager here
-  }
-}
+namespace BooruLocalManager {}
 
 export default BooruLocalManager
