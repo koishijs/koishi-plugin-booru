@@ -1,19 +1,13 @@
-export interface IndexStore {
-  version: 1
-  updatedAt: number
-  imageMap: Map<string, ImageMetadata>
-  auxiliary: IndexAuxiliary
-}
+import { ImageSource } from 'koishi-plugin-booru'
 
-export interface IndexAuxiliary {
-    tag?: Record<string, string[]>
-    nsfw?: { nsfw: string[]; safe: string[] }
-    author?: Record<string, string[]>
-    // NOTE: { md5Hash: fullPath }
-    hash?: Record<string, string>
+export interface BooruLocalConfig extends ImageSource.Config {
+    endpoint: string[]
+    extension: string[]
+    languages: string[]
+    proxy: boolean
+    buildByReload: boolean
+    scraper: string
   }
-
-export type IndexUserStore = Omit<IndexStore, 'auxiliary'>
 
 export interface ImageMetadata {
   name: string
