@@ -2,8 +2,11 @@
 import { opendir } from 'node:fs/promises'
 import { extname } from 'node:path'
 
+import { Notifier } from '@koishijs/plugin-notifier'
 import { Context, Logger, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
+
+import type { } from './console'
 
 import * as BooruLocalWebUI from './console'
 import BooruLocalManager, { BooruTables } from './manager'
@@ -31,7 +34,18 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
     ctx.on('ready', async () => {
       if (config.endpoint.length === 0) return this.logger.warn('No endpoint yet.')
 
+      const startTime = Date.now()
+      const count = {
+        galleries: 0,
+        images: 0,
+      }
+
+      this.logger.info('generating booru-local index...')
+      this.notifier('i18n:booru-local.notifiers.indexing')
+
       for await (const gallery of this.manager.scanGalleries(config.endpoint)) {
+        count.galleries++
+
         const { id, path } = gallery
         const queuer = new AsyncQueue(10)
         const handle = await opendir(path)
@@ -39,6 +53,8 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
 
         for await (const entry of handle) {
           if (entry.isFile() && config.extension.includes(extname(entry.name))) {
+            count.images++
+
             queuer.run(async () => {
               const scaned = await this.manager.scanImage(path)
 
@@ -65,6 +81,9 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
           temp = []
         }
       }
+
+      this.logger.info(`booru-local index generated in ${Date.now() - startTime}ms.`)
+      this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images}`)
     })
 
     // file proxy
@@ -102,6 +121,39 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
       }
 
       return next()
+    })
+  }
+
+  notifier(syntax: string, type: Notifier.Type = 'primary'): void {
+    this.ctx.inject(['notifier', 'console'], (_) => {
+      let content
+      if (syntax.startsWith('i18n:')) {
+        const [path, params] = syntax.split('|')
+        // foo,bar => { 0: 'foo', 1: 'bar' }
+        // foo=awa,bar=baz => { foo: 'awa', bar: 'baz' }
+        const paramParser = (p: string) => {
+          const result: Record<string, string> = {}
+          p.split(',').forEach((item) => {
+            const [key, value] = item.split('=')
+            if (value) {
+              result[key] = value
+            } else {
+              result[Object.keys(result).length] = key
+            }
+          })
+          return result
+        }
+        let locale = 'zh-CN'
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        _.console.addListener('booru-local/user-locale', (l) => {
+          locale = l
+        })
+        content = _.i18n.render([locale], [path], paramParser(params || '')).join('')
+      } else {
+        content = syntax
+      }
+      content && _.notifier.create({ type, content })
     })
   }
 

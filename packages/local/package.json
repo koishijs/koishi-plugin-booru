@@ -40,19 +40,31 @@
     },
     "service": {
       "require": [
-        "booru"
+        "booru",
+        "server",
+        "database"
       ],
       "optional": [
-        "database"
+        "console",
+        "notifier"
       ]
     }
   },
   "peerDependencies": {
     "@koishijs/console": "^5.28.0",
     "koishi": "^4.17.0",
-    "koishi-plugin-booru": "^1.2.0",
-    "@koishijs/plugin-console": "^5.28.0",
-    "@koishijs/plugin-notifier": "^1.2.1"
+    "koishi-plugin-booru": "^1.2.0"
+  },
+  "peerDependenciesMeta": {
+    "koishi-plugin-booru": {
+      "optional": false
+    },
+    "@koishijs/plugin-console": {
+      "optional": true
+    },
+    "@koishijs/plugin-notifier": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@koishijs/client": "^5.28.0",
