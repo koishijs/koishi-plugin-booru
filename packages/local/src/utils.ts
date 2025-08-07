@@ -35,6 +35,19 @@ export function randomPick<T>(array: T[], count: number): T[] {
   return pool
 }
 
+export function toJSON(value: object, stringify: boolean = true): object | string {
+  for (const [key, val] of Object.entries(value)) {
+    if (typeof val === 'object') {
+      value[key] = toJSON(val)
+    } else if (!['string', 'number', 'boolean'].includes(typeof val)) {
+      delete value[key]
+    } else {
+      continue
+    }
+  }
+  return stringify ? JSON.stringify(value) : value
+}
+
 export class AsyncQueue {
   private running: number
   private awaiting: (() => void)[]

@@ -9,8 +9,7 @@ import { ImageSource } from 'koishi-plugin-booru'
 import type { } from './console'
 
 import * as BooruLocalWebUI from './console'
-import BooruLocalManager, { BooruTables } from './manager'
-import { Image } from './types'
+import BooruLocalManager from './manager'
 import { AsyncQueue, LRUCache, randomPick } from './utils'
 
 class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
@@ -48,39 +47,28 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
 
         const { id, path } = gallery
         const queuer = new AsyncQueue(10)
-        const handle = await opendir(path)
-        let temp: Image[] = []
+        const directives = await opendir(path)
 
-        for await (const entry of handle) {
-          if (entry.isFile() && config.extension.includes(extname(entry.name))) {
+        for await (const image of directives) {
+          if (image.isFile() && config.extension.includes(extname(image.name))) {
             count.images++
 
             queuer.run(async () => {
-              const scaned = await this.manager.scanImage(path)
+              const scaned = await this.manager.scanImage(image.path)
 
-              if (!scaned) return
-
-              temp.push({
+              this.manager._processImage({
                 gid: id,
-                created_at: new Date(),
-                updated_at: new Date(),
                 ...scaned,
               })
             })
           }
-
-          if (temp.length >= 100) {
-            await ctx.database.upsert(BooruTables.IMAGES, temp)
-            temp = []
-          }
         }
 
-        // flush
-        if (temp.length > 0) {
-          await ctx.database.upsert(BooruTables.IMAGES, temp)
-          temp = []
-        }
+        await queuer.idle()
       }
+
+      // flush remnant cache
+      this.manager._flush()
 
       this.logger.info(`booru-local index generated in ${Date.now() - startTime}ms.`)
       this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images}`)
@@ -95,14 +83,14 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
         if (!context.headers.referer || context.headers.referer !== ctx.server.selfUrl) throw [403, 'Forbidden']
 
         const { filepath, mime } = await this.manager.queryByHash(hash)
-        const cacher = new LRUCache<string, Buffer>(4096)
+        const cacher = new LRUCache<string, Buffer>(16384) // 16MB max cache
 
         if (!filepath) throw [404, 'Not Found']
 
         context.set({
           'Cache-Control': 'public, max-age=31536000, immutable',
           'Content-Type': `image/${mime}` || 'application/octet-stream',
-          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Origin': ctx.server.selfUrl,
         })
         context.body = await cacher.getElse(filepath, async () => {
           const readable = await this.manager.readableStream(filepath)
@@ -144,9 +132,7 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
           return result
         }
         let locale = 'zh-CN'
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        _.console.addListener('booru-local/user-locale', (l) => {
+        this.ctx.console.addListener('booru-local/user-locale', (l) => {
           locale = l
         })
         content = _.i18n.render([locale], [path], paramParser(params || '')).join('')

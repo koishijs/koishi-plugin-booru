@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
-import { createReadStream } from 'node:fs'
+import { createReadStream, Stats } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
-import { basename } from 'node:path'
+import { basename, extname } from 'node:path'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 
@@ -9,10 +9,15 @@ import { Context } from 'koishi'
 
 import { scraper } from './scraper'
 import { Galleries, Tags, Image } from './types'
+import { toJSON } from './utils'
 
 import type BooruLocalSource from '.'
 
 declare module 'koishi' {
+  interface Context {
+    booruLocal: BooruLocalManager
+  }
+
   interface Tables {
     [BooruTables.GALLERIES]: Galleries
     [BooruTables.IMAGES]: Image
@@ -29,7 +34,12 @@ export const BooruTables = {
 export const IMAGE_SCAN_LIMIT = 20
 
 class BooruLocalManager {
+  private _flushBatch: Image[] = []
+  private readonly _flushThreshold = 100
+
   constructor(public ctx: Context, public config: BooruLocalSource.Config) {
+    ctx.provide('booruLocal', this)
+
     // #region Database
     ctx.model.extend(BooruTables.GALLERIES, {
       id: 'unsigned',
@@ -39,6 +49,7 @@ class BooruLocalManager {
     }, {
       autoInc: true,
       primary: 'id',
+      unique: ['path'],
     })
 
     ctx.model.extend(BooruTables.IMAGES, {
@@ -57,6 +68,8 @@ class BooruLocalManager {
     }, {
       autoInc: false,
       primary: 'id',
+      unique: ['id', 'filepath'],
+      indexes: ['id', 'gid', 'tags', 'nsfw', 'author'],
     })
 
     ctx.model.extend(BooruTables.TAGS, {
@@ -65,6 +78,7 @@ class BooruLocalManager {
     }, {
       autoInc: true,
       primary: 'id',
+      unique: ['name'],
     })
     // #endregion
 
@@ -89,9 +103,10 @@ class BooruLocalManager {
   }
 
   async scanImage(filepath: string): Promise<
-    Omit<Image, 'gid' | 'created_at' | 'updated_at'>
+    Omit<Image, 'gid' | 'updated_at'>
   > {
     const filename = basename(filepath)
+    const mime = extname(filename).toLowerCase().split('.').pop() || 'unknown'
     const fileStats = await stat(filepath)
     const hasher = createHash('md5')
     const fileStream = createReadStream(filepath)
@@ -106,17 +121,17 @@ class BooruLocalManager {
     const scrap = scraper(this.config.scraper)
     const { tags, nsfw, author } = scrap(filepath, hash)
 
-    this.ctx.logger('booru-local').debug(`scanned image: ${filename} (${hash})`)
-
     return {
       id: hash,
       filename,
       filepath,
       tags: await this.createTags(tags) || [],
       nsfw,
+      mime,
       author,
+      created_at: fileStats.birthtime,
       size: fileStats.size,
-      stat_raw: fileStats,
+      stat_raw: toJSON(fileStats, false) as Stats, // type happy
     }
   }
 
@@ -124,6 +139,41 @@ class BooruLocalManager {
     await this.ctx.database.upsert(BooruTables.TAGS, tags.map((name) => ({ name })))
 
     return (await this.ctx.database.get(BooruTables.TAGS, { name: tags })).map(row => row.id)
+  }
+
+  async _processImage(meta: Omit<Image, 'updated_at'>): Promise<void> {
+    const metadata: Image = {
+      ...meta,
+      updated_at: new Date(),
+    }
+
+    this._flushBatch.push(metadata)
+    if (this._flushBatch.length >= this._flushThreshold) {
+      await this._flush()
+    }
+  }
+
+  async _flush(): Promise<void> {
+    if (this._flushBatch.length === 0) return
+
+    await this.updateImage(this._flushBatch)
+    this._flushBatch = []
+  }
+
+  async updateImage(metadata: Image | Image[]): Promise<void> {
+    await this.ctx.database.upsert(BooruTables.IMAGES, (Array.isArray(metadata) ? metadata : [metadata]))
+  }
+
+  async removeImage(id: string): Promise<void> {
+    await this.ctx.database.remove(BooruTables.IMAGES, { id })
+  }
+
+  async updateTags(tags: string[]): Promise<void> {
+    await this.ctx.database.upsert(BooruTables.TAGS, tags.map((name) => ({ name })))
+  }
+
+  async removeTags(tagIDs: number[]): Promise<void> {
+    await this.ctx.database.remove(BooruTables.TAGS, { id: { $in: tagIDs } })
   }
 
   async queryByHash(hash: string): Promise<Image | null> {
