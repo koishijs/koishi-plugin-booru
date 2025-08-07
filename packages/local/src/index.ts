@@ -41,7 +41,8 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
 
       try {
         if (!hash || typeof hash !== 'string' || hash.length !== 32) throw [400, 'Bad Request']
-        if (!context.headers.referer || context.headers.referer !== ctx.server.selfUrl) throw [403, 'Forbidden']
+        if (!context.headers.referer ||
+          !context.headers.referer.startsWith(ctx.server.selfUrl)) throw [403, 'Forbidden']
 
         const { filepath, mime } = await this.manager.queryByHash(hash)
         const cacher = new LRUCache<string, Buffer>(16384) // 16MB max cache
@@ -78,6 +79,7 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
     const count = {
       galleries: 0,
       images: 0,
+      failed: 0,
     }
 
     this.logger.info('generating booru-local index...')
@@ -88,40 +90,63 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
 
       const { id, path } = gallery
       const queuer = new AsyncQueue(10)
-      const directives = await opendir(path)
 
-      for await (const image of directives) {
-        if (image.isFile() && this.config.extension.includes(extname(image.name))) {
-          count.images++
+      try {
+        const directives = await opendir(path)
 
-          const fullPath = join(path, image.name)
+        for await (const image of directives) {
+          if (image.isFile() && this.config.extension.includes(extname(image.name))) {
+            count.images++
 
-          queuer.run(async () => {
-            const scanned = await this.manager.scanImage(fullPath)
+            const fullPath = join(path, image.name)
 
-            this.manager._processImage({
-              gid: id,
-              ...scanned,
+            queuer.run(async () => {
+              try {
+                const scanned = await this.manager.scanImage(fullPath)
+
+                this.manager._processImage({
+                  gid: id,
+                  ...scanned,
+                })
+              } catch (error) {
+                count.failed++
+
+                switch (error.code) {
+                  case 'ENOENT':
+                    this.logger.warn(`file not found: ${fullPath}`)
+                    break
+                  case 'EACCES':
+                    this.logger.warn(`permission denied: ${fullPath}`)
+                    break
+                  default:
+                    this.logger.error(`failed to scan image ${fullPath}: ${error}`)
+                    break
+                }
+              }
             })
-          })
+          } else {
+            continue
+          }
         }
-      }
 
-      await queuer.idle()
+        await queuer.idle()
+      } catch (error) {
+        this.logger.error(`failed to scan gallery ${id}: ${error}`)
+      }
     }
 
     // flush remnant cache
-    this.manager._flush()
+    await this.manager._flush()
 
-    this.logger.info(`booru-local index generated in ${Date.now() - startTime}ms.`)
-    this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images}`)
+    this.logger.info(`scanned ${count.galleries} folders and indexed ${count.images} images in ${Date.now() - startTime}ms.`)
+    this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images},${count.failed}`, 'success')
   }
 
   notifier(syntax: string, type: Notifier.Type = 'primary'): void {
     this.ctx.inject(['notifier', 'console'], (_) => {
       let content
       if (syntax.startsWith('i18n:')) {
-        const [path, params] = syntax.split('|')
+        const [path, params] = syntax.replace('i18n:', '').split('|')
         // foo,bar => { 0: 'foo', 1: 'bar' }
         // foo=awa,bar=baz => { foo: 'awa', bar: 'baz' }
         const paramParser = (p: string) => {
@@ -150,7 +175,7 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     const { tags, count } = query
-    const images = await this.manager.queryByTags(tags)
+    const images = tags.length > 0 ? await this.manager.queryByTags(tags) : await this.manager.queryAll()
     const namedTags = await this.manager.namedTags(images.map(image => image.tags).flat())
 
     const results: ImageSource.Result[] = randomPick(images, count).map((image) => ({

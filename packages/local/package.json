@@ -56,14 +56,14 @@
     "koishi-plugin-booru": "^1.2.0"
   },
   "peerDependenciesMeta": {
-    "koishi-plugin-booru": {
-      "optional": false
-    },
     "@koishijs/plugin-console": {
       "optional": true
     },
     "@koishijs/plugin-notifier": {
       "optional": true
+    },
+    "koishi-plugin-booru": {
+      "optional": false
     }
   },
   "devDependencies": {

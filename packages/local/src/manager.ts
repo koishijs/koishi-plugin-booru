@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
-import { createReadStream, Stats } from 'node:fs'
+import { createReadStream, existsSync, Stats } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
-import { basename, extname } from 'node:path'
+import { basename, extname, resolve } from 'node:path'
 import { Readable } from 'node:stream'
 
 import { $, Context } from 'koishi'
@@ -60,6 +60,7 @@ class BooruLocalManager {
       nsfw: 'boolean',
       author: 'string',
       size: 'unsigned',
+      mime: 'string',
       updated_at: 'timestamp',
       created_at: 'timestamp',
       source: 'string',
@@ -86,16 +87,21 @@ class BooruLocalManager {
 
   async* scanGalleries(galleryPaths: string[]): AsyncGenerator<Galleries> {
     for (const path of galleryPaths) {
-      const stats = await stat(path)
+      const fullPath = resolve(this.ctx.baseDir, path)
+
+      if (!existsSync(fullPath)) continue
+
+      const stats = await stat(fullPath)
+
       if (!stats.isDirectory()) continue
       // auto create by upsert
       await this.ctx.database.upsert(BooruTables.GALLERIES, [{
         name: basename(path),
-        path,
+        path: fullPath,
         status: 'active',
-      }])
+      }], ['path'])
 
-      const [gallery] = await this.ctx.database.get(BooruTables.GALLERIES, { path })
+      const [gallery] = await this.ctx.database.get(BooruTables.GALLERIES, { path: fullPath })
 
       if (gallery) yield gallery
     }
@@ -104,6 +110,8 @@ class BooruLocalManager {
   async scanImage(filepath: string): Promise<
     Omit<Image, 'gid' | 'updated_at'>
   > {
+    if (!existsSync(filepath)) throw new Error(`file not found: ${filepath}`)
+
     const scrap = scraper(this.config.scraper)
     const filename = basename(filepath)
     const mime = extname(filename).toLowerCase().split('.').pop() || 'unknown'
@@ -157,7 +165,7 @@ class BooruLocalManager {
   }
 
   async updateImage(metadata: Image | Image[]): Promise<void> {
-    await this.ctx.database.upsert(BooruTables.IMAGES, (Array.isArray(metadata) ? metadata : [metadata]))
+    await this.ctx.database.upsert(BooruTables.IMAGES, (Array.isArray(metadata) ? metadata : [metadata]), ['id'])
   }
 
   async removeImage(id: string): Promise<void> {
@@ -165,7 +173,7 @@ class BooruLocalManager {
   }
 
   async updateTags(tags: string[]): Promise<void> {
-    await this.ctx.database.upsert(BooruTables.TAGS, tags.map((name) => ({ name })))
+    await this.ctx.database.upsert(BooruTables.TAGS, tags.map((name) => ({ name })), ['name'])
   }
 
   async removeTags(tagIDs: number[]): Promise<void> {
@@ -183,6 +191,10 @@ class BooruLocalManager {
 
     const images = await this.ctx.database.get(BooruTables.IMAGES, { tags: { $el: { $in: tagIDs } } })
     return images
+  }
+
+  async queryAll(): Promise<Image[]> {
+    return this.ctx.database.get(BooruTables.IMAGES, {})
   }
 
   async namedTags(tags: number[]): Promise<string[]> {
