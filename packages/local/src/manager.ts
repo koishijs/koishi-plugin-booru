@@ -3,7 +3,6 @@ import { createReadStream, Stats } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
 import { basename, extname } from 'node:path'
 import { Readable } from 'node:stream'
-import { pipeline } from 'node:stream/promises'
 
 import { $, Context } from 'koishi'
 
@@ -105,20 +104,17 @@ class BooruLocalManager {
   async scanImage(filepath: string): Promise<
     Omit<Image, 'gid' | 'updated_at'>
   > {
+    const scrap = scraper(this.config.scraper)
     const filename = basename(filepath)
     const mime = extname(filename).toLowerCase().split('.').pop() || 'unknown'
     const fileStats = await stat(filepath)
     const hasher = createHash('md5')
     const fileStream = createReadStream(filepath)
-
-    try {
-      await pipeline(fileStream, hasher)
-    } finally {
-      if (!fileStream.closed) fileStream.close()
-    }
-
-    const hash = hasher.digest('hex')
-    const scrap = scraper(this.config.scraper)
+    const hash = await new Promise<string>((resolve, reject) => {
+      fileStream.on('error', reject)
+      fileStream.on('data', (chunk) => hasher.update(chunk))
+      fileStream.on('end', () => resolve(hasher.digest('hex')))
+    })
     const { tags, nsfw, author } = scrap(filepath, hash)
 
     return {
