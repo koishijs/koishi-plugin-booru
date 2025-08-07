@@ -187,7 +187,7 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
       pageUrl: image.source,
       author: image.author,
       nsfw: image.nsfw,
-      title: image.mime ?? image.filename,
+      title: image.title ?? image.filename,
     }))
 
     return results

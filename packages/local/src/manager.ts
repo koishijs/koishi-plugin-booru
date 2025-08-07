@@ -56,6 +56,7 @@ class BooruLocalManager {
       gid: 'unsigned',
       filename: 'string',
       filepath: 'string',
+      title: 'string',
       tags: 'array',
       nsfw: 'boolean',
       author: 'string',
@@ -127,6 +128,7 @@ class BooruLocalManager {
 
     return {
       id: hash,
+      title: filename,
       filename,
       filepath,
       tags: await this.createTags(tags) || [],

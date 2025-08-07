@@ -21,6 +21,7 @@ export interface Galleries {
 export interface Image {
   id: string // md5 hash
   gid: number // gallery id
+  title: string
   filename: string
   filepath: string // full path
   tags?: number[] // tag ids
