@@ -1,200 +1,219 @@
-import { existsSync } from 'fs'
-import { readFile, writeFile } from 'fs/promises'
-import { resolve } from 'path'
-import { pathToFileURL } from 'url'
+/* eslint-disable no-throw-literal */
+import { opendir } from 'node:fs/promises'
+import { extname, join } from 'node:path'
 
-import { Context, Logger, Random, Schema } from 'koishi'
+import { Notifier } from '@koishijs/plugin-notifier'
+import { Context, Logger, Schema } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
-import { Mapping } from './mapping'
-import { scraper } from './scraper'
-import { LocalStorage } from './types'
-import { hash, mkdirs } from './utils'
+import type { } from './console'
 
-declare module 'koishi' {
-  interface Tables {
-    booru_local: LocalStorage.Type
-  }
-}
+import * as BooruLocalWebUI from './console'
+import BooruLocalManager from './manager'
+import { AsyncQueue, LRUCache, randomPick } from './utils'
 
-class LocalImageSource extends ImageSource<LocalImageSource.Config> {
+class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
   static override inject = {
-    required: ['booru'],
-    optional: ['database', 'cache'],
+    required: ['booru', 'server', 'database'],
+    optional: ['console', 'notifier'],
   }
 
-  languages = []
-  source = 'local'
-  private imageMap: LocalStorage.Type[] = []
   private logger: Logger
+  private manager: BooruLocalManager
 
-  constructor(ctx: Context, config: LocalImageSource.Config) {
+  constructor(ctx: Context, config: BooruLocalSource.Config) {
     super(ctx, config)
     this.languages = config.languages
     this.logger = ctx.logger('booru-local')
 
-    if (config.storage === 'database') {
-      ctx.inject(['database'], async (ctx) => {
-        ctx.model.extend(
-          'booru_local',
-          {
-            storeId: 'string',
-            storeName: 'text',
-            imageCount: 'integer',
-            imagePaths: 'list',
-            images: 'json',
-          },
-          {
-            autoInc: false,
-            primary: 'storeId',
-            unique: ['storeId', 'storeName'],
-          },
-        )
+    this.manager = new BooruLocalManager(ctx, config)
 
-        this.imageMap = await ctx.database.get('booru_local', {})
-      })
-    }
+    if (ctx.console) ctx.plugin(BooruLocalWebUI)
 
-    if (config.storage === 'file') {
-      const absMap = resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap)
-      if (!existsSync(resolve(ctx.root.baseDir, LocalImageSource.DataDir))) {
-        mkdirs(resolve(ctx.root.baseDir, LocalImageSource.DataDir))
+    ctx.on('ready', async () => {
+      if (config.endpoint.length === 0) return this.logger.warn('No endpoint yet.')
+      if (config.buildByReload || !(await this.manager.existIndex())) this.init()
+    })
+
+    // file proxy
+    ctx.server.get('/booru-local/i/:hash', async (context, next) => {
+      const { hash } = context.params
+
+      try {
+        if (!hash || typeof hash !== 'string' || hash.length !== 32) throw [400, 'Bad Request']
+        if (!context.headers.referer ||
+          !context.headers.referer.startsWith(ctx.server.selfUrl)) throw [403, 'Forbidden']
+
+        const { filepath, mime } = await this.manager.queryByHash(hash)
+        const cacher = new LRUCache<string, Buffer>(16384) // 16MB max cache
+
+        if (!filepath) throw [404, 'Not Found']
+
+        context.set({
+          'Cache-Control': 'public, max-age=31536000, immutable',
+          'Content-Type': `image/${mime}` || 'application/octet-stream',
+          'Access-Control-Allow-Origin': ctx.server.selfUrl,
+        })
+        context.body = await cacher.getElse(filepath, async () => {
+          const readable = await this.manager.readableStream(filepath)
+          return new Promise<Buffer>((resolve, reject) => {
+            const chunks: Buffer[] = []
+            readable.on('data', (chunk) => chunks.push(chunk))
+            readable.on('end', () => resolve(Buffer.concat(chunks)))
+            readable.on('error', (err) => reject(err))
+          })
+        })
+      } catch (error) {
+        context.status = error[0] || 500
+        context.body = error[1] || 'Internal Server Error'
+      } finally {
+        context.status = context.status || 200
       }
 
-      if (existsSync(absMap)) {
-        try {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          this.imageMap = require(absMap) as LocalStorage.Type[]
-        } catch (err) {
-          readFile(absMap, 'utf-8')
-            .then((map) => {
-              this.imageMap = JSON.parse(map)
-            })
-            .catch((err) => {
-              this.logger.error(err)
-            })
-        }
-      }
+      return next()
+    })
+  }
+
+  private async init() {
+    const startTime = Date.now()
+    const count = {
+      galleries: 0,
+      images: 0,
+      failed: 0,
     }
 
-    // TODO: cache storage
-    if (config.storage === 'cache') ctx.inject(['cache'], () => {})
+    this.logger.info('generating booru-local index...')
+    this.notifier('i18n:booru-local.notifiers.indexing')
 
-    ctx.on(
-      'ready',
-      async () => {
-        if (config.endpoint.length <= 0) return this.logger.warn('no folder yet')
-        let mapping: Mapping = new Mapping(ctx.root.baseDir, config.storage)
-        const imgScrap = scraper(config.scraper)
-        const count = {
-          folder: 0,
-          images: 0,
-        }
-        this.logger.info('Initializing storages...')
-        // duplicate check
-        this.config.endpoint = [...new Set(this.config.endpoint)]
-        if (this.imageMap.length > 0) mapping = mapping.update(this.imageMap)
-        // mapping the folders to memory by loop
-        for await (const path of config.endpoint) {
-          const store = await mapping.create(path, { extnames: config.extension })
-          const images = store.imagePaths.filter((path) => !store.images.map((img) => img.path).includes(path))
-          // create image informations
-          for await (const image of images) {
-            const imageHash = hash(await readFile(image))
-            store.images.push(imgScrap(image, imageHash))
+    for await (const gallery of this.manager.scanGalleries(this.config.endpoint)) {
+      count.galleries++
+
+      const { id, path } = gallery
+      const queuer = new AsyncQueue(10)
+
+      try {
+        const directives = await opendir(path)
+
+        for await (const image of directives) {
+          if (image.isFile() && this.config.extension.includes(extname(image.name))) {
+            count.images++
+
+            const fullPath = join(path, image.name)
+
+            queuer.run(async () => {
+              try {
+                const scanned = await this.manager.scanImage(fullPath)
+
+                this.manager._processImage({
+                  gid: id,
+                  ...scanned,
+                })
+              } catch (error) {
+                count.failed++
+
+                switch (error.code) {
+                  case 'ENOENT':
+                    this.logger.warn(`file not found: ${fullPath}`)
+                    break
+                  case 'EACCES':
+                    this.logger.warn(`permission denied: ${fullPath}`)
+                    break
+                  default:
+                    this.logger.error(`failed to scan image ${fullPath}: ${error}`)
+                    break
+                }
+              }
+            })
+          } else {
+            continue
           }
-          store.imageCount = store.images.length
-          count.folder++
-          count.images = count.images + store.imagePaths.length
-          const imgIndex = this.imageMap.findIndex((img) => img.storeId === store.storeId)
-          if (imgIndex >= 0) this.imageMap[imgIndex] = store
-          else this.imageMap.push(store)
         }
-        this.logger.info(`${count.images} images in ${count.folder} folders is loaded.`)
-        // save mapping
-        if (config.storage === 'database') ctx.database.upsert('booru_local', this.imageMap, ['storeId', 'storeName'])
-        else if (config.storage === 'file') {
-          // TODO: fill this part
+
+        await queuer.idle()
+      } catch (error) {
+        this.logger.error(`failed to scan gallery ${id}: ${error}`)
+      }
+    }
+
+    // flush remnant cache
+    await this.manager._flush()
+
+    this.logger.info(`scanned ${count.galleries} folders and indexed ${count.images} images in ${Date.now() - startTime}ms.`)
+    this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images},${count.failed}`, 'success')
+  }
+
+  notifier(syntax: string, type: Notifier.Type = 'primary'): void {
+    this.ctx.inject(['notifier', 'console'], (_) => {
+      let content
+      if (syntax.startsWith('i18n:')) {
+        const [path, params] = syntax.replace('i18n:', '').split('|')
+        // foo,bar => { 0: 'foo', 1: 'bar' }
+        // foo=awa,bar=baz => { foo: 'awa', bar: 'baz' }
+        const paramParser = (p: string) => {
+          const result: Record<string, string> = {}
+          p.split(',').forEach((item) => {
+            const [key, value] = item.split('=')
+            if (value) {
+              result[key] = value
+            } else {
+              result[Object.keys(result).length] = key
+            }
+          })
+          return result
         }
-        writeFile(
-          resolve(ctx.root.baseDir, LocalImageSource.DataDir, LocalImageSource.RootMap),
-          JSON.stringify(this.imageMap),
-        )
-      },
-      true,
-    )
+        let locale = 'zh-CN'
+        this.ctx.console.addListener('booru-local/user-locale', (l) => {
+          locale = l
+        })
+        content = _.i18n.render([locale], [path], paramParser(params || '')).join('')
+      } else {
+        content = syntax
+      }
+      content && _.notifier.create({ type, content })
+    })
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    if (this.imageMap.length < 1) return undefined
-    let pickPool = []
-    // Flatten all maps
-    if (this.imageMap.length > 1) {
-      for (const storage of this.imageMap) {
-        if (query.tags.length > 0) {
-          // filter by tags
-          for (const image of storage.images) {
-            if (query.tags.every((tag) => image.tags.includes(tag))) pickPool.push(image)
-          }
-        } else {
-          // pick from all images
-          pickPool.push(...storage.images)
-        }
-      }
-    } else {
-      // pick from one image map
-      pickPool = this.imageMap
-        .map((storage) => {
-          if (query.tags.length > 0) {
-            // filter by tags
-            return storage.images.filter((image) => query.tags.every((tag) => image.tags.includes(tag)))
-          } else {
-            // pick from all images
-            return storage.images
-          }
-        })
-        .flat()
-    }
-    const picker = Random.pick(pickPool, query.count)
-    return picker.map((img) => {
-      return {
-        urls: {
-          original: pathToFileURL(img.path).href,
-        },
-        title: img.name,
-        // nsfw: img.nsfw,
-        tags: img.tags,
-      }
-    })
+    const { tags, count } = query
+    const images = tags.length > 0 ? await this.manager.queryByTags(tags) : await this.manager.queryAll()
+    const namedTags = await this.manager.namedTags(images.map(image => image.tags).flat())
+
+    const results: ImageSource.Result[] = randomPick(images, count).map((image) => ({
+      url: this.ctx.server.selfUrl + '/booru-local/i/' + image.id,
+      urls: {
+        original: this.ctx.server.selfUrl + '/booru-local/i/' + image.id,
+      },
+      tags: namedTags,
+      pageUrl: image.source,
+      author: image.author,
+      nsfw: image.nsfw,
+      title: image.title ?? image.filename,
+    }))
+
+    return results
   }
 }
 
-namespace LocalImageSource {
-  export const RootMap = 'booru-maps.json'
-  // export const FileRegex = /^booru\-M(.*).json$/g
-  export const DataDir = './data/booru-local'
+namespace BooruLocalSource {
   export interface Config extends ImageSource.Config {
     endpoint: string[]
     extension: string[]
     languages: string[]
-    reload: boolean
+    buildByReload: boolean
     scraper: string
-    storage: Mapping.Storage
   }
 
   export const Config: Schema<Config> = Schema.intersect([
     ImageSource.createSchema({ label: 'local' }),
     Schema.intersect([
       Schema.object({
-        // TODO: Schema.path()?
-        endpoint: Schema.array(String),
-        storage: Schema.union<Mapping.Storage>(['file', 'database']).default('file'),
-        reload: Schema.boolean().default(false),
+        endpoint: Schema.array(Schema.path({ allowCreate: true, filters: ['directory'] })),
+        buildByReload: Schema.boolean().default(false),
         languages: Schema.array(String).default(['zh-CN']),
       }),
       Schema.object({
         scraper: Schema.string().default('{filename}-{tag}'),
-        extension: Schema.array(String).default(['.jpg', '.png', '.jpeg', '.gif']),
+        extension: Schema.array(String).default(['.jpg', '.png', '.jpeg', '.gif']).collapse(),
       }),
     ]).i18n({
       'zh-CN': require('./locales/zh-CN.schema'),
@@ -202,4 +221,4 @@ namespace LocalImageSource {
   ])
 }
 
-export default LocalImageSource
+export default BooruLocalSource
