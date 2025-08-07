@@ -1,6 +1,6 @@
 /* eslint-disable no-throw-literal */
 import { opendir } from 'node:fs/promises'
-import { extname } from 'node:path'
+import { extname, join } from 'node:path'
 
 import { Notifier } from '@koishijs/plugin-notifier'
 import { Context, Logger, Schema } from 'koishi'
@@ -94,12 +94,14 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
         if (image.isFile() && this.config.extension.includes(extname(image.name))) {
           count.images++
 
+          const fullPath = join(path, image.name)
+
           queuer.run(async () => {
-            const scaned = await this.manager.scanImage(image.path)
+            const scanned = await this.manager.scanImage(fullPath)
 
             this.manager._processImage({
               gid: id,
-              ...scaned,
+              ...scanned,
             })
           })
         }
