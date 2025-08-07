@@ -5,7 +5,7 @@ import { basename, extname } from 'node:path'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 
-import { Context } from 'koishi'
+import { $, Context } from 'koishi'
 
 import { scraper } from './scraper'
 import { Galleries, Tags, Image } from './types'
@@ -203,6 +203,11 @@ class BooruLocalManager {
       }
     })
     return readable
+  }
+
+  async existIndex(): Promise<boolean> {
+    const imageIndexCount = await this.ctx.database.eval(BooruTables.IMAGES, row => $.count(row.id))
+    return imageIndexCount > 0
   }
 }
 

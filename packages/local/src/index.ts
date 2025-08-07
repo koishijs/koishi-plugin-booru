@@ -32,46 +32,7 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
 
     ctx.on('ready', async () => {
       if (config.endpoint.length === 0) return this.logger.warn('No endpoint yet.')
-
-      const startTime = Date.now()
-      const count = {
-        galleries: 0,
-        images: 0,
-      }
-
-      this.logger.info('generating booru-local index...')
-      this.notifier('i18n:booru-local.notifiers.indexing')
-
-      for await (const gallery of this.manager.scanGalleries(config.endpoint)) {
-        count.galleries++
-
-        const { id, path } = gallery
-        const queuer = new AsyncQueue(10)
-        const directives = await opendir(path)
-
-        for await (const image of directives) {
-          if (image.isFile() && config.extension.includes(extname(image.name))) {
-            count.images++
-
-            queuer.run(async () => {
-              const scaned = await this.manager.scanImage(image.path)
-
-              this.manager._processImage({
-                gid: id,
-                ...scaned,
-              })
-            })
-          }
-        }
-
-        await queuer.idle()
-      }
-
-      // flush remnant cache
-      this.manager._flush()
-
-      this.logger.info(`booru-local index generated in ${Date.now() - startTime}ms.`)
-      this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images}`)
+      if (config.buildByReload || !(await this.manager.existIndex())) this.init()
     })
 
     // file proxy
@@ -110,6 +71,48 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
 
       return next()
     })
+  }
+
+  private async init() {
+    const startTime = Date.now()
+    const count = {
+      galleries: 0,
+      images: 0,
+    }
+
+    this.logger.info('generating booru-local index...')
+    this.notifier('i18n:booru-local.notifiers.indexing')
+
+    for await (const gallery of this.manager.scanGalleries(this.config.endpoint)) {
+      count.galleries++
+
+      const { id, path } = gallery
+      const queuer = new AsyncQueue(10)
+      const directives = await opendir(path)
+
+      for await (const image of directives) {
+        if (image.isFile() && this.config.extension.includes(extname(image.name))) {
+          count.images++
+
+          queuer.run(async () => {
+            const scaned = await this.manager.scanImage(image.path)
+
+            this.manager._processImage({
+              gid: id,
+              ...scaned,
+            })
+          })
+        }
+      }
+
+      await queuer.idle()
+    }
+
+    // flush remnant cache
+    this.manager._flush()
+
+    this.logger.info(`booru-local index generated in ${Date.now() - startTime}ms.`)
+    this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images}`)
   }
 
   notifier(syntax: string, type: Notifier.Type = 'primary'): void {
