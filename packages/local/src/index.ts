@@ -48,14 +48,14 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
         if (!context.headers.referer ||
           !context.headers.referer.startsWith(ctx.server.selfUrl)) throw [403, 'Forbidden']
 
-        const { filepath, mime } = await this.manager.queryByHash(hash)
+        const { filepath, raw } = await this.manager.queryByHash(hash)
         const cacher = new LRUCache<string, Buffer>(16384) // 16MB max cache
 
         if (!filepath) throw [404, 'Not Found']
 
         context.set({
           'Cache-Control': 'public, max-age=31536000, immutable',
-          'Content-Type': `image/${mime}` || 'application/octet-stream',
+          'Content-Type': `image/${raw.mime}` || 'application/octet-stream',
           'Access-Control-Allow-Origin': ctx.server.selfUrl,
         })
         context.body = await cacher.getElse(filepath, async () => {

@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { createReadStream, existsSync, Stats } from 'node:fs'
+import { createReadStream, existsSync } from 'node:fs'
 import { readFile, stat } from 'node:fs/promises'
 import { basename, extname, resolve } from 'node:path'
 import { Readable } from 'node:stream'
@@ -61,12 +61,8 @@ class BooruLocalManager {
       tags: 'array',
       nsfw: 'boolean',
       author: 'string',
-      size: 'unsigned',
-      mime: 'string',
-      updated_at: 'timestamp',
-      created_at: 'timestamp',
       source: 'string',
-      stat_raw: 'json',
+      raw: 'json',
     }, {
       autoInc: false,
       primary: 'id',
@@ -109,9 +105,7 @@ class BooruLocalManager {
     }
   }
 
-  async scanImage(filepath: string): Promise<
-    Omit<Image, 'gid' | 'updated_at'>
-  > {
+  async scanImage(filepath: string): Promise<Omit<Image, 'gid'>> {
     if (!existsSync(filepath)) throw new Error(`file not found: ${filepath}`)
 
     const scrap = scraper(this.config.scraper)
@@ -165,11 +159,15 @@ class BooruLocalManager {
       filepath,
       tags: await this.createTags(tags) || [],
       nsfw,
-      mime,
       author,
-      created_at: fileStats.birthtime,
-      size: fileStats.size,
-      stat_raw: Object.assign(toJSON(fileStats, false) as Stats, { width, height }), // type happy
+      raw: {
+        width,
+        height,
+        size: fileStats.size,
+        mime,
+        created: fileStats.birthtime,
+        ...toJSON(fileStats) as object,
+      },
     }
   }
 
@@ -179,11 +177,8 @@ class BooruLocalManager {
     return (await this.ctx.database.get(BooruTables.TAGS, { name: tags })).map(row => row.id)
   }
 
-  async _processImage(meta: Omit<Image, 'updated_at'>): Promise<void> {
-    const metadata: Image = {
-      ...meta,
-      updated_at: new Date(),
-    }
+  async _processImage(meta: Image): Promise<void> {
+    const metadata: Image = meta
 
     this._flushBatch.push(metadata)
     if (this._flushBatch.length >= this._flushThreshold) {

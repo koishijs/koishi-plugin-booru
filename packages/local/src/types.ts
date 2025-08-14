@@ -1,5 +1,3 @@
-import { Stats } from 'node:fs'
-
 import { ImageSource } from 'koishi-plugin-booru'
 
 export interface BooruLocalConfig extends ImageSource.Config {
@@ -27,12 +25,17 @@ export interface Image {
   tags?: number[] // tag ids
   nsfw?: boolean
   author?: string
-  size?: number
-  updated_at: Date
-  created_at: Date
   source?: string // original source URL
-  mime?: string
-  stat_raw: Stats & { width?: number; height?: number } // file stats, may include width and height
+  raw: ImageRaw
+}
+
+export interface ImageRaw {
+  width?: number
+  height?: number
+  size?: number
+  mime: string
+  created: Date
+  [key: string]: unknown
 }
 
 export interface Tags {
