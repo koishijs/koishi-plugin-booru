@@ -4,6 +4,7 @@ import { readFile, stat } from 'node:fs/promises'
 import { basename, extname, resolve } from 'node:path'
 import { Readable } from 'node:stream'
 
+import { imageDimensionsFromData } from 'image-dimensions'
 import { $, Context } from 'koishi'
 
 import { scraper } from './scraper'
@@ -119,10 +120,41 @@ class BooruLocalManager {
     const fileStats = await stat(filepath)
     const hasher = createHash('md5')
     const fileStream = createReadStream(filepath)
-    const hash = await new Promise<string>((resolve, reject) => {
+    let dataBuffer: Uint8Array = new Uint8Array(0)
+    let dims: { width: number; height: number } | undefined
+    const { hash, width, height } = await new Promise<{
+      hash: string
+      width: number
+      height: number
+    }>((resolve, reject) => {
       fileStream.on('error', reject)
-      fileStream.on('data', (chunk) => hasher.update(chunk))
-      fileStream.on('end', () => resolve(hasher.digest('hex')))
+      fileStream.on('data', (chunk) => {
+        const buf = typeof chunk === 'string'
+          ? Buffer.from(chunk)
+          : Buffer.isBuffer(chunk)
+            ? chunk
+            : Buffer.from(chunk)
+        hasher.update(buf)
+        if (!dims) {
+          const temp = new Uint8Array(dataBuffer.length + buf.length)
+          temp.set(dataBuffer)
+          temp.set(buf, dataBuffer.length)
+          dataBuffer = temp
+          const res = imageDimensionsFromData(dataBuffer)
+          if (res) {
+            dims = res
+            dataBuffer = new Uint8Array(0) // clear buffer after dimensions are extracted
+          }
+        }
+      })
+      fileStream.on('end', () => {
+        const hash = hasher.digest('hex')
+        if (!dims) {
+          dims = imageDimensionsFromData(dataBuffer) || { width: 0, height: 0 }
+        }
+        dataBuffer = new Uint8Array(0) // clear buffer after processing
+        resolve({ hash, width: dims.width, height: dims.height })
+      })
     })
     const { tags, nsfw, author } = scrap(filepath, hash)
 
@@ -137,7 +169,7 @@ class BooruLocalManager {
       author,
       created_at: fileStats.birthtime,
       size: fileStats.size,
-      stat_raw: toJSON(fileStats, false) as Stats, // type happy
+      stat_raw: Object.assign(toJSON(fileStats, false) as Stats, { width, height }), // type happy
     }
   }
 
@@ -221,6 +253,6 @@ class BooruLocalManager {
   }
 }
 
-namespace BooruLocalManager {}
+namespace BooruLocalManager { }
 
 export default BooruLocalManager

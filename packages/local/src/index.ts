@@ -15,7 +15,7 @@ import { AsyncQueue, LRUCache, randomPick } from './utils'
 class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
   static override inject = {
     required: ['booru', 'server', 'database'],
-    optional: ['console', 'notifier'],
+    optional: ['notifier'],
   }
 
   private logger: Logger
@@ -28,10 +28,14 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
 
     this.manager = new BooruLocalManager(ctx, config)
 
-    if (ctx.console) ctx.plugin(BooruLocalWebUI)
+    ctx.plugin(BooruLocalWebUI)
 
     ctx.on('ready', async () => {
-      if (config.endpoint.length === 0) return this.logger.warn('No endpoint yet.')
+      if (config.endpoint.length === 0) {
+        // this.notifier('i18n:booru-local.notifiers.no-endpoint', 'warning')
+        this.notifier('没有设置任何图库路径。', 'warning')
+        return this.logger.warn('No endpoint yet.')
+      }
       if (config.buildByReload || !(await this.manager.existIndex())) this.init()
     })
 
@@ -83,7 +87,6 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
     }
 
     this.logger.info('generating booru-local index...')
-    this.notifier('i18n:booru-local.notifiers.indexing')
 
     for await (const gallery of this.manager.scanGalleries(this.config.endpoint)) {
       count.galleries++
@@ -139,7 +142,8 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
     await this.manager._flush()
 
     this.logger.info(`scanned ${count.galleries} folders and indexed ${count.images} images in ${Date.now() - startTime}ms.`)
-    this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images},${count.failed}`, 'success')
+    // this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images},${count.failed}`, 'success')
+    this.notifier(`已建立索引：共 ${count.images} 个图像${count.failed > 0 ? `，失败 ${count.failed} 个` : ''}。`, 'success')
   }
 
   notifier(syntax: string, type: Notifier.Type = 'primary'): void {

@@ -32,7 +32,7 @@ export interface Image {
   created_at: Date
   source?: string // original source URL
   mime?: string
-  stat_raw: Stats
+  stat_raw: Stats & { width?: number; height?: number } // file stats, may include width and height
 }
 
 export interface Tags {

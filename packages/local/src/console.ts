@@ -1,11 +1,11 @@
 import { resolve } from 'node:path'
 
-import { } from '@koishijs/plugin-console'
+import { } from '@koishijs/console'
 import { Context } from 'koishi'
 
 import { Image } from './types'
 
-declare module '@koishijs/plugin-console' {
+declare module '@koishijs/console' {
   namespace Console {
     interface Services {
 
@@ -20,6 +20,8 @@ declare module '@koishijs/plugin-console' {
     'booru-local/tags-remove': (tags: number[]) => Promise<void>
   }
 }
+
+export const inject = ['console']
 
 export function apply(ctx: Context) {
   ctx.console.addEntry({
