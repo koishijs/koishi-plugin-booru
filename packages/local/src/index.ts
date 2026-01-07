@@ -141,7 +141,7 @@ class BooruLocalSource extends ImageSource<BooruLocalSource.Config> {
     // flush remnant cache
     await this.manager._flush()
 
-    this.logger.info(`scanned ${count.galleries} folders and indexed ${count.images} images in ${Date.now() - startTime}ms.`)
+    this.logger.info(`indexed ${count.images} images in ${Date.now() - startTime}ms.`)
     // this.notifier(`i18n:booru-local.notifiers.indexed|${count.galleries},${count.images},${count.failed}`, 'success')
     this.notifier(`已建立索引：共 ${count.images} 个图像${count.failed > 0 ? `，失败 ${count.failed} 个` : ''}。`, 'success')
   }
