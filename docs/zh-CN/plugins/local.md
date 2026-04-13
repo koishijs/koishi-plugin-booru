@@ -24,15 +24,7 @@
 
 图源文件夹，支持多个不同的文件夹
 
-#### storage
-
-- 类型: `ENUM`
-- 选项: `file | database`
-- 默认值: `file`
-
-图源存数据存储方式，`file` 为文件存储，`database` 为数据库存储
-
-#### reload
+#### buildByReload
 
 - 类型: `boolean`
 - 默认值: `false`
@@ -45,6 +37,13 @@
 - 默认值: `['zh-CN']`
 
 图源支持的语言
+
+#### proxy
+
+- 类型: `boolean`
+- 默认值: `false`
+
+是否启用链接代理，如果启用，插件将使用代理的本地图片链接，而不是本地文件路径。
 
 ### 文件设置
 
@@ -72,15 +71,15 @@
 
 ### 使用
 
-插件设置中 `scraper` 默认值可得出大致的使用方式：当 `scraper` 为 `{filename}-{tag}` 时，文件名为 `foo-[bar].jpg` 的图片将被刮削为 `{name: 'foo', tag: ['bar']， ...}`。
+插件设置中 `scraper` 默认值可得出大致的使用方式：当 `scraper` 为 `{filename}-{tag}` 时，文件名为 `foo-[bar].jpg` 的图片将被刮削为 `{name: 'foo', tags: ['bar']， ...}`
 
-即：文件名为 `foo` 的图片，其拥有 `bar` 这个 tags。
+即：文件名为 `foo` 的图片，其拥有 `bar` 这个 tags
 
 ### 语法
 
 #### `#...#`
 
-- 类型: `string`
+- 类型: `name | meta | index`
 - 默认值: `name`
 - 示例: `#name#{fliename}-{tag}`
 
@@ -90,6 +89,13 @@
 
 1. `name`: 文件名模式
 2. `meta`: 文件元信息模式（开发中）
+3. `index`: 外部索引模式（开发中）
+
+#### `{hidden}`
+
+> 该语法应当在 `#...#` 语法后的第一个，否则将忽略
+
+匹配 `.` 开头的隐藏文件，不设置的情况下将忽略隐藏文件
 
 #### `{filename}`
 
@@ -105,17 +111,27 @@
 
 指示标签所在的位置，标签将被刮削为 `tag`，并作为图片的 `tags` 属性
 
-#### `{nsfw}`（WIP）
+#### `{nsfw}`
 
 - 类型: `boolean | 'furry' | 'guro' | 'shota' | 'bl'`
-- 默认值: `nsfw=false`
+- 默认值: `false`
 
-指示图片是否为 nsfw，若为 `boolean` 类型，则直接将其作为 `nsfw` 属性，若为 `string` 类型，则将其作为 `nsfw` 属性的值
+指示图片是否为 nsfw，若为 `boolean` 类型，则直接将其作为 `nsfw` 属性开关，若为 `string` 类型，则将其作为 `nsfw` 属性的值，并且 `nsfw` 总是为 `true`
+
+#### `{author}`
+
+- 类型: `string`
+
+指示图片作者名称，作者将被刮削为 `author`，并作为图片的 `author` 属性
 
 #### `+`
 
-忽略后续的内容不作为元信息处理
+- 示例：`{filename}-{author}+{tag}`
 
-#### `.`
+忽略后续的内容不作为元信息处理，如示例所示，`{tag}` 将被忽略
 
-匹配 `.` 开头的隐藏文件，不设置的情况下将忽略隐藏文件
+## 外部索引
+
+外部索引一般存储在 `./data/booru-local` 文件夹中，包含了所有图片的元信息索引。这个文件通常由插件在初次加载时生成，并且除非配置了 `buildByReload` 选项，否则不会在每次启动时重新生成。
+
+索引文件名称为 `index.[plugin id].json`，其中 `[plugin id]` 是插件的唯一标识符。你不应该手动修改这个文件，因为插件提供了 WebUI 界面来方便的管理与编辑索引，经由 WebUI 管理的索引会保存为 `index.user.[plugin id].json`，该索引会覆盖基本索引的内容，如果因为特殊情况需要手动修改索引文件，请确保遵循正确的格式。
