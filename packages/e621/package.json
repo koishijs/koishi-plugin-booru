@@ -1,18 +1,14 @@
 {
   "name": "koishi-plugin-booru-e621",
-  "description": "Image service by e621/e926 for Koishi",
   "version": "1.2.1",
-  "main": "lib/index.js",
+  "description": "Image service by e621/e926 for Koishi",
   "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "dist"
-  ],
   "author": {
     "name": "Seidko",
     "email": "seidko.coding@gmail.com"
   },
   "license": "MIT",
+  "homepage": "https://booru.koishi.chat/plugins/e621.html",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
@@ -21,7 +17,6 @@
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
   },
-  "homepage": "https://booru.koishi.chat/plugins/e621.html",
   "keywords": [
     "chatbot",
     "koishi",
@@ -34,6 +29,11 @@
     "setu",
     "e621",
     "e926"
+  ],
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib"
   ],
   "koishi": {
     "description": {

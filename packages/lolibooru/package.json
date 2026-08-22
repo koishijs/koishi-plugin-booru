@@ -1,19 +1,15 @@
 {
   "name": "koishi-plugin-booru-lolibooru",
-  "description": "Image service by lolibooru for Koishi",
   "version": "1.2.0",
-  "main": "lib/index.js",
+  "description": "Image service by lolibooru for Koishi",
   "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "dist"
-  ],
   "author": {
     "email": "634469564@qq.com",
     "name": "kbd",
     "url": "https://github.com/Kabuda-czh"
   },
   "license": "MIT",
+  "homepage": "https://booru.koishi.chat/plugins/lolibooru.html",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
@@ -22,7 +18,6 @@
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
   },
-  "homepage": "https://booru.koishi.chat/plugins/lolibooru.html",
   "keywords": [
     "chatbot",
     "koishi",
@@ -34,6 +29,11 @@
     "random",
     "setu",
     "lolibooru"
+  ],
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib"
   ],
   "koishi": {
     "description": {

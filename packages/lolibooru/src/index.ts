@@ -1,9 +1,10 @@
+import type { Dict } from 'koishi'
+
+import type { Lolibooru } from './types'
 import { createHash } from 'node:crypto'
+import { Schema, trimSlash } from 'koishi'
 
-import { Dict, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
-
-import { Lolibooru } from './types'
 /**
  * Lolibooru requires a password hash for authentication.
  *
@@ -23,7 +24,8 @@ class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
   reusable = true
 
   get keyPair() {
-    if (!this.config.keyPairs.length) return
+    if (!this.config.keyPairs.length)
+      return
     const key = this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
     return {
       login: key.login,
@@ -34,16 +36,16 @@ class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://lolibooru.moe/help/api
     const params: Dict<string> = {
-      tags: query.tags.join('+') + '+order:random',
+      tags: `${query.tags.join('+')}+order:random`,
       limit: `${query.count}`,
     }
 
-    const url = trimSlash(this.config.endpoint) + '/post/index.json'
+    const url = `${trimSlash(this.config.endpoint)}/post/index.json`
 
     const keyPair = this.keyPair
     if (keyPair) {
-      params['login'] = keyPair.login
-      params['password_hash'] = keyPair.password_hash
+      params.login = keyPair.login
+      params.password_hash = keyPair.password_hash
     }
     const data = await this.http.get<Lolibooru.Response[]>(url, { params: new URLSearchParams(params) })
 
@@ -63,7 +65,7 @@ class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
         },
         pageUrl: post.source,
         author: post.author.replace(/ /g, ', ').replace(/_/g, ' '),
-        tags: post.tags.split(' ').map((t) => t.replace(/_/g, ' ')),
+        tags: post.tags.split(' ').map(t => t.replace(/_/g, ' ')),
         nsfw: ['e', 'q'].includes(post.rating),
       }
     })
@@ -73,7 +75,7 @@ class LolibooruImageSource extends ImageSource<LolibooruImageSource.Config> {
 namespace LolibooruImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
-    keyPairs: { login: string; password: string }[]
+    keyPairs: { login: string, password: string }[]
   }
 
   export const Config: Schema<Config> = Schema.intersect([

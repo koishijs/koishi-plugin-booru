@@ -1,15 +1,16 @@
-import { PathLike, existsSync, statSync } from 'fs'
-import { readdir } from 'fs/promises'
-import { extname, isAbsolute, resolve, sep } from 'path'
+import type { PathLike } from 'node:fs'
+import type { LocalStorage } from './types'
+import { existsSync, statSync } from 'node:fs'
+import { readdir } from 'node:fs/promises'
 
-import { LocalStorage } from './types'
+import { extname, isAbsolute, resolve, sep } from 'node:path'
 import { hash } from './utils/hash'
 
 export class Mapping {
   private map: LocalStorage.Type[] = []
   constructor(
     private root: string,
-    storage: Mapping.Storage,
+    _storage: Mapping.Storage,
   ) {}
 
   protected absPath(path: string) {
@@ -22,11 +23,13 @@ export class Mapping {
   }
 
   async create(folderPath: PathLike, options: Mapping.Options): Promise<LocalStorage.Type> {
-    if (!existsSync(folderPath)) return
-    if (options.extnames.length === 0) return // no extname set is ignore all files for this folder
+    if (!existsSync(folderPath))
+      return
+    if (options.extnames.length === 0)
+      return // no extname set is ignore all files for this folder
 
     const storeId = hash(folderPath.toString())
-    const storage: LocalStorage.Type[] = this.map.filter((s) => s.storeId === storeId)
+    const storage: LocalStorage.Type[] = this.map.filter(s => s.storeId === storeId)
     const storeName = storage.length > 0 ? storage[0].storeName : folderPath.toString().split(sep).at(-1)
     const imagePaths: string[] = storage.length > 0 ? storage[0].imagePaths : []
     const images = storage.length > 0 ? storage[0].images : []
@@ -39,7 +42,8 @@ export class Mapping {
           imagePaths.push(file)
         }
       })
-    } catch (error) {
+    }
+    catch {
       // ignore error task
     }
 
@@ -55,7 +59,7 @@ export class Mapping {
 
 export namespace Mapping {
   export type Storage = 'file' | 'cache' | 'database'
-  export type Options = {
+  export interface Options {
     extnames: string[]
   }
 }

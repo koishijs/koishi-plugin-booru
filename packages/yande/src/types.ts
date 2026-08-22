@@ -1,4 +1,11 @@
 export namespace Yande {
+  export interface Request {
+    tags: string
+    limit: number
+    login?: string
+    password_hash?: string
+  }
+
   export interface Response {
     id: number
     tags: string

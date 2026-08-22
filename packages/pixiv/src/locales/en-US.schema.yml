@@ -1,7 +1,6 @@
 $description: Search Settings
 $inner:
-  - 
-    endpoint: Pixiv API Root
+  - endpoint: Pixiv API Root
     token: Refresh Token for Pixiv
     target:
       $description: Search target type
@@ -36,8 +35,7 @@ $inner:
       $inner:
         - AI Work Not Allowed
         - AI Work Allowed
-  - 
-    bypassMethod:
+  - bypassMethod:
       $description: 'Bypass Pixiv''s image hotlinking protection methods. [Reference](https://booru.koishi.chat/en-US/plugins/pixiv.html#bypass-pixiv-detection)'
       $inner:
         - Use existing reverse proxy services
@@ -49,8 +47,7 @@ $inner:
         - i.pixiv.re
         - i.pixiv.cat
         - i.pixiv.nl
-        - 
-          $description: Custom
+        - $description: Custom
           endpoint: URL of reverse proxy server.
     route: Path to reverse proxy service (`selfUrl` field is required in `server` plugin configuration)
     aesKey: AES encryption key

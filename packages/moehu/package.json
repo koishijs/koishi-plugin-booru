@@ -1,16 +1,8 @@
 {
   "name": "koishi-plugin-booru-moehu",
-  "description": "Image service by moehu for Koishi",
   "version": "1.1.1",
-  "main": "lib/index.js",
+  "description": "Image service by moehu for Koishi",
   "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "dist"
-  ],
-  "scripts": {
-    "fetchIds": "tsx scripts/fetch-ids.ts"
-  },
   "author": {
     "email": "634469564@qq.com",
     "name": "kbd",
@@ -24,6 +16,7 @@
     }
   ],
   "license": "MIT",
+  "homepage": "https://booru.koishi.chat/plugins/moehu.html",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
@@ -32,7 +25,6 @@
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
   },
-  "homepage": "https://booru.koishi.chat/plugins/moehu.html",
   "keywords": [
     "chatbot",
     "koishi",
@@ -45,6 +37,14 @@
     "setu",
     "moehu"
   ],
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib"
+  ],
+  "scripts": {
+    "fetchIds": "tsx scripts/fetch-ids.ts"
+  },
   "koishi": {
     "description": {
       "zh": "最好的涩图插件！ - moehu 图源支持"
@@ -59,13 +59,13 @@
     "koishi": "^4.17.0",
     "koishi-plugin-booru": "^1.4.0"
   },
-  "devDependencies": {
-    "koishi": "^4.17.0",
-    "tsx": "^4.20.3"
-  },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
     "fastest-levenshtein": "^1.0.16"
+  },
+  "devDependencies": {
+    "koishi": "^4.17.0",
+    "tsx": "^4.20.3"
   },
   "publishConfig": {
     "provenance": true
