@@ -1,13 +1,11 @@
 $inner:
-  - 
-    $description: Source Settings
+  - $description: Source Settings
     $inner:
       endpoint: Source folder, multiple folders are supported
       storage: Source data saving method
       reload: Rebuild source data on each boot
       languages: Supported languages
-  - 
-    $description: File Settings
+  - $description: File Settings
     $inner:
       scraper: Meta information format of file names, refer to <a herf="https://booru.koishi.chat/plugins/local.html">document</a> for details.
       extension: Supported extensions

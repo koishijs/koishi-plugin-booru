@@ -1,6 +1,8 @@
-import { basename, extname } from 'path'
+import type { LocalStorage, Scraper } from './types'
 
-import { LocalStorage, Scraper } from './types'
+import { basename, extname } from 'node:path'
+
+type ScraperFunction = Scraper.Function
 
 const element = {
   filename: '(.+)',
@@ -17,7 +19,7 @@ const format = {
       .slice(1, -1)
       .replace('，', ',')
       .split(',')
-      .map((s) => s.trim()),
+      .map(s => s.trim()),
   nsfw: (tag: string) => nsfw.includes(tag.split('=')[1]),
 }
 
@@ -36,10 +38,10 @@ function name(scraper: string, path: string, hash: string): LocalStorage.Respons
     .replace(/^\./gm, '')
     .replace(/\+$/gm, '')
     .split('-')
-    .map((k) => k.slice(1, -1))
-    .filter((k) => Object.keys(element).includes(k))
+    .map(k => k.slice(1, -1))
+    .filter(k => Object.keys(element).includes(k))
 
-  const rule = new RegExp(start + pattren.map((key) => element[key]).join('-') + end, 'g')
+  const rule = new RegExp(start + pattren.map(key => element[key]).join('-') + end, 'g')
   const unitData = rule.exec(filename)
   return Object.fromEntries([
     ...(unitData === null
@@ -59,9 +61,9 @@ function meta(scraper: string, path: string, hash: string): LocalStorage.Respons
 }
 
 export function scraper<T extends Scraper.String>(scraper: T) {
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  const func: Record<Scraper.Type, Function> = { name, meta }
-  const typer = /^\#(.+)#(.+)/.exec(scraper)
-  if (typer === null) return (path: string, hash: string) => name(scraper, path, hash)
+  const func: Record<Scraper.Type, ScraperFunction> = { name, meta }
+  const typer = /^#([^#]+)#(.+)/.exec(scraper)
+  if (typer === null)
+    return (path: string, hash: string) => name(scraper, path, hash)
   else return (path: string, hash: string) => func[typer[1]](typer[2], path, hash)
 }

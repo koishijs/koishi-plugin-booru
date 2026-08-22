@@ -1,17 +1,17 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "declaration": true,
-    "composite": true,
     "incremental": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "emitDeclarationOnly": true,
-    "moduleResolution": "bundler",
-    "strictBindCallApply": true,
+    "composite": true,
+    "target": "esnext",
     "jsx": "react-jsx",
     "jsxImportSource": "@satorijs/element",
-    "types": ["yml-register/types"]
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "types": ["yml-register/types"],
+    "strictBindCallApply": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }

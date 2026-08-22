@@ -1,5 +1,5 @@
-import { writeFile } from 'fs/promises'
-import { resolve } from 'path'
+import { writeFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 
 import * as cheerio from 'cheerio'
 
@@ -18,7 +18,7 @@ const url = 'https://img.moehu.org/'
     menuDivs.each((index, menu) => {
       const menuUl = $(menu).find('ul')
       menuUl.find('pre').each((_, pre) => {
-        const match = /(?<name>.*)→.*id=(?<id>.*)">/g.exec($(pre).html() ?? '')
+        const match = /(?<name>[^→]*)→[^>]*id=(?<id>[^"]*)">/.exec($(pre).html() ?? '')
         if (match && match.groups) {
           const { name, id } = match.groups
           keyMap[name.trim()] = id.trim()

@@ -1,18 +1,14 @@
 {
   "name": "koishi-plugin-booru-danbooru",
-  "description": "Image service by Danbooru for Koishi",
   "version": "1.2.0",
-  "main": "lib/index.js",
+  "description": "Image service by Danbooru for Koishi",
   "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "dist"
-  ],
   "author": {
     "name": "Maiko Tan",
     "email": "maiko.tan.coding@gmail.com"
   },
   "license": "MIT",
+  "homepage": "https://booru.koishi.chat/plugins/danbooru.html",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
@@ -21,7 +17,6 @@
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
   },
-  "homepage": "https://booru.koishi.chat/plugins/danbooru.html",
   "keywords": [
     "chatbot",
     "koishi",
@@ -33,6 +28,11 @@
     "random",
     "setu",
     "danbooru"
+  ],
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib"
   ],
   "koishi": {
     "description": {
