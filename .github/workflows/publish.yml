@@ -16,11 +16,13 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install
-        run: yarn
+        run: yarn --no-immutable
       - name: Build
         run: yarn docs:build
         env:
