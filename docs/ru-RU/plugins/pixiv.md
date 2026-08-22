@@ -5,7 +5,7 @@
 1. 在 Koishi 中下载并安装本插件，若你还未安装 [Booru 插件](../index.md)，请先安装。
 2. 在 [Pixiv](https://www.pixiv.net/) 注册账号并登录。
 3. 安装 [pixiv-auth](https://www.npmjs.com/package/koishi-plugin-pixiv-auth) 插件，根据其配置页面获取 `Refresh Token`，注意此插件需求图形界面。
-    - 如果你没有图形界面，也可以使用 [Pixiv OAuth Script](https://gist.github.com/ZipFile/c9ebedb224406f4f11845ab700124362) 脚本获取 `Refresh Token`。
+   - 如果你没有图形界面，也可以使用 [Pixiv OAuth Script](https://gist.github.com/ZipFile/c9ebedb224406f4f11845ab700124362) 脚本获取 `Refresh Token`。
 4. 将 `Refresh Token` 填入配置项中的 `token` 项。
 
 ## 配置项
