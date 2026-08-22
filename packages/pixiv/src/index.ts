@@ -15,6 +15,8 @@ const CLIENT_ID = 'MOBrBDS8blbauoSck0ZfDbtuzpyT'
 const CLIENT_SECRET = 'lsACyCD94FhDUtGTXi3QzcFE2uU1hqtDaKeqrdwj'
 
 class PixivImageSource extends ImageSource<PixivImageSource.Config> {
+  static override recommend = true
+
   static inject = {
     required: ['booru'],
     optional: ['assets', 'server'],

@@ -5,6 +5,19 @@ import type {} from '@cordisjs/plugin-proxy-agent'
 export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
   static inject: string[] | Partial<Record<'required' | 'optional', string[]>> = ['booru']
 
+  /**
+   * Whether the source supports random results when no query is provided.
+   * Most booru sources support this via order:random / sort:random tags.
+   */
+  static random = true
+
+  /**
+   * Whether the source has a dedicated recommendation endpoint.
+   * When true, this source is preferred for the `booru` command without keywords.
+   * Example: Pixiv's /v1/illust/recommended endpoint.
+   */
+  static recommend = false
+
   languages: string[] = []
   source: string
 
