@@ -68,7 +68,8 @@ class ImageService extends Service {
       const randomSources = sources.filter(s => !!(s.constructor as any).random)
       if (recommendSources.length) {
         sources = recommendSources
-      } else if (randomSources.length) {
+      }
+      else if (randomSources.length) {
         sources = randomSources
       }
     }
