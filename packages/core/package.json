@@ -1,15 +1,11 @@
 {
   "name": "koishi-plugin-booru",
-  "description": "Image service for Koishi",
   "version": "1.4.0",
-  "main": "lib/index.js",
+  "description": "Image service for Koishi",
   "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "dist"
-  ],
   "author": "Shigma <shigma10826@gmail.com>",
   "license": "MIT",
+  "homepage": "https://booru.koishi.chat",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/koishijs/koishi-plugin-booru.git",
@@ -18,7 +14,6 @@
   "bugs": {
     "url": "https://github.com/koishijs/koishi-plugin-booru/issues"
   },
-  "homepage": "https://booru.koishi.chat",
   "keywords": [
     "chatbot",
     "koishi",
@@ -29,6 +24,11 @@
     "picture",
     "random",
     "setu"
+  ],
+  "main": "lib/index.js",
+  "files": [
+    "dist",
+    "lib"
   ],
   "koishi": {
     "description": {
@@ -48,14 +48,14 @@
     "@cordisjs/plugin-proxy-agent": ">=0.3.0",
     "koishi": "^4.17.0"
   },
+  "dependencies": {
+    "languagedetect": "^2.0.0"
+  },
   "devDependencies": {
     "@cordisjs/plugin-proxy-agent": ">=0.3.3",
     "@koishijs/assets": "^1.0.2",
     "@koishijs/canvas": "^0.2.0",
     "koishi": "^4.17.0"
-  },
-  "dependencies": {
-    "languagedetect": "^2.0.0"
   },
   "publishConfig": {
     "provenance": true

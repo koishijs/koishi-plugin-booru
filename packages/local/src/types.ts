@@ -18,5 +18,5 @@ export namespace LocalStorage {
 export namespace Scraper {
   export type String = `#${Type}#${string}` | string
   export type Type = 'name' | 'meta'
-  export type Function = (path: string, hash: string) => LocalStorage.Response
+  export type Function = (scraper: string, path: string, hash: string) => LocalStorage.Response
 }

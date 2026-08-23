@@ -1,13 +1,11 @@
 $inner:
-  - 
-    $description: Search Settings
+  - $description: Search Settings
     detectLanguage: Detect the input language automatically and select the matching source.
     confidence: The confidence of language detection.
     maxCount: The maximum number of images per search.
     nsfw: Whether to allow NSFW content.
     blacklist: The blacklist of tags to filter out the image that contains the corresponding tags.
-  - 
-    $description: Output Settings
+  - $description: Output Settings
     output:
       $description: The output content.
       $inner:

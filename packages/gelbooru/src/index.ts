@@ -1,7 +1,7 @@
+import type { Gelbooru } from './types'
 import { Schema, trimSlash } from 'koishi'
-import { ImageSource } from 'koishi-plugin-booru'
 
-import { Gelbooru } from './types'
+import { ImageSource } from 'koishi-plugin-booru'
 
 class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
   languages = ['en']
@@ -9,26 +9,27 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
   reusable = true
 
   get keyPair() {
-    if (!this.config.keyPairs.length) return
+    if (!this.config.keyPairs.length)
+      return
     return this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://gelbooru.com/index.php?page=help&topic=dapi
     const params = {
-      tags: query.tags.join('+') + '+sort:random',
+      tags: `${query.tags.join('+')}+sort:random`,
       page: 'dapi',
       s: 'post',
       q: 'index',
       json: 1,
       limit: query.count,
     }
-    let url =
-      trimSlash(this.config.endpoint) +
-      '?' +
-      Object.entries(params)
-        .map(([key, value]) => `${key}=${value}`)
-        .join('&')
+    let url
+      = `${trimSlash(this.config.endpoint)
+      }?${
+        Object.entries(params)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&')}`
 
     const keyPair = this.keyPair
     if (keyPair) {
@@ -52,7 +53,7 @@ class GelbooruImageSource extends ImageSource<GelbooruImageSource.Config> {
         },
         pageUrl: post.source,
         author: post.owner.replace(/ /g, ', ').replace(/_/g, ' '),
-        tags: post.tags.split(' ').map((t) => t.replace(/_/g, ' ')),
+        tags: post.tags.split(' ').map(t => t.replace(/_/g, ' ')),
         nsfw: ['explicit', 'questionable'].includes(post.rating),
       }
     })

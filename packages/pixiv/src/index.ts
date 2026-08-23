@@ -1,11 +1,12 @@
+import type { Context } from 'koishi'
+import type { ReadableStream } from 'node:stream/web'
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto'
+
 import { Readable } from 'node:stream'
-import { ReadableStream } from 'node:stream/web'
-
 import {} from '@koishijs/assets'
-import {} from '@koishijs/plugin-server'
 
-import { Context, HTTP, Random, Schema, trimSlash } from 'koishi'
+import {} from '@koishijs/plugin-server'
+import { HTTP, Random, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
 
 import { PixivAppApi } from './types'
@@ -47,13 +48,14 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
         const aesKey = randomBytes(32).toString('hex')
         config.aesKey = aesKey
         this.ctx.setTimeout(() => ctx.scope.update(config, false), 0)
-        this.logger.info("Found empty aesKey with a bypass method set to 'route', generated a random one in config.")
+        this.logger.info('Found empty aesKey with a bypass method set to \'route\', generated a random one in config.')
       }
 
-      this.ctx.server.get(trimSlash(config.route) + '/:url(.+)', async (ctx, next) => {
+      this.ctx.server.get(`${trimSlash(config.route)}/:url(.+)`, async (ctx, next) => {
         const url = ctx.request.url.replace(/^\/booru\/pixiv\/proxy\//, '')
         const decrypted = Cipher.decrypt(decodeURIComponent(url), config.aesKey)
-        if (typeof decrypted !== 'string' || !decrypted.startsWith('https://i.pximg.net/')) return next()
+        if (typeof decrypted !== 'string' || !decrypted.startsWith('https://i.pximg.net/'))
+          return next()
         const file = await this.http<ReadableStream>(decrypted, {
           headers: { Referer: 'https://www.pixiv.net/' },
           responseType: 'stream',
@@ -79,16 +81,17 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
       return Promise.all(
         Random.shuffle(
           data.illusts
-            .filter((illust) => illust.total_bookmarks > this.config.minBookmarks)
-            .filter((illust) => illust.x_restrict <= this.config.rank)
-            .filter((illust) => illust.illust_ai_type <= this.config.ai),
+            .filter(illust => illust.total_bookmarks > this.config.minBookmarks)
+            .filter(illust => illust.x_restrict <= this.config.rank)
+            .filter(illust => illust.illust_ai_type <= this.config.ai),
         )
           .slice(0, query.count)
           .map(async (illust) => {
             let url = ''
             if (illust.page_count > 1) {
               url = illust.meta_pages[0].image_urls.original
-            } else {
+            }
+            else {
               url = illust.meta_single_page.original_image_url
             }
 
@@ -102,16 +105,18 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
               author: illust.user.name,
               authorUrl: `https://pixiv.net/u/${illust.user.id}`,
               desc: normaliseCaption(illust.caption),
-              tags: illust.tags.map((tag) => tag.name),
+              tags: illust.tags.map(tag => tag.name),
               nsfw: illust.x_restrict >= 1,
             }
           }),
       )
-    } catch (err) {
+    }
+    catch (err) {
       if (HTTP.Error.is(err)) {
         throw new Error('get pixiv image failed: ' + `${err.message} (${err.response?.status})`)
-      } else {
-        throw new Error('get pixiv image failed: ' + err)
+      }
+      else {
+        throw new Error(`get pixiv image failed: ${err}`)
       }
     }
   }
@@ -165,7 +170,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
 
   async _login() {
     const endpoint = 'https://oauth.secure.pixiv.net/' // OAuth Endpoint
-    const url = trimSlash(endpoint) + '/auth/token'
+    const url = `${trimSlash(endpoint)}/auth/token`
 
     const data = new URLSearchParams({
       get_secure_url: 'true',
@@ -182,21 +187,24 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
           'Content-Type': 'application/x-www-form-urlencoded',
           'host': 'oauth.secure.pixiv.net',
         },
-        validateStatus: (status) => [200, 301, 302].includes(status),
+        validateStatus: status => [200, 301, 302].includes(status),
       })
 
       this.userId = resp.user.id
       this.accessToken = resp.access_token
       this.refreshToken = resp.refresh_token
-      if (this.refreshTime) clearTimeout(this.refreshTime)
+      if (this.refreshTime)
+        clearTimeout(this.refreshTime)
       this.refreshTime = setTimeout(() => (this.accessToken = undefined), resp.expires_in * 1000)
 
       return this.accessToken
-    } catch (err) {
+    }
+    catch (err) {
       if (HTTP.Error.is(err)) {
-        throw new Error('Login failed with status code ' + err.response?.status + '\n' + JSON.stringify(err.response))
-      } else {
-        throw new Error('Login failed with unknown error: ' + err.message)
+        throw new Error(`Login failed with status code ${err.response?.status}\n${JSON.stringify(err.response)}`)
+      }
+      else {
+        throw new Error(`Login failed with unknown error: ${err.message}`)
       }
     }
   }
@@ -209,7 +217,7 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     }
 
     if (this.refreshToken && this.accessToken) {
-      headers.Authorization = 'Bearer ' + this.accessToken
+      headers.Authorization = `Bearer ${this.accessToken}`
     }
 
     return headers
@@ -219,17 +227,20 @@ class PixivImageSource extends ImageSource<PixivImageSource.Config> {
     if (this.config.bypassMethod === 'proxy' && this.config.proxy) {
       const proxy = typeof this.config.proxy === 'string' ? this.config.proxy : this.config.proxy.endpoint
       return url.replace(/^https?:\/\/i\.pximg\.net/, trimSlash(proxy))
-    } else if (this.config.bypassMethod === 'route' && this.config.route && this.ctx.get('server')) {
+    }
+    else if (this.config.bypassMethod === 'route' && this.config.route && this.ctx.get('server')) {
       const encrypted = Cipher.encrypt(url, this.config.aesKey)
       return (
-        trimSlash(this.ctx.server.config.selfUrl) + trimSlash(this.config.route) + '/' + encodeURIComponent(encrypted)
+        `${trimSlash(this.ctx.server.config.selfUrl) + trimSlash(this.config.route)}/${encodeURIComponent(encrypted)}`
       )
-    } else if (this.config.bypassMethod === 'asset' && this.ctx.get('assets')) {
+    }
+    else if (this.config.bypassMethod === 'asset' && this.ctx.get('assets')) {
       const filename = url.split('/').pop().split('?')[0]
       const file = await this.http<ArrayBuffer>(url, { headers: { Referer: 'https://www.pixiv.net/' } })
       const base64 = Buffer.from(file.data).toString('base64')
       return this.ctx.assets.upload(`data:${file.headers['content-type']};base64,${base64}`, filename)
-    } else {
+    }
+    else {
       this.logger.warn(
         `Bypass method is set to ${this.config.bypassMethod}, but there's no candidate to handle the image.`,
       )
@@ -323,7 +334,8 @@ class Cipher {
       const cipher = createCipheriv('aes-256-cbc', Buffer.from(key, 'hex'), iv)
       const encrypted = Buffer.concat([iv, cipher.update(data), cipher.final()])
       return encrypted.toString('base64')
-    } catch (err) {
+    }
+    catch {
       return null
     }
   }
@@ -335,7 +347,8 @@ class Cipher {
       const decipher = createDecipheriv('aes-256-cbc', Buffer.from(key, 'hex'), iv)
       const decrypted = Buffer.concat([decipher.update(encrypted.slice(16)), decipher.final()])
       return decrypted.toString()
-    } catch (err) {
+    }
+    catch {
       return null
     }
   }

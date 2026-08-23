@@ -1,14 +1,15 @@
-import { existsSync } from 'fs'
-import { readFile, writeFile } from 'fs/promises'
-import { resolve } from 'path'
-import { pathToFileURL } from 'url'
+import type { Context, Logger } from 'koishi'
+import type { LocalStorage } from './types'
+import { existsSync } from 'node:fs'
+import { readFile, writeFile } from 'node:fs/promises'
 
-import { Context, Logger, Random, Schema } from 'koishi'
+import { resolve } from 'node:path'
+import { pathToFileURL } from 'node:url'
+import { Random, Schema } from 'koishi'
+
 import { ImageSource } from 'koishi-plugin-booru'
-
 import { Mapping } from './mapping'
 import { scraper } from './scraper'
-import { LocalStorage } from './types'
 import { hash, mkdirs } from './utils'
 
 declare module 'koishi' {
@@ -63,9 +64,9 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
 
       if (existsSync(absMap)) {
         try {
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
           this.imageMap = require(absMap) as LocalStorage.Type[]
-        } catch (err) {
+        }
+        catch {
           readFile(absMap, 'utf-8')
             .then((map) => {
               this.imageMap = JSON.parse(map)
@@ -78,12 +79,14 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
     }
 
     // TODO: cache storage
-    if (config.storage === 'cache') ctx.inject(['cache'], () => {})
+    if (config.storage === 'cache')
+      ctx.inject(['cache'], () => {})
 
     ctx.on(
       'ready',
       async () => {
-        if (config.endpoint.length <= 0) return this.logger.warn('no folder yet')
+        if (config.endpoint.length <= 0)
+          return this.logger.warn('no folder yet')
         let mapping: Mapping = new Mapping(ctx.root.baseDir, config.storage)
         const imgScrap = scraper(config.scraper)
         const count = {
@@ -93,11 +96,12 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         this.logger.info('Initializing storages...')
         // duplicate check
         this.config.endpoint = [...new Set(this.config.endpoint)]
-        if (this.imageMap.length > 0) mapping = mapping.update(this.imageMap)
+        if (this.imageMap.length > 0)
+          mapping = mapping.update(this.imageMap)
         // mapping the folders to memory by loop
         for await (const path of config.endpoint) {
           const store = await mapping.create(path, { extnames: config.extension })
-          const images = store.imagePaths.filter((path) => !store.images.map((img) => img.path).includes(path))
+          const images = store.imagePaths.filter(path => !store.images.map(img => img.path).includes(path))
           // create image informations
           for await (const image of images) {
             const imageHash = hash(await readFile(image))
@@ -106,13 +110,16 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
           store.imageCount = store.images.length
           count.folder++
           count.images = count.images + store.imagePaths.length
-          const imgIndex = this.imageMap.findIndex((img) => img.storeId === store.storeId)
-          if (imgIndex >= 0) this.imageMap[imgIndex] = store
+          const imgIndex = this.imageMap.findIndex(img => img.storeId === store.storeId)
+          if (imgIndex >= 0)
+            this.imageMap[imgIndex] = store
           else this.imageMap.push(store)
         }
         this.logger.info(`${count.images} images in ${count.folder} folders is loaded.`)
         // save mapping
-        if (config.storage === 'database') ctx.database.upsert('booru_local', this.imageMap, ['storeId', 'storeName'])
+        if (config.storage === 'database') {
+          ctx.database.upsert('booru_local', this.imageMap, ['storeId', 'storeName'])
+        }
         else if (config.storage === 'file') {
           // TODO: fill this part
         }
@@ -126,7 +133,8 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    if (this.imageMap.length < 1) return undefined
+    if (this.imageMap.length < 1)
+      return undefined
     let pickPool = []
     // Flatten all maps
     if (this.imageMap.length > 1) {
@@ -134,21 +142,25 @@ class LocalImageSource extends ImageSource<LocalImageSource.Config> {
         if (query.tags.length > 0) {
           // filter by tags
           for (const image of storage.images) {
-            if (query.tags.every((tag) => image.tags.includes(tag))) pickPool.push(image)
+            if (query.tags.every(tag => image.tags.includes(tag)))
+              pickPool.push(image)
           }
-        } else {
+        }
+        else {
           // pick from all images
           pickPool.push(...storage.images)
         }
       }
-    } else {
+    }
+    else {
       // pick from one image map
       pickPool = this.imageMap
         .map((storage) => {
           if (query.tags.length > 0) {
             // filter by tags
-            return storage.images.filter((image) => query.tags.every((tag) => image.tags.includes(tag)))
-          } else {
+            return storage.images.filter(image => query.tags.every(tag => image.tags.includes(tag)))
+          }
+          else {
             // pick from all images
             return storage.images
           }

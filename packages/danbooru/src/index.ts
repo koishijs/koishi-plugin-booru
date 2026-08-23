@@ -1,7 +1,7 @@
+import type { Danbooru } from './types'
 import { Schema, trimSlash } from 'koishi'
-import { ImageSource } from 'koishi-plugin-booru'
 
-import { Danbooru } from './types'
+import { ImageSource } from 'koishi-plugin-booru'
 
 class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
   languages = ['en']
@@ -9,13 +9,14 @@ class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
   reusable = true
 
   get keyPair() {
-    if (!this.config.keyPairs.length) return
+    if (!this.config.keyPairs.length)
+      return
     return this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     const keyPair = this.keyPair
-    const data = await this.http.get<Danbooru.Post[]>(trimSlash(this.config.endpoint) + '/posts.json', {
+    const data = await this.http.get<Danbooru.Post[]>(`${trimSlash(this.config.endpoint)}/posts.json`, {
       params: {
         tags: query.tags.join(' '),
         random: true,
@@ -38,7 +39,7 @@ class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
         },
         pageUrl: post.source,
         author: post.tag_string_artist.replace(/ /g, ', ').replace(/_/g, ' '),
-        tags: post.tag_string.split(' ').map((t) => t.replace(/_/g, ' ')),
+        tags: post.tag_string.split(' ').map(t => t.replace(/_/g, ' ')),
         nsfw: post.rating === 'e' || post.rating === 'q',
       }
     })
@@ -48,7 +49,7 @@ class DanbooruImageSource extends ImageSource<DanbooruImageSource.Config> {
 namespace DanbooruImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
-    keyPairs: { login: string; apiKey: string }[]
+    keyPairs: { login: string, apiKey: string }[]
   }
 
   export const Config: Schema<Config> = Schema.intersect([

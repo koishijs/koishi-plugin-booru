@@ -1,8 +1,6 @@
 $inner:
-  - 
-    $description: Global Settings
+  - $description: Global Settings
     label: Source label, can be used to specify the source in command invocation.
     weight: Source weight, source plugin with a higher weight would be more likely chosen for searching images.
-  - 
-    $description: Request Settings
+  - $description: Request Settings
     proxyAgent: Use proxy when requesting an image.

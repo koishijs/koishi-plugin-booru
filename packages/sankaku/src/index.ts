@@ -1,8 +1,9 @@
-import { Context, Schema } from 'koishi'
-import { ImageSource } from 'koishi-plugin-booru'
+import type { Context } from 'koishi'
+import type { SankakuComplex } from './types'
+import { Schema } from 'koishi'
 
+import { ImageSource } from 'koishi-plugin-booru'
 import * as consts from './constants'
-import { SankakuComplex } from './types'
 
 class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Config> {
   languages = ['en']
@@ -19,7 +20,8 @@ class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Co
   }
 
   get keyPair() {
-    if (!this.config.keyPairs.length) return
+    if (!this.config.keyPairs.length)
+      return
     return this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
   }
 
@@ -39,9 +41,8 @@ class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Co
       params,
       headers: keyPair.accessToken ? { Authentication: `${keyPair.tokenType} ${keyPair.accessToken}` } : {},
     })
-    console.log(data)
-
-    if (!Array.isArray(data)) return
+    if (!Array.isArray(data))
+      return
 
     return data.map((post) => {
       return {
@@ -52,7 +53,7 @@ class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Co
         },
         pageUrl: post.source,
         author: post.author.name.replace(/ /g, ', ').replace(/_/g, ' '),
-        tags: post.tags.map((t) => t.name.replace(/_/g, ' ')),
+        tags: post.tags.map(t => t.name.replace(/_/g, ' ')),
         nsfw: ['e', 'q'].includes(post.rating),
       }
     })
@@ -64,8 +65,6 @@ class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Co
         login: keyPair.login,
         password: keyPair.password,
       })
-      console.log(data)
-
       if (data.access_token) {
         keyPair.accessToken = data.access_token
         keyPair.tokenType = data.token_type
@@ -104,7 +103,7 @@ namespace SankakuComplexImageSource {
         }),
       ).default([]),
       userAgent: Schema.string().default(
-        // eslint-disable-next-line max-len
+
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
       ),
     }).i18n({

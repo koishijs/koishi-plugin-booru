@@ -1,6 +1,7 @@
-import { Context, Element, HTTP, Schema } from 'koishi'
-
 import type {} from '@cordisjs/plugin-proxy-agent'
+import type { Context, Element, HTTP } from 'koishi'
+
+import { Schema } from 'koishi'
 
 export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
   static inject: string[] | Partial<Record<'required' | 'optional', string[]>> = ['booru']
@@ -40,9 +41,9 @@ export abstract class ImageSource<Config extends ImageSource.Config = ImageSourc
   tokenize(query: string): string[] {
     return query
       .split(',')
-      .map((x) => x.trim())
+      .map(x => x.trim())
       .filter(Boolean)
-      .map((x) => x.toLowerCase().replace(/\s+/g, '_'))
+      .map(x => x.toLowerCase().replace(/\s+/g, '_'))
   }
 
   abstract get(query: ImageSource.Query): Promise<ImageSource.Result[]>

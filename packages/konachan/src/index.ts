@@ -1,9 +1,10 @@
+import type { Dict } from 'koishi'
+
+import type { Konachan } from './types'
 import { createHash } from 'node:crypto'
+import { Schema, trimSlash } from 'koishi'
 
-import { Dict, Schema, trimSlash } from 'koishi'
 import { ImageSource } from 'koishi-plugin-booru'
-
-import { Konachan } from './types'
 
 /**
  * Konachan requires a password hash for authentication.
@@ -24,7 +25,8 @@ class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
   reusable = true
 
   get keyPair() {
-    if (!this.config.keyPairs.length) return
+    if (!this.config.keyPairs.length)
+      return
     const key = this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
     return {
       login: key.login,
@@ -35,15 +37,15 @@ class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://konachan.net/help/api and https://konachan.com/help/api
     const params: Dict<string> = {
-      tags: query.tags.join('+') + '+order:random',
+      tags: `${query.tags.join('+')}+order:random`,
       limit: `${query.count}`,
     }
-    const url = trimSlash(this.config.endpoint) + '/post.json'
+    const url = `${trimSlash(this.config.endpoint)}/post.json`
 
     const keyPair = this.keyPair
     if (keyPair) {
-      params['login'] = keyPair.login
-      params['password_hash'] = keyPair.password_hash
+      params.login = keyPair.login
+      params.password_hash = keyPair.password_hash
     }
     const data = await this.http.get<Konachan.Response[]>(url, { params: new URLSearchParams(params) })
 
@@ -60,7 +62,7 @@ class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
         },
         pageUrl: post.source,
         author: post.author.replace(/ /g, ', ').replace(/_/g, ' '),
-        tags: post.tags.split(' ').map((t) => t.replace(/_/g, ' ')),
+        tags: post.tags.split(' ').map(t => t.replace(/_/g, ' ')),
         nsfw: ['e', 'q'].includes(post.rating),
       }
     })
@@ -70,7 +72,7 @@ class KonachanImageSource extends ImageSource<KonachanImageSource.Config> {
 namespace KonachanImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
-    keyPairs: { login: string; password: string }[]
+    keyPairs: { login: string, password: string }[]
   }
 
   export const Config: Schema<Config> = Schema.intersect([
