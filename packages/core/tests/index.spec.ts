@@ -1,13 +1,12 @@
-import { Context, Schema } from 'koishi'
-import mock from '@koishijs/plugin-mock'
 import memory from '@koishijs/plugin-database-memory'
-import { describe, it, beforeEach, afterEach } from 'mocha'
+import mock from '@koishijs/plugin-mock'
 import { expect } from 'chai'
+import { Context } from 'koishi'
+import { afterEach, beforeEach, describe, it } from 'mocha'
 
-import { ImageSource } from '../src/source'
 import * as booru from '../src/index'
+import { ImageSource } from '../src/source'
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 namespace MockSource {
   export interface Config extends ImageSource.Config {
     results: ImageSource.Result[]
@@ -26,7 +25,7 @@ class MockSource extends ImageSource<MockSource.Config> {
     this.results = config.results
   }
 
-  async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
+  async get(_query: ImageSource.Query): Promise<ImageSource.Result[]> {
     return this.results
   }
 }
@@ -40,6 +39,10 @@ function makeResult(overrides: Partial<ImageSource.Result> = {}): ImageSource.Re
     nsfw: false,
     ...overrides,
   }
+}
+
+function registerSource(app: Context, config: MockSource.Config): MockSource {
+  return new MockSource(app, config)
 }
 
 const defaultConfig = {
@@ -75,7 +78,7 @@ describe('ImageService', () => {
   })
 
   it('should return results from registered sources', async () => {
-    new MockSource(app, {
+    registerSource(app, {
       label: 'test',
       weight: 1,
       proxyAgent: '',
@@ -89,13 +92,13 @@ describe('ImageService', () => {
   })
 
   it('should respect label filter', async () => {
-    new MockSource(app, {
+    registerSource(app, {
       label: 'source-a',
       weight: 1,
       proxyAgent: '',
       results: [makeResult({ title: 'From A' })],
     })
-    new MockSource(app, {
+    registerSource(app, {
       label: 'source-b',
       weight: 1,
       proxyAgent: '',
@@ -108,13 +111,13 @@ describe('ImageService', () => {
   })
 
   it('should fall back to next source if first returns empty', async () => {
-    new MockSource(app, {
+    registerSource(app, {
       label: 'empty-source',
       weight: 2,
       proxyAgent: '',
       results: [],
     })
-    new MockSource(app, {
+    registerSource(app, {
       label: 'fallback-source',
       weight: 1,
       proxyAgent: '',
@@ -127,7 +130,7 @@ describe('ImageService', () => {
   })
 
   it('should return undefined when all sources are empty', async () => {
-    new MockSource(app, {
+    registerSource(app, {
       label: 'empty-a',
       weight: 1,
       proxyAgent: '',
@@ -135,6 +138,7 @@ describe('ImageService', () => {
     })
 
     const images = await app.booru.get({ query: 'nonexistent', count: 1, labels: [] })
+    // eslint-disable-next-line ts/no-unused-expressions -- chai assertion
     expect(images).to.be.undefined
   })
 })
@@ -156,7 +160,7 @@ describe('booru command', () => {
   })
 
   it('should reply with results for a query', async () => {
-    new MockSource(app, {
+    registerSource(app, {
       label: 'test',
       weight: 1,
       proxyAgent: '',
@@ -170,7 +174,7 @@ describe('booru command', () => {
   })
 
   it('should show no-result message when sources return empty', async () => {
-    new MockSource(app, {
+    registerSource(app, {
       label: 'test',
       weight: 1,
       proxyAgent: '',
@@ -179,6 +183,7 @@ describe('booru command', () => {
 
     const client = app.mock.client('789')
     const replies = await client.receive('booru nonexistent')
+    // eslint-disable-next-line ts/no-unused-expressions -- chai assertion
     expect(replies).to.be.an('array').that.is.empty
   })
 })
