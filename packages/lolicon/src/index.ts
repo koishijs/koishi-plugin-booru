@@ -1,7 +1,7 @@
+import type { Lolicon } from './types'
 import { Schema } from 'koishi'
-import { ImageSource } from 'koishi-plugin-booru'
 
-import { Lolicon } from './types'
+import { ImageSource } from 'koishi-plugin-booru'
 
 class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
   languages = ['en', 'zh-CN', 'ja']
@@ -28,8 +28,8 @@ class LoliconImageSource extends ImageSource<LoliconImageSource.Config> {
     }
 
     return resp.data
-      .filter((setu) => !(this.config.excludeAI && setu.aiType === 2))
-      .filter((setu) => !!this.config.r18 || !!this.config.r18 === setu.r18)
+      .filter(setu => !(this.config.excludeAI && setu.aiType === 2))
+      .filter(setu => !!this.config.r18 || !!this.config.r18 === setu.r18)
       .map((setu) => {
         return {
           urls: {

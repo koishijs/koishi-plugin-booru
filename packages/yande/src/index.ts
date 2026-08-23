@@ -1,9 +1,9 @@
+import type { Yande } from './types'
+
 import { createHash } from 'node:crypto'
-
 import { Schema, trimSlash } from 'koishi'
-import { ImageSource } from 'koishi-plugin-booru'
 
-import { Yande } from './types'
+import { ImageSource } from 'koishi-plugin-booru'
 
 /**
  * Yande.re requires a password hash for authentication.
@@ -24,7 +24,8 @@ class YandeImageSource extends ImageSource<YandeImageSource.Config> {
   reusable = true
 
   get keyPair() {
-    if (!this.config.keyPairs.length) return
+    if (!this.config.keyPairs.length)
+      return
     const key = this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
     return {
       login: key.login,
@@ -34,16 +35,16 @@ class YandeImageSource extends ImageSource<YandeImageSource.Config> {
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
     // API docs: https://yande.re/help/api
-    const params = {
+    const params: Yande.Request = {
       tags: [...query.tags, 'order:random'].join('+'),
       limit: query.count,
     }
-    const url = trimSlash(this.config.endpoint) + '/post.json'
+    const url = `${trimSlash(this.config.endpoint)}/post.json`
 
     const keyPair = this.keyPair
     if (keyPair) {
-      params['login'] = keyPair.login
-      params['password_hash'] = keyPair.password_hash
+      params.login = keyPair.login
+      params.password_hash = keyPair.password_hash
     }
 
     const data = await this.http.get<Yande.Response[]>(url, { params })
@@ -61,7 +62,7 @@ class YandeImageSource extends ImageSource<YandeImageSource.Config> {
         },
         pageUrl: post.source,
         author: post.author.replace(/ /g, ', ').replace(/_/g, ' '),
-        tags: post.tags.split(' ').map((t) => t.replace(/_/g, ' ')),
+        tags: post.tags.split(' ').map(t => t.replace(/_/g, ' ')),
         nsfw: ['e', 'q'].includes(post.rating),
       }
     })

@@ -2,14 +2,14 @@
   "extends": "../../tsconfig.base",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "lib",
-    "resolveJsonModule": true,
     "paths": {
-      "koishi-plugin-booru": ["../../core/src"],
-    }
+      "koishi-plugin-booru": ["../../core/src"]
+    },
+    "resolveJsonModule": true,
+    "outDir": "lib"
   },
-  "include": ["src", "src/**/*.json"],
   "references": [
     { "path": "../core" }
-  ]
+  ],
+  "include": ["src", "src/**/*.json"]
 }
