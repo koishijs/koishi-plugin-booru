@@ -46,7 +46,7 @@ class ImageService extends Service {
   }
 
   async get(query: ImageService.Query): Promise<ImageArray> {
-    const sources = this.sources
+    let sources = this.sources
       .filter((source) => {
         if (query.labels.length && !query.labels.includes(source.config.label))
           return false
@@ -60,11 +60,25 @@ class ImageService extends Service {
         }
         return true
       })
-      .sort((a, b) => {
-        if (a.config.weight !== b.config.weight)
-          return b.config.weight - a.config.weight
-        return Math.random() - 0.5
-      })
+
+    // When no query is provided, prefer sources with dedicated recommend support,
+    // then fall back to random-capable sources.
+    if (!query.query) {
+      const recommendSources = sources.filter(s => !!(s.constructor as any).recommend)
+      const randomSources = sources.filter(s => !!(s.constructor as any).random)
+      if (recommendSources.length) {
+        sources = recommendSources
+      }
+      else if (randomSources.length) {
+        sources = randomSources
+      }
+    }
+
+    sources = sources.sort((a, b) => {
+      if (a.config.weight !== b.config.weight)
+        return b.config.weight - a.config.weight
+      return Math.random() - 0.5
+    })
 
     // return the first non-empty result
     for (const source of sources) {
