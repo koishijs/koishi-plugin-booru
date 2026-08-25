@@ -1,13 +1,11 @@
 $inner:
-  - 
-    $description: 搜索设置
+  - $description: 搜索设置
     detectLanguage: 自动检测输入语言并选择语言匹配的图源。
     confidence: 语言检测的置信度。
     maxCount: 每次搜索的最大数量。
     nsfw: 是否允许输出 NSFW 内容。
     blacklist: 黑名单列表，一旦匹配到黑名单中的关键词，将不会发送图片。
-  - 
-    $description: 输出设置
+  - $description: 输出设置
     output:
       $description: 输出方式。
       $inner:

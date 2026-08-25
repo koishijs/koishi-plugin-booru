@@ -1,9 +1,9 @@
+import type { Moehu } from './types'
 import { closest } from 'fastest-levenshtein'
 import { Schema, trimSlash } from 'koishi'
-import { ImageSource } from 'koishi-plugin-booru'
 
+import { ImageSource } from 'koishi-plugin-booru'
 import ids from './data/ids.json'
-import { Moehu } from './types'
 
 const availableTags: string[] = Object.entries(ids)
   .map(([k, v]) => [k, v])
@@ -20,12 +20,12 @@ class MoehuImageSource extends ImageSource<MoehuImageSource.Config> {
       num: query.count,
       return: 'json',
     }
-    const url =
-      trimSlash(this.config.endpoint) +
-      '?' +
-      Object.entries(params)
-        .map(([key, value]) => `${key}=${value}`)
-        .join('&')
+    const url
+      = `${trimSlash(this.config.endpoint)
+      }?${
+        Object.entries(params)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&')}`
     const data = await this.ctx.http.get<Moehu.Response>(url, { responseType: 'json' })
 
     if (!Array.isArray(data.pic)) {

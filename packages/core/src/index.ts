@@ -1,10 +1,11 @@
-import { Computed, Context, Logger, HTTP, Schema, Service, remove } from 'koishi'
-import LanguageDetect from 'languagedetect'
-
-import * as Command from './command'
-import { ImageSource } from './source'
+import type { Computed } from 'koishi'
+import type { ImageSource } from './source'
 import {} from '@koishijs/assets'
+
 import {} from '@koishijs/canvas'
+import { Context, HTTP, Logger, remove, Schema, Service } from 'koishi'
+import LanguageDetect from 'languagedetect'
+import * as Command from './command'
 
 export * from './source'
 
@@ -39,17 +40,18 @@ class ImageService extends Service {
 
   hasSource(name?: string): boolean {
     if (name) {
-      return this.sources.some((source) => source.config.label === name)
+      return this.sources.some(source => source.config.label === name)
     }
     return this.sources.some(Boolean)
   }
 
   async get(query: ImageService.Query): Promise<ImageArray> {
-    const sources = this.sources
+    let sources = this.sources
       .filter((source) => {
-        if (query.labels.length && !query.labels.includes(source.config.label)) return false
+        if (query.labels.length && !query.labels.includes(source.config.label))
+          return false
         if (this.config.detectLanguage) {
-          const probabilities = this.languageDetect.detect(query.query, 3).filter((x) => x[1] > this.config.confidence)
+          const probabilities = this.languageDetect.detect(query.query, 3).filter(x => x[1] > this.config.confidence)
           if (!probabilities.length) {
             // if no language detected, just treat it as any language
             return true
@@ -58,10 +60,25 @@ class ImageService extends Service {
         }
         return true
       })
-      .sort((a, b) => {
-        if (a.config.weight !== b.config.weight) return b.config.weight - a.config.weight
-        return Math.random() - 0.5
-      })
+
+    // When no query is provided, prefer sources with dedicated recommend support,
+    // then fall back to random-capable sources.
+    if (!query.query) {
+      const recommendSources = sources.filter(s => !!(s.constructor as any).recommend)
+      const randomSources = sources.filter(s => !!(s.constructor as any).random)
+      if (recommendSources.length) {
+        sources = recommendSources
+      }
+      else if (randomSources.length) {
+        sources = randomSources
+      }
+    }
+
+    sources = sources.sort((a, b) => {
+      if (a.config.weight !== b.config.weight)
+        return b.config.weight - a.config.weight
+      return Math.random() - 0.5
+    })
 
     // return the first non-empty result
     for (const source of sources) {
@@ -74,7 +91,8 @@ class ImageService extends Service {
               err.response?.status ? `with code ${err.response?.status} ${JSON.stringify(err.response?.data)}` : '',
             ].join(' '),
           )
-        } else {
+        }
+        else {
           logger.error(`source ${source.config.label} unknown error: ${err.message}`)
         }
         // log full error in debug mode, if user want to see it.
@@ -106,7 +124,8 @@ class ImageService extends Service {
           logger.warn(
             `Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
           )
-        } else {
+        }
+        else {
           logger.error(`Request images failed with unknown error: ${err.message}.`)
         }
         return null
@@ -138,7 +157,8 @@ class ImageService extends Service {
         await img.dispose()
       }
       return url
-    } catch (err) {
+    }
+    catch (err) {
       logger.error(`Resize image failed with error: ${err.message}.`)
       return url
     }
@@ -162,7 +182,8 @@ class ImageService extends Service {
           logger.warn(
             `Request images failed with HTTP status ${err.response?.status}: ${JSON.stringify(err.response?.data)}.`,
           )
-        } else {
+        }
+        else {
           logger.error(`Request images failed with unknown error: ${err.message}.`)
         }
         return null
@@ -264,6 +285,5 @@ export function apply(ctx: Context, config: Config) {
   // @ts-expect-error inject structure not compatible
   ctx.plugin(Command, config)
 
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   ctx.i18n.define('zh', require('./locales/zh-CN'))
 }

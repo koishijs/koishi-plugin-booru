@@ -1,9 +1,23 @@
-import { Context, Element, HTTP, Schema } from 'koishi'
-
 import type {} from '@cordisjs/plugin-proxy-agent'
+import type { Context, Element, HTTP } from 'koishi'
+
+import { Schema } from 'koishi'
 
 export abstract class ImageSource<Config extends ImageSource.Config = ImageSource.Config> {
   static inject: string[] | Partial<Record<'required' | 'optional', string[]>> = ['booru']
+
+  /**
+   * Whether the source supports random results when no query is provided.
+   * Most booru sources support this via order:random / sort:random tags.
+   */
+  static random = true
+
+  /**
+   * Whether the source has a dedicated recommendation endpoint.
+   * When true, this source is preferred for the `booru` command without keywords.
+   * Example: Pixiv's /v1/illust/recommended endpoint.
+   */
+  static recommend = false
 
   languages: string[] = []
   source: string
@@ -27,9 +41,9 @@ export abstract class ImageSource<Config extends ImageSource.Config = ImageSourc
   tokenize(query: string): string[] {
     return query
       .split(',')
-      .map((x) => x.trim())
+      .map(x => x.trim())
       .filter(Boolean)
-      .map((x) => x.toLowerCase().replace(/\s+/g, '_'))
+      .map(x => x.toLowerCase().replace(/\s+/g, '_'))
   }
 
   abstract get(query: ImageSource.Query): Promise<ImageSource.Result[]>
