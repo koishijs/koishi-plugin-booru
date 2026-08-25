@@ -1,7 +1,8 @@
-import { Context, Schema, trimSlash } from 'koishi'
-import { ImageSource } from 'koishi-plugin-booru'
+import type { Context } from 'koishi'
+import type { e621 } from './types'
+import { Schema, trimSlash } from 'koishi'
 
-import { e621 } from './types'
+import { ImageSource } from 'koishi-plugin-booru'
 
 class e621ImageSource extends ImageSource<e621ImageSource.Config> {
   languages = ['en']
@@ -18,22 +19,24 @@ class e621ImageSource extends ImageSource<e621ImageSource.Config> {
   }
 
   get keyPair() {
-    if (!this.config.keyPairs.length) return
+    if (!this.config.keyPairs.length)
+      return
     return this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
   }
 
   async get(query: ImageSource.Query): Promise<ImageSource.Result[]> {
-    if (!query.tags.find((t) => t.startsWith('order:'))) query.tags.push('order:random')
+    if (!query.tags.find(t => t.startsWith('order:')))
+      query.tags.push('order:random')
     const keyPair = this.keyPair
     const data = await this.http.get<{
       posts: e621.Post[]
-    }>(trimSlash(this.config.endpoint) + '/posts.json', {
+    }>(`${trimSlash(this.config.endpoint)}/posts.json`, {
       params: {
         tags: query.tags.join(' '),
         limit: query.count,
       },
       headers: keyPair
-        ? { Authorization: 'Basic ' + Buffer.from(`${keyPair.login}:${keyPair.apiKey}`).toString('base64') }
+        ? { Authorization: `Basic ${Buffer.from(`${keyPair.login}:${keyPair.apiKey}`).toString('base64')}` }
         : {},
     })
 
@@ -49,7 +52,7 @@ class e621ImageSource extends ImageSource<e621ImageSource.Config> {
           medium: post.sample.url,
           thumbnail: post.preview.url,
         },
-        pageUrl: trimSlash(this.config.endpoint) + `/post/${post.id}`,
+        pageUrl: `${trimSlash(this.config.endpoint)}/post/${post.id}`,
         author: post.tags.artist.join(', '),
         tags: Object.values(post.tags).flat(),
         nsfw: post.rating !== 's',
@@ -62,7 +65,7 @@ class e621ImageSource extends ImageSource<e621ImageSource.Config> {
 namespace e621ImageSource {
   export interface Config extends ImageSource.Config {
     endpoint: string
-    keyPairs: { login: string; apiKey: string }[]
+    keyPairs: { login: string, apiKey: string }[]
     userAgent: string
   }
 
@@ -77,7 +80,7 @@ namespace e621ImageSource {
         }),
       ).default([]),
       userAgent: Schema.string().default(
-        // eslint-disable-next-line max-len
+
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36 Edg/114.0.1823.37',
       ),
     }).i18n({

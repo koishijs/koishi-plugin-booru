@@ -12,8 +12,7 @@ proxy:
     - i.pixiv.re
     - i.pixiv.cat
     - i.pixiv.nl
-    - 
-      $description: Custom
+    - $description: Custom
       $inner:
         endpoint: URL of reverse proxy server.
 excludeAI:

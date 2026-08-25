@@ -1,7 +1,7 @@
+import type { Safebooru } from './types'
 import { Schema, trimSlash } from 'koishi'
-import { ImageSource } from 'koishi-plugin-booru'
 
-import { Safebooru } from './types'
+import { ImageSource } from 'koishi-plugin-booru'
 
 class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
   languages = ['en']
@@ -12,19 +12,19 @@ class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
     // API docs: https://safebooru.org/index.php?page=help&topic=dapi
     const params = {
       // TODO random 无效
-      tags: query.tags.join('+') + '+sort:random',
+      tags: `${query.tags.join('+')}+sort:random`,
       page: 'dapi',
       s: 'post',
       q: 'index',
       json: 1,
       limit: query.count,
     }
-    const url =
-      trimSlash(this.config.endpoint) +
-      '?' +
-      Object.entries(params)
-        .map(([key, value]) => `${key}=${value}`)
-        .join('&')
+    const url
+      = `${trimSlash(this.config.endpoint)
+      }?${
+        Object.entries(params)
+          .map(([key, value]) => `${key}=${value}`)
+          .join('&')}`
 
     const data = await this.http.get<Safebooru.Response[]>(url)
 
@@ -46,7 +46,7 @@ class SafebooruImageSource extends ImageSource<SafebooruImageSource.Config> {
         },
         // pageUrl: post.source,
         author: post.owner.replace(/ /g, ', ').replace(/_/g, ' '),
-        tags: post.tags.split(' ').map((t) => t.replace(/_/g, ' ')),
+        tags: post.tags.split(' ').map(t => t.replace(/_/g, ' ')),
         nsfw: !['safe', 'general'].includes(post.rating),
       }
     })

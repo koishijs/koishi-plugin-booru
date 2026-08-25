@@ -1,7 +1,8 @@
-import { Context, Schema, trimSlash } from 'koishi'
-import { ImageSource } from 'koishi-plugin-booru'
+import type { Context } from 'koishi'
+import type { Derpibooru } from './types'
+import { Schema, trimSlash } from 'koishi'
 
-import { Derpibooru } from './types'
+import { ImageSource } from 'koishi-plugin-booru'
 
 class DerpibooruImageSource extends ImageSource<DerpibooruImageSource.Config> {
   languages = ['en']
@@ -12,7 +13,8 @@ class DerpibooruImageSource extends ImageSource<DerpibooruImageSource.Config> {
   }
 
   get keyPair() {
-    if (!this.config.keyPairs.length) return
+    if (!this.config.keyPairs.length)
+      return
     return this.config.keyPairs[Math.floor(Math.random() * this.config.keyPairs.length)]
   }
 
@@ -28,7 +30,7 @@ class DerpibooruImageSource extends ImageSource<DerpibooruImageSource.Config> {
     }
 
     const data = await this.http.get(
-      trimSlash(this.config.endpoint) + '/api/v1/json/search/images',
+      `${trimSlash(this.config.endpoint)}/api/v1/json/search/images`,
       { params },
     ) as Derpibooru.ImagesResponse
 
