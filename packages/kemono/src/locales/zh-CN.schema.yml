@@ -1,0 +1,3 @@
+$description: 搜索设置
+endpoint: Kemono API 的 URL。
+dataEndpoint: Kemono 文件 CDN 的 URL。

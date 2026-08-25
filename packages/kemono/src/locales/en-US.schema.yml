@@ -1,0 +1,3 @@
+$description: Search Settings
+endpoint: Kemono API URL.
+dataEndpoint: Kemono data CDN URL.
