@@ -13,3 +13,5 @@ files:
     translation: /docs/%locale%/**/%file_name%.md
   - source: /docs/**/zh-CN.json
     translation: /docs/**/%locale%.json
+  - source: /pkg-translations/zh.json
+    translation: /pkg-translations/%locale%.json
