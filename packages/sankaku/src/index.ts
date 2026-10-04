@@ -33,13 +33,13 @@ class SankakuComplexImageSource extends ImageSource<SankakuComplexImageSource.Co
     }
 
     const keyPair = this.keyPair
-    if (!keyPair.accessToken) {
+    if (keyPair && !keyPair.accessToken) {
       await this._login(keyPair)
     }
 
     const data = await this.http.get<SankakuComplex.Response[]>(consts.POSTS_URL, {
       params,
-      headers: keyPair.accessToken ? { Authentication: `${keyPair.tokenType} ${keyPair.accessToken}` } : {},
+      headers: keyPair?.accessToken ? { Authentication: `${keyPair.tokenType} ${keyPair.accessToken}` } : {},
     })
     if (!Array.isArray(data))
       return
